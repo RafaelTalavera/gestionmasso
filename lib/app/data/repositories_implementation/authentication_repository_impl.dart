@@ -1,7 +1,7 @@
 import 'package:gestionmasso/app/domain/models/user.dart';
 import 'package:gestionmasso/app/domain/repositories/authentication_repositoty.dart';
 
-class AuthenticationRepositoryImpl implements AutehnticationRepository {
+class AuthenticationRepositoryImpl implements AuthenticationRepository {
   @override
   Future<User> getUserData() {
     return Future.value(User());
