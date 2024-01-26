@@ -29,7 +29,7 @@ class _SplashViewState extends State<SplashView> {
 
     if (hasInternet) {
       final authenticationRepository = injector.authenticationRepository;
-      final isSignedIn = await authenticationRepository.insSignedIn;
+      final isSignedIn = await authenticationRepository.isSignedIn;
       if (isSignedIn) {
         final user = await authenticationRepository.getUserData();
         if (mounted) {

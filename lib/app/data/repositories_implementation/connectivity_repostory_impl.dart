@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:gestionmasso/app/data/services/remote/internet_checker.dart';
 
