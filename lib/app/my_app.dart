@@ -7,9 +7,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      initialRoute: Routes.splash,
-      routes: appRoutes,
-    );
+    return GestureDetector(
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: MaterialApp(
+          initialRoute: Routes.splash,
+          routes: appRoutes,
+        ));
   }
 }
