@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gestionmasso/app/domain/enums.dart';
-import 'package:gestionmasso/app/presentation/routes/routes.dart';
-import 'package:gestionmasso/main.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../routes/routes.dart';
+import '../../../../main.dart';
 
 class SignInView extends StatefulWidget {
-  const SignInView({Key? key}) : super(key: key);
+  const SignInView({super.key});
 
   @override
   State<SignInView> createState() => _SignInViewState();
@@ -98,35 +98,62 @@ class _SignInViewState extends State<SignInView> {
     setState(() {
       _fetching = true;
     });
-    final result = await Injector.of(context).authenticationRepository.signIn(
-          _username,
-          _password,
-        );
 
-    if (!mounted) {
-      return;
+    try {
+      final result = await Injector.of(context).authenticationRepository.signIn(
+            _username,
+            _password,
+          );
+
+      result.when(
+        (failure) {
+          setState(() {
+            _fetching = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Error en la autenticación'),
+            ),
+          );
+        },
+        (user) async {
+          // Extraer el token del usuario o realizar cualquier lógica adicional
+          final token = user.token; // Ajusta esto según tu implementación real
+
+          // Guardar el token en un lugar seguro, por ejemplo, FlutterSecureStorage
+          await _saveToken(context, token);
+
+          setState(() {
+            _fetching = false;
+          });
+
+          // ignore: use_build_context_synchronously
+          Navigator.pushReplacementNamed(context, Routes.home);
+        },
+      );
+    } catch (e) {
+      setState(() {
+        _fetching = false;
+      });
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error en la autenticación'),
+        ),
+      );
     }
+  }
 
-    result.when(
-      (failure) {
-        setState(() {
-          _fetching = false;
-        });
-        final message = {
-          SignInFailure.notFound: 'Not Found',
-          SignInFailure.unauthorized: 'Invalid password',
-          SignInFailure.unknown: 'Error',
-        }[failure];
+  Future<void> _saveToken(BuildContext context, String token) async {
+    const storage = FlutterSecureStorage();
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message!),
-          ),
-        );
-      },
-      (user) {
-        Navigator.pushReplacementNamed(context, Routes.home);
-      },
-    );
+    try {
+      // Guardar el token en el almacenamiento seguro
+      await storage.write(key: 'authToken', value: token);
+    } catch (e) {
+      // Manejar errores, por ejemplo, si no se puede acceder al almacenamiento seguro
+      print('Error al guardar el token: $e');
+      throw Exception('Error al guardar el token');
+    }
   }
 }

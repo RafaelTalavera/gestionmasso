@@ -1,6 +1,6 @@
-import 'package:gestionmasso/app/domain/either.dart';
-import 'package:gestionmasso/app/domain/enums.dart';
-import 'package:gestionmasso/app/domain/models/user.dart';
+import '../either.dart';
+import '../enums.dart';
+import '../models/user.dart';
 
 abstract class AuthenticationRepository {
   Future<bool> get isSignedIn;
