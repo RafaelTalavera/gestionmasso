@@ -2,12 +2,12 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gestionmasso/app/data/repositories_implementation/authentication_repository_impl.dart';
-import 'package:gestionmasso/app/data/repositories_implementation/connectivity_repostory_impl.dart';
-import 'package:gestionmasso/app/data/services/remote/internet_checker.dart';
-import 'package:gestionmasso/app/domain/repositories/authentication_repository.dart';
-import 'package:gestionmasso/app/my_app.dart';
-import 'package:gestionmasso/app/domain/repositories/connectivity_repository.dart';
+import 'app/data/repositories_implementation/authentication_repository_impl.dart';
+import 'app/data/repositories_implementation/connectivity_repostory_impl.dart';
+import 'app/data/services/remote/internet_checker.dart';
+import 'app/domain/repositories/authentication_repository.dart';
+import 'app/my_app.dart';
+import 'app/domain/repositories/connectivity_repository.dart';
 
 void main() {
   runApp(

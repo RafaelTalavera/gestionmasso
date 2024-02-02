@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:gestionmasso/app/presentation/routes/routes.dart';
+import "package:flutter/material.dart";
+import '../../../routes/routes.dart';
 
-import 'package:gestionmasso/main.dart';
+import '../../../../../main.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});

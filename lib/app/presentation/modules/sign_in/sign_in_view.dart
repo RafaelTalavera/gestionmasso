@@ -151,8 +151,6 @@ class _SignInViewState extends State<SignInView> {
       // Guardar el token en el almacenamiento seguro
       await storage.write(key: 'authToken', value: token);
     } catch (e) {
-      // Manejar errores, por ejemplo, si no se puede acceder al almacenamiento seguro
-      print('Error al guardar el token: $e');
       throw Exception('Error al guardar el token');
     }
   }

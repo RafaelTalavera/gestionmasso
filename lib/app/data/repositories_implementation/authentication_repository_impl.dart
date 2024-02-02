@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
@@ -24,11 +23,9 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
         final userData = json.decode(response.body);
         return User.fromMap(userData);
       } else {
-        print('Error al obtener los datos del usuario: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Error al obtener los datos del usuario: $e');
       return null;
     }
   }
@@ -48,9 +45,6 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
         'password': password,
       };
 
-      // Imprimir el JSON que estás enviando al backend
-      debugPrint('Request JSON: $requestBody');
-
       final response = await http.post(
         Uri.parse(
             'http://10.0.2.2:8080/api/auth/authenticate'), // Use 10.0.2.2 for Android emulator
@@ -59,9 +53,6 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
         },
         body: jsonEncode(requestBody),
       );
-
-      // Imprimir el JSON que recibes del backend
-      debugPrint('Response JSON: ${response.body}');
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -72,18 +63,14 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
           await _secureStorage.write(key: _key, value: token);
           return Either.right(User(token: token));
         } else {
-          // Manejar el caso en el que 'token' es nulo
-          print('Error en la autenticación: Token nulo');
           return Either.left(SignInFailure.unknown);
         }
       } else if (response.statusCode == 404) {
         return Either.left(SignInFailure.notFound);
       } else {
-        print('Error en la autenticación: ${response.statusCode}');
         return Either.left(SignInFailure.unknown);
       }
     } catch (e) {
-      print('Error en la autenticación: $e');
       return Either.left(SignInFailure.unknown);
     }
   }
