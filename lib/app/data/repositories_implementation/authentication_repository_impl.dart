@@ -17,7 +17,7 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
   Future<User?> getUserData() async {
     try {
       final response = await http
-          .get(Uri.parse('http://10.0.2.2:8080/api/auth/authenticate'));
+          .post(Uri.parse('http://10.0.2.2:8080/api/auth/authenticate'));
 
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);

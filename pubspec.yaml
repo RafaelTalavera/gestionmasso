@@ -38,6 +38,9 @@ dependencies:
   connectivity_plus: ^5.0.2
   http: ^1.2.0
   flutter_secure_storage: ^9.0.0
+  floating_bottom_navigation_bar: ^1.5.2
+  circular_bottom_navigation: ^2.3.0
+  flutter_form_builder: ^9.2.1
 
 dev_dependencies:
   flutter_test:
