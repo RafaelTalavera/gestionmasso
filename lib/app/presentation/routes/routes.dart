@@ -4,6 +4,6 @@ class Routes {
   static const splash = '/splash';
   static const signIn = '/sign-in';
   static const home = '/home';
-  // ignore: constant_identifier_names
-  static const FormularioAccid = '/formulario';
+  static const formularioAccid = '/formulario';
+  static const riesgo = '/riesgo';
 }

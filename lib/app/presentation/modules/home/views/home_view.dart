@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../../main.dart';
 import '../../../routes/routes.dart';
-import '../../Formulario/views/formulario_view.dart';
+import '../../formulario/views/formulario_view.dart';
+import '../../riesgos/views/riesgos_views.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -163,8 +164,12 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  // Aquí puedes agregar la lógica para cargar el formulario
-                  // Por ejemplo, puedes navegar a una nueva pantalla con el formulario.
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Riesgo(),
+                    ),
+                  );
                 },
                 child: const Text('Inicio de Analisis de riesgo'),
               ),
