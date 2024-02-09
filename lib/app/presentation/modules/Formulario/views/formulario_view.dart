@@ -3,6 +3,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../../../../data/services/remote/token_manager.dart';
+
 class FormularioAccid extends StatelessWidget {
   const FormularioAccid({super.key});
 
@@ -37,7 +39,6 @@ class MyForm extends StatefulWidget {
 
 class _MyFormState extends State<MyForm> {
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
-
 
   final String apiUrl = 'http://10.0.2.2:8080/api/events';
 
@@ -126,6 +127,8 @@ class _MyFormState extends State<MyForm> {
   bool showPtsApplied = false;
 
   void _submitForm() async {
+    String? token = await TokenManager.getToken();
+
     if (_fbKey.currentState!.saveAndValidate()) {
       final formData = Map<String, dynamic>.from(_fbKey.currentState!.value);
       formData['dateEvent'] = formData['dateEvent'].toIso8601String();
@@ -139,6 +142,7 @@ class _MyFormState extends State<MyForm> {
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
         },
         body: jsonEncode(formData),
       );
