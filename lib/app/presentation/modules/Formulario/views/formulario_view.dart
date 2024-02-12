@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../../../../data/services/remote/token_manager.dart';
+import '../util/listas_dropdown.dart';
 
 class FormularioAccid extends StatelessWidget {
   const FormularioAccid({super.key});
@@ -41,86 +42,6 @@ class _MyFormState extends State<MyForm> {
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
 
   final String apiUrl = 'http://10.0.2.2:8080/api/events';
-
-  List<String> severidades = [
-    'CASI',
-    'LEVE',
-    'MODERADO',
-    'INCAPACITANTE',
-    'FATAL'
-  ];
-
-  List<String> bodyPart = [
-    'Cabeza',
-    'Cuello',
-    'Cara',
-    'Brazo',
-    'Mano',
-    'Pierna',
-    'Pie',
-    'Rodillo',
-    'Dedos',
-    'Ojo',
-    'Oido',
-    'Esplada',
-    'Columna',
-    'Multiples'
-  ];
-
-  List<String> injury = [
-    'Amputación',
-    'Conmoción',
-    'Contusión',
-    'Corte',
-    'Esguince',
-    'Fisura',
-    'Fractura',
-    'Intoxicación',
-    'Laceración',
-    'Perforación',
-    'Quemaduras',
-    'Torceduras'
-  ];
-
-  List<String> incidenType = [
-    'Atrapado por',
-    'Caída a distinto nivel',
-    'Caída al mismo nivel',
-    'Contacto con calor',
-    'Contacto con electricidad',
-    'Contacto con químicos',
-    'Contacto con frío',
-    'Contacto con elemento cortante',
-    'Contacto con elemento punzante',
-    'Exposición a gases',
-    'Exposición a radiación',
-    'Golpeado contra',
-    'Golpeado por',
-    'Proyección de fluidos',
-    'Proyección de partículas'
-  ];
-
-  List<String> workOccasion = [
-    'Tareas ajenas al puesto de trabajo',
-    'Tareas del puesto de trabajo rutinarias',
-    'Tareas del puesto de trabajo fuera de rutina',
-  ];
-
-  List<String> hoursWorked = [
-    'menos de 8 horas',
-    'más de 8 horas y menos de 12 horas',
-    'más de 12 horas'
-  ];
-
-  List<String> energia = [
-    'cinética',
-    'Elástica',
-    'Térmica',
-    'Nuclear',
-    'Mecánica',
-    'Eléctrica',
-    'Química',
-  ];
 
   bool showMachineOptions = false;
   bool showAuthorization = false;
@@ -220,10 +141,10 @@ class _MyFormState extends State<MyForm> {
               labelText: 'Severidad',
               hintText: 'Selecciona una severidad',
             ),
-            items: severidades
+            items: ListasDropdown.severidades
                 .map((severidad) => DropdownMenuItem(
-                      value: severidad,
-                      child: Text(severidad),
+                      value: severidad['value'],
+                      child: Text(severidad['label'] ?? ''),
                     ))
                 .toList(),
           ),
@@ -232,10 +153,10 @@ class _MyFormState extends State<MyForm> {
             decoration: const InputDecoration(
                 labelText: 'Parte del cuerpo lesionada',
                 hintText: 'Selecciona una parte del cuerpot lesionada'),
-            items: bodyPart
+            items: ListasDropdown.bodyPart
                 .map((bodyPart) => DropdownMenuItem(
-                      value: bodyPart,
-                      child: Text(bodyPart),
+                      value: bodyPart['value'],
+                      child: Text(bodyPart['label'] ?? ''),
                     ))
                 .toList(),
           ),
@@ -244,10 +165,10 @@ class _MyFormState extends State<MyForm> {
             decoration: const InputDecoration(
                 labelText: 'Tipo de lesión',
                 hintText: 'Selecciona un tipo de lesión'),
-            items: injury
+            items: ListasDropdown.injury
                 .map((injury) => DropdownMenuItem(
-                      value: injury,
-                      child: Text(injury),
+                      value: injury['value'],
+                      child: Text(injury['label'] ?? ''),
                     ))
                 .toList(),
           ),
@@ -256,10 +177,10 @@ class _MyFormState extends State<MyForm> {
             decoration: const InputDecoration(
                 labelText: 'Tipo de accidente',
                 hintText: 'Selecciona un tipo de accidente'),
-            items: incidenType
+            items: ListasDropdown.incidenType
                 .map((incidenType) => DropdownMenuItem(
-                      value: incidenType,
-                      child: Text(incidenType),
+                      value: incidenType['value'],
+                      child: Text(incidenType['label'] ?? ''),
                     ))
                 .toList(),
           ),
@@ -276,10 +197,10 @@ class _MyFormState extends State<MyForm> {
             decoration: const InputDecoration(
                 labelText: '¿Que tipo de tarea estaba realizando?',
                 hintText: 'Selecciona un tipo de accidente'),
-            items: workOccasion
+            items: ListasDropdown.workOccasion
                 .map((workOccasion) => DropdownMenuItem(
-                      value: workOccasion,
-                      child: Text(workOccasion),
+                      value: workOccasion['value'],
+                      child: Text(workOccasion['label'] ?? ''),
                     ))
                 .toList(),
           ),
@@ -288,10 +209,10 @@ class _MyFormState extends State<MyForm> {
             decoration: const InputDecoration(
                 labelText: '¿Cuantas horas llevaba trabajadas?',
                 hintText: 'Selecciona un rango de horario'),
-            items: hoursWorked
+            items: ListasDropdown.hoursWorked
                 .map((hoursWorked) => DropdownMenuItem(
-                      value: hoursWorked,
-                      child: Text(hoursWorked),
+                      value: hoursWorked['value'],
+                      child: Text(hoursWorked['label'] ?? ''),
                     ))
                 .toList(),
           ),
@@ -399,10 +320,10 @@ class _MyFormState extends State<MyForm> {
                   decoration: const InputDecoration(
                       labelText: 'Energía utilizada',
                       hintText: 'Selecciona la energía utilizada'),
-                  items: energia
+                  items: ListasDropdown.energia
                       .map((energia) => DropdownMenuItem(
-                            value: energia,
-                            child: Text(energia),
+                            value: energia['value'],
+                            child: Text(energia['label'] ?? ''),
                           ))
                       .toList(),
                 ),
@@ -454,10 +375,10 @@ class _MyFormState extends State<MyForm> {
           const Padding(
             padding: EdgeInsets.only(top: 20.0),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           ElevatedButton(
             onPressed: _submitForm,
-            child: Text('Enviar formulario'),
+            child: const Text('Enviar formulario'),
           ),
         ],
       ),
