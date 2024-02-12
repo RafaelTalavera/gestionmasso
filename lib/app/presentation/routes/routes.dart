@@ -6,4 +6,6 @@ class Routes {
   static const home = '/home';
   static const formularioAccid = '/formulario';
   static const riesgo = '/riesgo';
+  static const causa = '/causa';
+  static const table = '/table';
 }

@@ -6,27 +6,31 @@ import 'dart:convert';
 import '../../../../data/services/remote/token_manager.dart';
 import '../util/listas_dropdown.dart';
 
-class FormularioAccid extends StatelessWidget {
-  const FormularioAccid({super.key});
+class FormularioAccid extends StatefulWidget {
+  // ignore: use_key_in_widget_constructors
+  const FormularioAccid({Key? key});
 
   @override
+  State<FormularioAccid> createState() => _FormularioAccidState();
+}
+
+class _FormularioAccidState extends State<FormularioAccid> {
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Formulario Accidentes'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Formulario Accidentes'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: MyForm(),
-          ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: MyForm(),
         ),
       ),
     );
@@ -69,28 +73,15 @@ class _MyFormState extends State<MyForm> {
       );
 
       if (responsePost.statusCode == 201) {
-        print('Evento creado exitosamente');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
+            duration: Duration(seconds: 10),
             content: Text('Evento creado exitosamente'),
-            duration: Duration(seconds: 2),
           ),
         );
         _fbKey.currentState?.reset();
-      } else {
-        print(
-            'Error al crear el evento. Código de estado: ${responsePost.statusCode}');
-      }
-
-      final responseGet = await http.get(Uri.parse(apiUrl));
-
-      if (responseGet.statusCode == 200) {
-        print('Respuesta GET exitosa');
-        print(responseGet.body);
-      } else {
-        print(
-            'Error al realizar la solicitud GET. Código de estado: ${responseGet.statusCode}');
-      }
+        Navigator.of(context).pop();
+      } else {}
     }
   }
 
@@ -149,7 +140,7 @@ class _MyFormState extends State<MyForm> {
                 .toList(),
           ),
           FormBuilderDropdown(
-            name: 'BodyPart',
+            name: 'bodyPart',
             decoration: const InputDecoration(
                 labelText: 'Parte del cuerpo lesionada',
                 hintText: 'Selecciona una parte del cuerpot lesionada'),

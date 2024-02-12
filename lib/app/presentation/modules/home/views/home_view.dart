@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../../main.dart';
 import '../../../routes/routes.dart';
+
+import '../../event_table/views/event_table.dart';
 import '../../formulario/views/formulario_view.dart';
 import '../../riesgos/views/riesgos_views.dart';
 
@@ -33,6 +35,7 @@ class MyHomePage extends StatefulWidget {
   final String? title;
 
   @override
+  // ignore: library_private_types_in_public_api
   _MyHomePageState createState() => _MyHomePageState();
 }
 
@@ -131,11 +134,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => FormularioAccid(),
+                      builder: (context) => const FormularioAccid(),
                     ),
                   );
                 },
                 child: const Text('Cargar Formulario'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EventTable(),
+                    ),
+                  );
+                },
+                child: const Text('Accidentes cargados'),
               ),
               const SizedBox(
                 height: 60,
