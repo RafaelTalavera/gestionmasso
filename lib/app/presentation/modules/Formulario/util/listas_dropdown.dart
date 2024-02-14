@@ -15,13 +15,13 @@ class ListasDropdown {
     {'label': 'Mano', 'value': 'MANO'},
     {'label': 'Pierna', 'value': 'PIERNA'},
     {'label': 'Pie', 'value': 'PIE'},
-    {'label': 'Rodillo', 'value': 'RODILLO'},
+    {'label': 'Rodillo', 'value': 'RODILLA'},
     {'label': 'Dedos', 'value': 'DEDOS'},
     {'label': 'Ojo', 'value': 'OJO'},
-    {'label': 'Oido', 'value': 'OIDO'},
+    {'label': 'Oído', 'value': 'OIDO'},
     {'label': 'Esplada', 'value': 'ESPALDA'},
     {'label': 'Columna', 'value': 'COLUMNA'},
-    {'label': 'Multiples', 'value': 'MULTIPLES'},
+    {'label': 'Múltiples', 'value': 'MULTIPLES'},
   ];
 
   static List<Map<String, String>> injury = [
@@ -70,12 +70,9 @@ class ListasDropdown {
   ];
 
   static List<Map<String, String>> hoursWorked = [
-    {'label': 'menos de 8 horas', 'value': 'MENOS_DE_8_HORAS'},
-    {
-      'label': 'más de 8 horas y menos de 12 horas',
-      'value': 'MAS_DE_8_Y_MENOS_DE_12_HORAS'
-    },
-    {'label': 'más de 12 horas', 'value': 'MAS_DE_12_HORAS'},
+    {'label': 'menos de 8 horas', 'value': 'MENOS_8'},
+    {'label': 'más de 8 horas y menos de 12 horas', 'value': 'MAS_8'},
+    {'label': 'más de 12 horas', 'value': 'MAS_12'},
   ];
 
   static List<Map<String, String>> energia = [

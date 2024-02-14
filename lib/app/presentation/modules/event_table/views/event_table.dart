@@ -18,7 +18,6 @@ class _EventTableState extends State<EventTable> {
   void initState() {
     super.initState();
     events = <Event>[];
-    // Llamar a la función para cargar datos desde el backend
     fetchData();
   }
 
@@ -49,6 +48,14 @@ class _EventTableState extends State<EventTable> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: DataTable(
+                  columnSpacing: 50,
+                  headingRowColor: MaterialStateColor.resolveWith(
+                      (states) => Colors.grey[300]!),
+                  headingTextStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                  dataRowMinHeight: 30,
                   columns: const [
                     DataColumn(label: Text('id')),
                     DataColumn(label: Text('Fecha del Evento')),

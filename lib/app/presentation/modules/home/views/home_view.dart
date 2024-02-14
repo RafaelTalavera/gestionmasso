@@ -1,13 +1,14 @@
 import 'package:circular_bottom_navigation/circular_bottom_navigation.dart';
 import 'package:circular_bottom_navigation/tab_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../../../../main.dart';
-import '../../../routes/routes.dart';
 
 import '../../event_table/views/event_table.dart';
 import '../../formulario/views/formulario_view.dart';
 import '../../riesgos/views/riesgos_views.dart';
+import '../../sign_in/sign_in_view.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -17,11 +18,11 @@ class HomeView extends StatelessWidget {
     return MaterialApp(
       title: 'Circular Bottom Navigation Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.orange,
       ),
       home: const Directionality(
         textDirection: TextDirection.ltr,
-        child: MyHomePage(title: 'Gestión Masso'),
+        child: MyHomePage(title: ''),
       ),
     );
   }
@@ -46,24 +47,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<TabItem> tabItems = List.of([
     TabItem(
-      Icons.border_color,
+      Icons.healing,
       "Accidentes",
-      Colors.blue,
+      const Color.fromARGB(255, 169, 221, 247),
       labelStyle: const TextStyle(
         fontWeight: FontWeight.normal,
       ),
     ),
     TabItem(
-      Icons.widgets,
-      "Riesgos",
-      Colors.orange,
+      CupertinoIcons.arrow_3_trianglepath,
+      "Medioambiente",
+      Colors.green,
       labelStyle: const TextStyle(
-        color: Colors.red,
+        color: Colors.green,
         fontWeight: FontWeight.bold,
       ),
     ),
     TabItem(
-      Icons.layers,
+      CupertinoIcons.chart_bar_fill,
       "Reports",
       Colors.red,
       circleStrokeColor: Colors.black,
@@ -87,16 +88,25 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title ?? ''),
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/imagen/gmasso.png', // Ruta de tu imagen
+              width: 40, // Ajusta el ancho según tus necesidades
+              height: 40, // Ajusta la altura según tus necesidades
+            ),
+            const SizedBox(width: 10), // Espacio entre la imagen y el texto
+            Text(widget.title ?? ''),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             onPressed: () async {
               Injector.of(context).authenticationRepository.singOut();
-              Navigator.pushReplacementNamed(
-                context,
-                Routes.signIn,
-              );
+
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => SignInView()));
             },
           ),
         ],
@@ -104,9 +114,8 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Stack(
         children: <Widget>[
           Padding(
-            // ignore: sort_child_properties_last
-            child: _bodyContainer(), // Cambiado aquí a _bodyContainer
             padding: EdgeInsets.only(bottom: bottomNavBarHeight),
+            child: _bodyContainer(),
           ),
           Align(alignment: Alignment.bottomCenter, child: bottomNav())
         ],

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../../routes/routes.dart';
+
 import '../../../../main.dart';
+import '../home/views/home_view.dart';
 
 class SignInView extends StatefulWidget {
   const SignInView({super.key});
@@ -27,65 +28,84 @@ class _SignInViewState extends State<SignInView> {
             key: _formKey,
             child: AbsorbPointer(
               absorbing: _fetching,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    onChanged: (text) {
-                      setState(() {
-                        _username = text.trim().toLowerCase();
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      hintText: 'username',
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(40.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/imagen/gmasso.png',
+                      width: 100,
+                      height: 100,
                     ),
-                    validator: (text) {
-                      text = text?.trim().toLowerCase() ?? '';
-
-                      if (text.isEmpty) {
-                        return 'Invalid username';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    onChanged: (text) {
-                      setState(() {
-                        _password = text.replaceAll(' ', '').toLowerCase();
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      hintText: 'password',
+                    const SizedBox(height: 30),
+                    const Text(
+                      'Gestión MASSO',
+                      style: TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 238, 183, 19)),
                     ),
-                    validator: (text) {
-                      text = text?.replaceAll(' ', '').toLowerCase() ?? '';
-
-                      if (text.length < 4) {
-                        return 'Invalid password';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  Builder(builder: (context) {
-                    if (_fetching) {
-                      return const CircularProgressIndicator();
-                    }
-                    return MaterialButton(
-                      onPressed: () {
-                        final isValid = _formKey.currentState!.validate();
-                        if (isValid) {
-                          _submit(context);
-                        }
+                    const SizedBox(height: 80),
+                    TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      onChanged: (text) {
+                        setState(() {
+                          _username = text.trim().toLowerCase();
+                        });
                       },
-                      color: Colors.blue,
-                      child: const Text('Sign in'),
-                    );
-                  }),
-                ],
+                      decoration: const InputDecoration(
+                        hintText: 'username',
+                      ),
+                      validator: (text) {
+                        text = text?.trim().toLowerCase() ?? '';
+
+                        if (text.isEmpty) {
+                          return 'Invalid username';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      onChanged: (text) {
+                        setState(() {
+                          _password = text.replaceAll(' ', '').toLowerCase();
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        hintText: 'password',
+                      ),
+                      validator: (text) {
+                        text = text?.replaceAll(' ', '').toLowerCase() ?? '';
+
+                        if (text.length < 4) {
+                          return 'Invalid password';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    Builder(builder: (context) {
+                      if (_fetching) {
+                        return const CircularProgressIndicator();
+                      }
+                      return IconButton(
+                          onPressed: () {
+                            final isValid = _formKey.currentState!.validate();
+                            if (isValid) {
+                              _submit(context);
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.login,
+                            size: 30,
+                            color: Colors.black,
+                          ));
+                    }),
+                  ],
+                ),
               ),
             ),
           ),
@@ -128,7 +148,12 @@ class _SignInViewState extends State<SignInView> {
           });
 
           // ignore: use_build_context_synchronously
-          Navigator.pushReplacementNamed(context, Routes.home);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const HomeView(),
+            ),
+          );
         },
       );
     } catch (e) {
