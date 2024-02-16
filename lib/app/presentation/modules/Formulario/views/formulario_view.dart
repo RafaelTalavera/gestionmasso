@@ -198,6 +198,7 @@ class _MyFormState extends State<MyForm> {
                       child: Text(severidad['label'] ?? ''),
                     ))
                 .toList(),
+            initialValue: ListasDropdown.severidades[0]['value'],
           ),
           FormBuilderDropdown(
             name: 'bodyPart',
@@ -210,6 +211,7 @@ class _MyFormState extends State<MyForm> {
                       child: Text(bodyPart['label'] ?? ''),
                     ))
                 .toList(),
+            initialValue: ListasDropdown.bodyPart[0]['value'],
           ),
           FormBuilderDropdown(
             name: 'injury',
@@ -222,18 +224,7 @@ class _MyFormState extends State<MyForm> {
                       child: Text(injury['label'] ?? ''),
                     ))
                 .toList(),
-          ),
-          FormBuilderDropdown(
-            name: 'incidenType',
-            decoration: const InputDecoration(
-                labelText: 'Tipo de accidente',
-                hintText: 'Selecciona un tipo de accidente'),
-            items: ListasDropdown.incidenType
-                .map((incidenType) => DropdownMenuItem(
-                      value: incidenType['value'],
-                      child: Text(incidenType['label'] ?? ''),
-                    ))
-                .toList(),
+            initialValue: ListasDropdown.injury[0]['value'],
           ),
           FormBuilderCheckbox(
             name: 'entry',
@@ -280,6 +271,7 @@ class _MyFormState extends State<MyForm> {
                       child: Text(hoursWorked['label'] ?? ''),
                     ))
                 .toList(),
+            initialValue: ListasDropdown.hoursWorked[0]['value'],
           ),
           const Padding(
             padding: EdgeInsets.only(top: 20.0),
@@ -373,16 +365,19 @@ class _MyFormState extends State<MyForm> {
             child: Column(
               children: [
                 FormBuilderDropdown(
-                  name: 'energia',
+                  name: 'energy',
                   decoration: const InputDecoration(
-                      labelText: 'Energía utilizada',
-                      hintText: 'Selecciona la energía utilizada'),
+                    labelText: 'Energía utilizada',
+                    hintText: 'Selecciona la energía utilizada',
+                  ),
                   items: ListasDropdown.energia
                       .map((energia) => DropdownMenuItem(
                             value: energia['value'],
                             child: Text(energia['label'] ?? ''),
                           ))
                       .toList(),
+                  initialValue: ListasDropdown.energia[0][
+                      'value'], // Establecer el primer elemento como predeterminado
                 ),
                 FormBuilderCheckbox(
                   name: 'lockedIn',
@@ -403,7 +398,7 @@ class _MyFormState extends State<MyForm> {
                   initialValue: false,
                 ),
                 FormBuilderCheckbox(
-                  name: 'workEquimentFails',
+                  name: 'fails',
                   title: const Text(
                       'Tilda aquí si el equipo utilizado presentaba fallas previas'),
                   initialValue: false,

@@ -1,5 +1,6 @@
 class ListasDropdown {
   static List<Map<String, String>> severidades = [
+    {'label': 'Desconocida', 'value': 'DESCONOCIDA'},
     {'label': 'Casi', 'value': 'CASI'},
     {'label': 'Leve', 'value': 'LEVE'},
     {'label': 'Moderado', 'value': 'MODERADO'},
@@ -8,6 +9,7 @@ class ListasDropdown {
   ];
 
   static List<Map<String, String>> bodyPart = [
+    {'label': 'Desconocida', 'value': 'DESCONOCIDA'},
     {'label': 'Cabeza', 'value': 'CABEZA'},
     {'label': 'Cuello', 'value': 'CUELLO'},
     {'label': 'Cara', 'value': 'CARA'},
@@ -25,6 +27,7 @@ class ListasDropdown {
   ];
 
   static List<Map<String, String>> injury = [
+    {'label': 'Desconocida', 'value': 'DESCONOCIDA'},
     {'label': 'Amputación', 'value': 'AMPUTACION'},
     {'label': 'Conmoción', 'value': 'CONMOCION'},
     {'label': 'Contusión', 'value': 'CONTUSION'},
@@ -39,25 +42,8 @@ class ListasDropdown {
     {'label': 'Torceduras', 'value': 'TORCEDURAS'},
   ];
 
-  static List<Map<String, String>> incidenType = [
-    {'label': 'Atrapado por', 'value': 'ATRAPADO_POR'},
-    {'label': 'Caída a distinto nivel', 'value': 'CAIDA_DISTINTO_NIVEL'},
-    {'label': 'Caída al mismo nivel', 'value': 'CAIDA_MISMO_NIVEL'},
-    {'label': 'Contacto con calor', 'value': 'CONTACTO_CALOR'},
-    {'label': 'Contacto con electricidad', 'value': 'CONTACTO_ELECTRICIDAD'},
-    {'label': 'Contacto con químicos', 'value': 'CONTACTO_QUIMICOS'},
-    {'label': 'Contacto con frío', 'value': 'CONTACTO_FRIO'},
-    {'label': 'Contacto con elemento cortante', 'value': 'CONTACTO_CORTANTE'},
-    {'label': 'Contacto con elemento punzante', 'value': 'CONTACTO_PUNZANTE'},
-    {'label': 'Exposición a gases', 'value': 'EXPOSICION_GASES'},
-    {'label': 'Exposición a radiación', 'value': 'EXPOSICION_RADIACTIVO'},
-    {'label': 'Golpeado contra', 'value': 'GOLPEADO_CONTRA'},
-    {'label': 'Golpeado por', 'value': 'GOLPEADO_POR'},
-    {'label': 'Proyección de fluidos', 'value': 'PROYECCION_FLUIDOS'},
-    {'label': 'Proyección de partículas', 'value': 'PROYECCION_PARTICULAS'},
-  ];
-
   static List<Map<String, String>> workOccasion = [
+    {'label': 'Desconocida', 'value': 'DESCONOCIDA'},
     {'label': 'Tareas ajenas al puesto de trabajo', 'value': 'TAREAS_AJENAS'},
     {
       'label': 'Tareas del puesto de trabajo rutinarias',
@@ -70,12 +56,14 @@ class ListasDropdown {
   ];
 
   static List<Map<String, String>> hoursWorked = [
+    {'label': 'Desconocida', 'value': 'DESCONOCIDA'},
     {'label': 'menos de 8 horas', 'value': 'MENOS_8'},
     {'label': 'más de 8 horas y menos de 12 horas', 'value': 'MAS_8'},
     {'label': 'más de 12 horas', 'value': 'MAS_12'},
   ];
 
   static List<Map<String, String>> energia = [
+    {'label': 'Desconocida', 'value': 'DESCONOCIDA'},
     {'label': 'cinética', 'value': 'CINETICA'},
     {'label': 'Elástica', 'value': 'ELASTICA'},
     {'label': 'Térmica', 'value': 'TERMICA'},

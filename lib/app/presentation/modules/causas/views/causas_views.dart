@@ -94,81 +94,80 @@ class _HypothesisScreenState extends State<HypothesisScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Entradas JSON existentes
-
-            Column(
-              children: hypothesisData.entries.map((entry) {
-                return Column(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Entradas JSON existentes
+              Column(
+                children: hypothesisData.entries.map((entry) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${entry.key}:',
+                        style: const TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
+                      const SizedBox(height: 4.0),
+                      Text(
+                        // ignore: unnecessary_string_interpolations
+                        '${entry.value}',
+                        style: const TextStyle(
+                          fontSize: 14.0,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      const SizedBox(height: 12.0),
+                    ],
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: .0),
+              Container(
+                margin: const EdgeInsets.only(top: 16.0),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '${entry.key}:',
-                      style: const TextStyle(
-                        fontSize: 14.0,
+                    const Text(
+                      'Escribe que te parecio el analisis:',
+                      style: TextStyle(
+                        fontSize: 16.0,
                         fontWeight: FontWeight.bold,
                         color: Colors.blue,
                       ),
                     ),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      // ignore: unnecessary_string_interpolations
-                      '${entry.value}',
-                      style: const TextStyle(
-                        fontSize: 14.0,
-                        fontStyle: FontStyle.italic,
+                    const SizedBox(height: 8.0),
+                    TextField(
+                      controller: commentController,
+                      decoration: const InputDecoration(
+                        hintText: 'Escribe tu comentario aquí',
                       ),
                     ),
-                    const SizedBox(height: 12.0),
+                    const SizedBox(height: 8.0),
+                    ElevatedButton(
+                      onPressed: () async {
+                        String? token = await TokenManager.getToken();
+
+                        if (token != null) {
+                          String comment = commentController.text;
+                          await sendComment(token, comment);
+                        } else {
+                          print('No se pudo obtener el token.');
+                        }
+                      },
+                      child: const Text('Enviar Comentario'),
+                    ),
                   ],
-                );
-              }).toList(),
-            ),
-
-            const SizedBox(height: 50.0),
-
-            Container(
-              margin: const EdgeInsets.only(top: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Escribe que te parecio el analisis:',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  TextField(
-                    controller: commentController,
-                    decoration: const InputDecoration(
-                      hintText: 'Escribe tu comentario aquí',
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  ElevatedButton(
-                    onPressed: () async {
-                      String? token = await TokenManager.getToken();
-
-                      if (token != null) {
-                        String comment = commentController.text;
-                        await sendComment(token, comment);
-                      } else {
-                        print('No se pudo obtener el token.');
-                      }
-                    },
-                    child: const Text('Enviar Comentario'),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
