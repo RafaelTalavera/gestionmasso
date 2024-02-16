@@ -9,7 +9,6 @@ class Event {
     required this.entry,
     required this.workOccasion,
     required this.hoursWorked,
-    required this.trainingDate,
     required this.accidentHistory,
     required this.authorization,
     required this.pts,
@@ -20,10 +19,7 @@ class Event {
     required this.lockedIn,
     required this.lockedRequired,
     required this.lockedUsed,
-    required this.defense,
-    required this.defenserIntegrity,
     required this.workEquimentFails,
-    required this.correctUseEquimat,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -37,7 +33,6 @@ class Event {
       entry: DateTime.parse(json['entry'] ?? ''),
       workOccasion: json['workOccasion'] ?? '',
       hoursWorked: json['hoursWorked'] ?? '',
-      trainingDate: DateTime.parse(json['trainingDate'] ?? ''),
       accidentHistory: json['accidentHistory'] ?? false,
       authorization: json['authorization'] ?? false,
       pts: json['pts'] ?? false,
@@ -48,10 +43,7 @@ class Event {
       lockedIn: json['lockedIn'] ?? false,
       lockedRequired: json['lockedRequired'] ?? false,
       lockedUsed: json['lockedUsed'] ?? false,
-      defense: json['defense'] ?? false,
-      defenserIntegrity: json['defenserIntegrity'] ?? false,
       workEquimentFails: json['workEquimentFails'] ?? false,
-      correctUseEquimat: json['correctUseEquimat'] ?? false,
     );
   }
   final String id;
@@ -63,7 +55,6 @@ class Event {
   final DateTime entry;
   final String workOccasion;
   final String hoursWorked;
-  final DateTime trainingDate;
   final bool accidentHistory;
   final bool authorization;
   final bool pts;
@@ -74,8 +65,5 @@ class Event {
   final bool lockedIn;
   final bool lockedRequired;
   final bool lockedUsed;
-  final bool defense;
-  final bool defenserIntegrity;
   final bool workEquimentFails;
-  final bool correctUseEquimat;
 }

@@ -6,8 +6,10 @@ import 'package:http/http.dart' as http;
 
 import '../../../../domain/repositories/event_repository.dart';
 
+// ignore: use_key_in_widget_constructors
 class EventTable extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _EventTableState createState() => _EventTableState();
 }
 
@@ -66,7 +68,6 @@ class _EventTableState extends State<EventTable> {
                     DataColumn(label: Text('Entrada')),
                     DataColumn(label: Text('Tarea')),
                     DataColumn(label: Text('H Trabajadas')),
-                    DataColumn(label: Text('Capacitación')),
                     DataColumn(label: Text('Accidentes previos')),
                     DataColumn(label: Text('Requiere Autorización')),
                     DataColumn(label: Text('Tiene autorización')),
@@ -77,10 +78,7 @@ class _EventTableState extends State<EventTable> {
                     DataColumn(label: Text('Tiene Bloqueo')),
                     DataColumn(label: Text('requerido')),
                     DataColumn(label: Text('uso')),
-                    DataColumn(label: Text('Defensas')),
-                    DataColumn(label: Text('Estado de defensas')),
                     DataColumn(label: Text('Tenia fallas el equipo?')),
-                    DataColumn(label: Text('Uso correcto'))
                   ],
                   rows: events.map((event) {
                     return DataRow(
@@ -96,10 +94,7 @@ class _EventTableState extends State<EventTable> {
                             Text(DateFormat('yyyy-MM-dd').format(event.entry))),
                         DataCell(Text(event.workOccasion)),
                         DataCell(Text(event.hoursWorked)),
-                        DataCell(Text(DateFormat('yyyy-MM-dd')
-                            .format(event.trainingDate))),
-                        DataCell(Text(event.accidentHistory
-                            .toString())), // Convert boolean to string
+                        DataCell(Text(event.accidentHistory.toString())),
                         DataCell(Text(event.authorization.toString())),
                         DataCell(Text(event.authorizationWork.toString())),
                         DataCell(Text(event.pts.toString())),
@@ -109,11 +104,7 @@ class _EventTableState extends State<EventTable> {
                         DataCell(Text(event.lockedIn.toString())),
                         DataCell(Text(event.lockedRequired.toString())),
                         DataCell(Text(event.lockedUsed.toString())),
-                        DataCell(Text(event.defense.toString())),
-                        DataCell(Text(event.defenserIntegrity.toString())),
                         DataCell(Text(event.workEquimentFails.toString())),
-                        DataCell(Text(event.correctUseEquimat.toString())),
-
                         // Agrega más celdas según sea necesario
                       ],
                     );

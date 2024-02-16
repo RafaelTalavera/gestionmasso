@@ -47,16 +47,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<TabItem> tabItems = List.of([
     TabItem(
-      Icons.healing,
-      "Accidentes",
-      const Color.fromARGB(255, 169, 221, 247),
+      Icons.warning,
+      "Seguridad",
+      const Color.fromRGBO(0, 0, 255, 0.5),
       labelStyle: const TextStyle(
         fontWeight: FontWeight.normal,
       ),
     ),
     TabItem(
       CupertinoIcons.arrow_3_trianglepath,
-      "Medioambiente",
+      "Ambiente",
       Colors.green,
       labelStyle: const TextStyle(
         color: Colors.green,
@@ -106,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Injector.of(context).authenticationRepository.singOut();
 
               Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => SignInView()));
+                  MaterialPageRoute(builder: (context) => const SignInView()));
             },
           ),
         ],
@@ -128,48 +128,73 @@ class _MyHomePageState extends State<MyHomePage> {
     String slogan;
     switch (selectedPos) {
       case 0:
-        slogan = "Carga de accidentes laborales";
+        slogan = "seguridad";
         return Container(
           color: selectedColor,
-          padding: const EdgeInsets.all(30.0),
+          padding: const EdgeInsets.all(5.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(
-                height: 10,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const FormularioAccid(),
-                    ),
-                  );
-                },
-                child: const Text('Cargar Formulario'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EventTable(),
-                    ),
-                  );
-                },
-                child: const Text('Accidentes cargados'),
-              ),
-              const SizedBox(
-                height: 60,
+                height: 5,
               ),
               const Text(
-                'En esta sección usted puede cargar los accidentes. Debes tener en cuenta que la información debe reflejar todo lo que tienes evidencia',
+                'Accidentes',
                 style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white, // Establecer el color de texto
+                  color: Colors.white,
+                  fontSize: 20.0,
                 ),
-                textAlign: TextAlign.center,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                      child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const FormularioAccid(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.healing),
+                    label: const Text(
+                      'Accidentes',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: const Color.fromRGBO(0, 0, 255, 0.5),
+                    ),
+                  )),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EventTable(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.grid_on),
+                      label: const Text(
+                        'historial',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: const Color.fromRGBO(0, 0, 255, 0.5),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

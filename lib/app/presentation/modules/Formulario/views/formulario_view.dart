@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import '../../../../data/services/remote/token_manager.dart';
+import '../../causas/views/causas_views.dart';
+import '../../event_table/views/event_table.dart';
+import '../../home/views/home_view.dart';
 import '../util/listas_dropdown.dart';
 
 class FormularioAccid extends StatefulWidget {
@@ -27,10 +31,15 @@ class _FormularioAccidState extends State<FormularioAccid> {
           },
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: MyForm(),
+      body: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white, // Color celeste claro
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: MyForm(),
+          ),
         ),
       ),
     );
@@ -57,8 +66,6 @@ class _MyFormState extends State<MyForm> {
     if (_fbKey.currentState!.saveAndValidate()) {
       final formData = Map<String, dynamic>.from(_fbKey.currentState!.value);
       formData['dateEvent'] = formData['dateEvent'].toIso8601String();
-      formData['entry'] = formData['entry'].toIso8601String();
-      formData['trainingDate'] = formData['trainingDate'].toIso8601String();
 
       print('JSON enviado a la API:');
       print(jsonEncode(formData));
@@ -73,11 +80,64 @@ class _MyFormState extends State<MyForm> {
       );
 
       if (responsePost.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            duration: Duration(seconds: 10),
-            content: Text('Evento creado exitosamente'),
-          ),
+        final Map<String, dynamic> responseData = jsonDecode(responsePost.body);
+        final String? id = responseData['id'];
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('event_id', id ?? '');
+        // Guardar el ID en una variable que puedas usar
+        print('ID del evento creado: $id');
+
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Éxito'),
+              content: const Text('El evento se creó correctamente.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => EventTable()));
+                  },
+                  child: const Text('Listado'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    // Recuperar el ID guardado de SharedPreferences
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    String? savedId = prefs.getString('event_id');
+
+                    if (savedId != null && savedId.isNotEmpty) {
+                      // Navegar a la pantalla de hipótesis pasando el ID
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              HypothesisScreen(eventId: savedId),
+                        ),
+                      );
+                    } else {
+                      print('No hay ID guardado.');
+                      // Manejar caso donde no hay ID guardado
+                    }
+                  },
+                  child: const Text('Hipotesis'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomeView()));
+                  },
+                  child: const Text('salir'),
+                ),
+              ],
+            );
+          },
         );
         _fbKey.currentState?.reset();
         Navigator.of(context).pop();
@@ -175,13 +235,27 @@ class _MyFormState extends State<MyForm> {
                     ))
                 .toList(),
           ),
-          FormBuilderDateTimePicker(
+          FormBuilderCheckbox(
             name: 'entry',
-            inputType: InputType.date,
-            firstDate: DateTime(2000),
-            lastDate: DateTime.now(),
-            decoration: const InputDecoration(
-                labelText: 'Fecha de ingreso del accidentado'),
+            title: const Text(
+                'Tilda aquí si tiene más de 6 meses en el puesto de trabajo'),
+            initialValue: false,
+            onChanged: (value) {
+              setState(() {
+                showPtsApplied = value ?? false;
+              });
+            },
+          ),
+          FormBuilderCheckbox(
+            name: 'accidentHistory',
+            title:
+                const Text('Tilda aquí si la persona tuvo accidentes previos'),
+            initialValue: false,
+            onChanged: (value) {
+              setState(() {
+                showPtsApplied = value ?? false;
+              });
+            },
           ),
           FormBuilderDropdown(
             name: 'workOccasion',
@@ -206,14 +280,6 @@ class _MyFormState extends State<MyForm> {
                       child: Text(hoursWorked['label'] ?? ''),
                     ))
                 .toList(),
-          ),
-          FormBuilderDateTimePicker(
-            name: 'trainingDate',
-            inputType: InputType.date,
-            firstDate: DateTime(2000),
-            lastDate: DateTime.now(),
-            decoration: const InputDecoration(
-                labelText: 'Fecha de la ultima capacitación recibida'),
           ),
           const Padding(
             padding: EdgeInsets.only(top: 20.0),
@@ -337,27 +403,9 @@ class _MyFormState extends State<MyForm> {
                   initialValue: false,
                 ),
                 FormBuilderCheckbox(
-                  name: 'defense',
-                  title: const Text(
-                      'Tilda aquí si el equipo tenia las defensas para aislar las energías'),
-                  initialValue: false,
-                ),
-                FormBuilderCheckbox(
-                  name: 'defenserIntegrity',
-                  title: const Text(
-                      'Tilda aquí si las defensas estabán en forma integras y operativas'),
-                  initialValue: false,
-                ),
-                FormBuilderCheckbox(
                   name: 'workEquimentFails',
                   title: const Text(
                       'Tilda aquí si el equipo utilizado presentaba fallas previas'),
-                  initialValue: false,
-                ),
-                FormBuilderCheckbox(
-                  name: 'correctUseEquimat',
-                  title: const Text(
-                      'Tilda aquí si el equipo estaba utilizado en forma correcta y para lo que diseño'),
                   initialValue: false,
                 ),
               ],
