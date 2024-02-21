@@ -1,6 +1,5 @@
 class ListasDropdown {
   static List<Map<String, String>> severidades = [
-    {'label': 'Desconocida', 'value': 'DESCONOCIDA'},
     {'label': 'Casi', 'value': 'CASI'},
     {'label': 'Leve', 'value': 'LEVE'},
     {'label': 'Moderado', 'value': 'MODERADO'},
@@ -9,7 +8,6 @@ class ListasDropdown {
   ];
 
   static List<Map<String, String>> bodyPart = [
-    {'label': 'Desconocida', 'value': 'DESCONOCIDA'},
     {'label': 'Cabeza', 'value': 'CABEZA'},
     {'label': 'Cuello', 'value': 'CUELLO'},
     {'label': 'Cara', 'value': 'CARA'},
@@ -27,7 +25,6 @@ class ListasDropdown {
   ];
 
   static List<Map<String, String>> injury = [
-    {'label': 'Desconocida', 'value': 'DESCONOCIDA'},
     {'label': 'Amputación', 'value': 'AMPUTACION'},
     {'label': 'Conmoción', 'value': 'CONMOCION'},
     {'label': 'Contusión', 'value': 'CONTUSION'},
@@ -43,27 +40,17 @@ class ListasDropdown {
   ];
 
   static List<Map<String, String>> workOccasion = [
-    {'label': 'Desconocida', 'value': 'DESCONOCIDA'},
-    {'label': 'Tareas ajenas al puesto de trabajo', 'value': 'TAREAS_AJENAS'},
-    {
-      'label': 'Tareas del puesto de trabajo rutinarias',
-      'value': 'TAREAS_RUTINARIAS'
-    },
-    {
-      'label': 'Tareas del puesto de trabajo fuera de rutina',
-      'value': 'TAREAS_FUERA_RUTINA'
-    },
+    {'label': 'Tareas rutinarias', 'value': 'TAREAS_RUTINARIAS'},
+    {'label': 'Tareas no rutinas', 'value': 'TAREAS_FUERA_RUTINA'},
   ];
 
   static List<Map<String, String>> hoursWorked = [
-    {'label': 'Desconocida', 'value': 'DESCONOCIDA'},
     {'label': 'menos de 8 horas', 'value': 'MENOS_8'},
     {'label': 'más de 8 horas y menos de 12 horas', 'value': 'MAS_8'},
     {'label': 'más de 12 horas', 'value': 'MAS_12'},
   ];
 
   static List<Map<String, String>> energia = [
-    {'label': 'Desconocida', 'value': 'DESCONOCIDA'},
     {'label': 'cinética', 'value': 'CINETICA'},
     {'label': 'Elástica', 'value': 'ELASTICA'},
     {'label': 'Térmica', 'value': 'TERMICA'},

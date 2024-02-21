@@ -68,7 +68,27 @@ class _HypothesisScreenState extends State<HypothesisScreen> {
 
       if (response.statusCode == 200) {
         print('Comentario enviado correctamente');
-        // Puedes agregar lógica adicional después de enviar el comentario
+        // ignore: use_build_context_synchronously
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Enviado correctamente'),
+                content: const Text(
+                    'Gracias por su comentario. Trabajaremos en incorporar las sugerencias.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const HomeView()));
+                    },
+                    child: const Text('Ir a inicio'),
+                  ),
+                ],
+              );
+            });
       } else {
         print('Error al enviar el comentario: ${response.statusCode}');
       }
@@ -84,11 +104,11 @@ class _HypothesisScreenState extends State<HypothesisScreen> {
         title: const Text('Hypothesis'),
         actions: [
           IconButton(
-            icon: Icon(Icons.home),
+            icon: const Icon(Icons.home),
             onPressed: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => HomeView()),
+                MaterialPageRoute(builder: (context) => const HomeView()),
               );
             },
           ),

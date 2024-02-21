@@ -5,10 +5,9 @@ import 'package:flutter/cupertino.dart';
 
 import '../../../../../main.dart';
 
-import '../../event_table/views/event_table.dart';
-import '../../formulario/views/formulario_view.dart';
 import '../../riesgos/views/riesgos_views.dart';
 import '../../sign_in/sign_in_view.dart';
+import 'validation/build_accident_module.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -128,79 +127,11 @@ class _MyHomePageState extends State<MyHomePage> {
     String slogan;
     switch (selectedPos) {
       case 0:
-        slogan = "seguridad";
-        return Container(
-          color: selectedColor,
-          padding: const EdgeInsets.all(5.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 5,
-              ),
-              const Text(
-                'Accidentes',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.0,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                      child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const FormularioAccid(),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.healing),
-                    label: const Text(
-                      'Accidentes',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: const Color.fromRGBO(0, 0, 255, 0.5),
-                    ),
-                  )),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EventTable(),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.grid_on),
-                      label: const Text(
-                        'historial',
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: const Color.fromRGBO(0, 0, 255, 0.5),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
+        slogan = "seguridad";       
+        return buildAccidentModule(context, selectedColor);
       case 1:
         slogan = "Find, Check, Use";
+        selectedColor;
         return Container(
           color: selectedColor,
           padding: const EdgeInsets.all(30.0),

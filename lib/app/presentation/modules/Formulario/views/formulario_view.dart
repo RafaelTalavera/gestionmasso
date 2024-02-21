@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -185,6 +186,9 @@ class _MyFormState extends State<MyForm> {
             firstDate: DateTime(2000),
             lastDate: DateTime.now(),
             decoration: const InputDecoration(labelText: 'Fecha del evento'),
+            validator: FormBuilderValidators.required(
+              errorText: 'La fecha del evento no puede estar vacía',
+            ),
           ),
           FormBuilderDropdown(
             name: 'severity',
@@ -192,39 +196,46 @@ class _MyFormState extends State<MyForm> {
               labelText: 'Severidad',
               hintText: 'Selecciona una severidad',
             ),
+            validator: FormBuilderValidators.required(
+              errorText: 'El campo severidad no puede estar vacío',
+            ),
             items: ListasDropdown.severidades
                 .map((severidad) => DropdownMenuItem(
                       value: severidad['value'],
                       child: Text(severidad['label'] ?? ''),
                     ))
                 .toList(),
-            initialValue: ListasDropdown.severidades[0]['value'],
           ),
           FormBuilderDropdown(
             name: 'bodyPart',
             decoration: const InputDecoration(
                 labelText: 'Parte del cuerpo lesionada',
                 hintText: 'Selecciona una parte del cuerpot lesionada'),
+            validator: FormBuilderValidators.required(
+              errorText:
+                  'El campo cuerpo parte del cuerpo lesionada no puede estar vacío',
+            ),
             items: ListasDropdown.bodyPart
                 .map((bodyPart) => DropdownMenuItem(
                       value: bodyPart['value'],
                       child: Text(bodyPart['label'] ?? ''),
                     ))
                 .toList(),
-            initialValue: ListasDropdown.bodyPart[0]['value'],
           ),
           FormBuilderDropdown(
             name: 'injury',
             decoration: const InputDecoration(
                 labelText: 'Tipo de lesión',
                 hintText: 'Selecciona un tipo de lesión'),
+            validator: FormBuilderValidators.required(
+              errorText: 'El campo lesión no puede estar vacío',
+            ),
             items: ListasDropdown.injury
                 .map((injury) => DropdownMenuItem(
                       value: injury['value'],
                       child: Text(injury['label'] ?? ''),
                     ))
                 .toList(),
-            initialValue: ListasDropdown.injury[0]['value'],
           ),
           FormBuilderCheckbox(
             name: 'entry',
@@ -249,29 +260,19 @@ class _MyFormState extends State<MyForm> {
             },
           ),
           FormBuilderDropdown(
-            name: 'workOccasion',
-            decoration: const InputDecoration(
-                labelText: '¿Que tipo de tarea estaba realizando?',
-                hintText: 'Selecciona un tipo de accidente'),
-            items: ListasDropdown.workOccasion
-                .map((workOccasion) => DropdownMenuItem(
-                      value: workOccasion['value'],
-                      child: Text(workOccasion['label'] ?? ''),
-                    ))
-                .toList(),
-          ),
-          FormBuilderDropdown(
             name: 'hoursWorked',
             decoration: const InputDecoration(
                 labelText: '¿Cuantas horas llevaba trabajadas?',
                 hintText: 'Selecciona un rango de horario'),
+            validator: FormBuilderValidators.required(
+              errorText: 'El campo horas trabajadas no puede estar vacío',
+            ),
             items: ListasDropdown.hoursWorked
                 .map((hoursWorked) => DropdownMenuItem(
                       value: hoursWorked['value'],
                       child: Text(hoursWorked['label'] ?? ''),
                     ))
                 .toList(),
-            initialValue: ListasDropdown.hoursWorked[0]['value'],
           ),
           const Padding(
             padding: EdgeInsets.only(top: 20.0),
@@ -370,14 +371,16 @@ class _MyFormState extends State<MyForm> {
                     labelText: 'Energía utilizada',
                     hintText: 'Selecciona la energía utilizada',
                   ),
+                  validator: FormBuilderValidators.required(
+                    errorText: 'El campo energía no puede estar vacío',
+                  ),
                   items: ListasDropdown.energia
                       .map((energia) => DropdownMenuItem(
                             value: energia['value'],
                             child: Text(energia['label'] ?? ''),
                           ))
                       .toList(),
-                  initialValue: ListasDropdown.energia[0][
-                      'value'], // Establecer el primer elemento como predeterminado
+                  // Establecer el primer elemento como predeterminado
                 ),
                 FormBuilderCheckbox(
                   name: 'lockedIn',
