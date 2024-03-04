@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../../domain/repositories/event_repository.dart';
+
+import '../event_repository.dart';
 
 // ignore: use_key_in_widget_constructors
 class EventTable extends StatefulWidget {
@@ -59,14 +60,12 @@ class _EventTableState extends State<EventTable> {
                   ),
                   dataRowMinHeight: 30,
                   columns: const [
-                    DataColumn(label: Text('id')),
-                    DataColumn(label: Text('Fecha del Evento')),
-                    DataColumn(label: Text('Severidad')),
-                    DataColumn(label: Text('Parte')),
-                    DataColumn(label: Text('Lesión')),
-                    DataColumn(label: Text('tipo')),
+                    DataColumn(label: Text('dateEven')),
+                    DataColumn(label: Text('severity')),
+                    DataColumn(label: Text('bodyPart')),
+                    DataColumn(label: Text('injury')),
                     DataColumn(label: Text('Entrada')),
-                    DataColumn(label: Text('Tarea')),
+                    DataColumn(label: Text('workOccasion')),
                     DataColumn(label: Text('H Trabajadas')),
                     DataColumn(label: Text('Accidentes previos')),
                     DataColumn(label: Text('Requiere Autorización')),
@@ -75,7 +74,6 @@ class _EventTableState extends State<EventTable> {
                     DataColumn(label: Text('Aplico PTS')),
                     DataColumn(label: Text('maquina')),
                     DataColumn(label: Text('Energia')),
-                    DataColumn(label: Text('Tiene Bloqueo')),
                     DataColumn(label: Text('requerido')),
                     DataColumn(label: Text('uso')),
                     DataColumn(label: Text('Tenia fallas el equipo?')),
@@ -83,15 +81,12 @@ class _EventTableState extends State<EventTable> {
                   rows: events.map((event) {
                     return DataRow(
                       cells: [
-                        DataCell(Text(event.id.toString())),
                         DataCell(Text(
                             DateFormat('yyyy-MM-dd').format(event.dateEvent))),
                         DataCell(Text(event.severity)),
                         DataCell(Text(event.bodyPart)),
                         DataCell(Text(event.injury)),
-                        DataCell(Text(event.incidenType)),
-                        DataCell(
-                            Text(DateFormat('yyyy-MM-dd').format(event.entry))),
+                        DataCell(Text(event.entry.toString())),
                         DataCell(Text(event.workOccasion)),
                         DataCell(Text(event.hoursWorked)),
                         DataCell(Text(event.accidentHistory.toString())),
@@ -101,7 +96,6 @@ class _EventTableState extends State<EventTable> {
                         DataCell(Text(event.ptsApplied.toString())),
                         DataCell(Text(event.machine.toString())),
                         DataCell(Text(event.energia)),
-                        DataCell(Text(event.lockedIn.toString())),
                         DataCell(Text(event.lockedRequired.toString())),
                         DataCell(Text(event.lockedUsed.toString())),
                         DataCell(Text(event.workEquimentFails.toString())),

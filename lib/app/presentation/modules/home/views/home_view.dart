@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../../../../../main.dart';
 
+
 import '../../riesgos/views/riesgos_views.dart';
 import '../../sign_in/sign_in_view.dart';
 import 'validation/build_accident_module.dart';
@@ -48,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     TabItem(
       Icons.warning,
       "Seguridad",
-      const Color.fromRGBO(0, 0, 255, 0.5),
+      const Color.fromARGB(33, 1, 1, 22),
       labelStyle: const TextStyle(
         fontWeight: FontWeight.normal,
       ),
@@ -127,7 +128,8 @@ class _MyHomePageState extends State<MyHomePage> {
     String slogan;
     switch (selectedPos) {
       case 0:
-        slogan = "seguridad";       
+        slogan = "seguridad";
+
         return buildAccidentModule(context, selectedColor);
       case 1:
         slogan = "Find, Check, Use";
@@ -141,16 +143,24 @@ class _MyHomePageState extends State<MyHomePage> {
               const SizedBox(
                 height: 10,
               ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Riesgo(),
-                    ),
-                  );
-                },
-                child: const Text('Inicio de Analisis de riesgo'),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                width: double.infinity, // Ocupa el ancho de la pantalla
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RiskPage(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: selectedColor
+                        .withOpacity(0.8), // Color ligeramente más claro
+                  ),
+                  child: const Text('Inicio de Analisis de riesgo'),
+                ),
               ),
               const SizedBox(
                 height: 60,

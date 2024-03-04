@@ -46,8 +46,7 @@ class ListasDropdown {
 
   static List<Map<String, String>> hoursWorked = [
     {'label': 'menos de 8 horas', 'value': 'MENOS_8'},
-    {'label': 'más de 8 horas y menos de 12 horas', 'value': 'MAS_8'},
-    {'label': 'más de 12 horas', 'value': 'MAS_12'},
+    {'label': 'más de 8 horas', 'value': 'MAS_8'},
   ];
 
   static List<Map<String, String>> energia = [

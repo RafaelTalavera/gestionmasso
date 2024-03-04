@@ -180,6 +180,13 @@ class _MyFormState extends State<MyForm> {
               textAlign: TextAlign.center,
             ),
           ),
+          FormBuilderTextField(
+            name: 'title',
+            decoration: const InputDecoration(labelText: 'Título'),
+            validator: FormBuilderValidators.required(
+              errorText: 'El campo título no puede estar vacío',
+            ),
+          ),
           FormBuilderDateTimePicker(
             name: 'dateEvent',
             inputType: InputType.date,
@@ -258,6 +265,21 @@ class _MyFormState extends State<MyForm> {
                 showPtsApplied = value ?? false;
               });
             },
+          ),
+          FormBuilderDropdown(
+            name: 'workOccasion',
+            decoration: const InputDecoration(
+                labelText: '¿Que tipo de tareas realizaba?',
+                hintText: 'Selecciona un rango de horario'),
+            validator: FormBuilderValidators.required(
+              errorText: 'El campo tipos de tareas no puede estar vacío',
+            ),
+            items: ListasDropdown.workOccasion
+                .map((workOccasion) => DropdownMenuItem(
+                      value: workOccasion['value'],
+                      child: Text(workOccasion['label'] ?? ''),
+                    ))
+                .toList(),
           ),
           FormBuilderDropdown(
             name: 'hoursWorked',
