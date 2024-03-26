@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../../../main.dart';
 import '../home/views/home_view.dart';
+import '../user/user_create_views.dart';
 
 class SignInView extends StatefulWidget {
   const SignInView({super.key});
@@ -74,6 +75,7 @@ class _SignInViewState extends State<SignInView> {
                           _password = text.replaceAll(' ', '').toLowerCase();
                         });
                       },
+                      obscureText: true,
                       decoration: const InputDecoration(
                         hintText: 'password',
                       ),
@@ -104,6 +106,26 @@ class _SignInViewState extends State<SignInView> {
                             color: Colors.black,
                           ));
                     }),
+                    const SizedBox(height: 50),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const CreateUser()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                      ),
+                      child: const Text(
+                        '¿No tienes cuenta? Regístrate aquí',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),

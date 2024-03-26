@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '../../../../data/services/remote/token_manager.dart';
-import '../../home/views/home_view.dart';
+import '../../../data/services/remote/token_manager.dart';
+import '../home/views/home_view.dart';
 
 class HypothesisScreen extends StatefulWidget {
   final String eventId;

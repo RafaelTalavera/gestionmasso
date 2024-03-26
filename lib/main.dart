@@ -9,7 +9,6 @@ import 'app/domain/repositories/authentication_repository.dart';
 import 'app/my_app.dart';
 import 'app/domain/repositories/connectivity_repository.dart';
 
-
 void main() {
   runApp(
     Injector(

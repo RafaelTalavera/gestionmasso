@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-import '../utils/iper_table.dart';
+import '../../../global/widgets/custom_AppBar.dart';
+import '../sources/iper_table.dart';
 
 class IperTable extends StatefulWidget {
+  const IperTable({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _IperTableState createState() => _IperTableState();
 }
 
@@ -19,13 +23,13 @@ class _IperTableState extends State<IperTable> {
   Color getColorForEvaluacion(String evaluacion) {
     switch (evaluacion.toLowerCase()) {
       case 'aceptable':
-        return const Color.fromARGB(255, 144, 229, 147);
+        return Colors.orange.shade50;
       case 'adecuado':
-        return const Color.fromARGB(255, 160, 240, 164);
+        return Colors.orange.shade50;
       case 'tolerable':
-        return Colors.yellow;
+        return Colors.orange.shade100;
       case 'inaceptable':
-        return Colors.red;
+        return Colors.orange.shade600;
       default:
         return Colors.white;
     }
@@ -66,49 +70,92 @@ class _IperTableState extends State<IperTable> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Identificacion de peligros'),
+      appBar: const CustomAppBar(
+        titleWidget: Text(
+          'Matriz IPER',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 238, 183, 19),
+          ),
+        ),
       ),
       // ignore: unnecessary_null_comparison
       body: ipers == null
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Filtros',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                ),
                 // Agregar filtros según sea necesario
-                // Filtro por Evaluación
-                DropdownButton<String>(
-                  value: filtroEvaluacion,
-                  hint: const Text('Filtrar por Evaluación'),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      filtroEvaluacion = newValue;
-                    });
-                  },
-                  items: obtenerItemsFiltro('evaluacion'),
-                ),
-                // Filtro por Puesto
-                DropdownButton<String>(
-                  value: filtroPuesto,
-                  hint: const Text('Filtrar por Puesto'),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      filtroPuesto = newValue;
-                    });
-                  },
-                  items: obtenerItemsFiltro('puesto'),
-                ),
-                // Filtro por Área
-                DropdownButton<String>(
-                  value: filtroArea,
-                  hint: const Text('Filtrar por Área'),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      filtroArea = newValue;
-                    });
-                  },
-                  items: obtenerItemsFiltro('area'),
-                ),
+                // Filtros en una tarjeta horizontal
 
+                SingleChildScrollView(
+                  child: Center(
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          // Cambiado de Row a Column
+                          children: [
+                            Row(
+                              // Fila para los dos primeros filtros
+                              children: [
+                                const SizedBox(width: 20.0),
+                                // Filtro por Evaluación
+                                Flexible(
+                                  child: DropdownButton<String>(
+                                    value: filtroEvaluacion,
+                                    hint: const Text('Evaluación'),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        filtroEvaluacion = newValue;
+                                      });
+                                    },
+                                    items: obtenerItemsFiltro('evaluacion'),
+                                  ),
+                                ),
+
+                                const SizedBox(width: 110.0),
+                                // Filtro por Puesto
+                                Flexible(
+                                  child: DropdownButton<String>(
+                                    value: filtroPuesto,
+                                    hint: const Text('Puesto'),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        filtroPuesto = newValue;
+                                      });
+                                    },
+                                    items: obtenerItemsFiltro('puesto'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            // Filtro por Área debajo
+                            DropdownButton<String>(
+                              value: filtroArea,
+                              hint: const Text('Área'),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  filtroArea = newValue;
+                                });
+                              },
+                              items: obtenerItemsFiltro('area'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
@@ -119,7 +166,6 @@ class _IperTableState extends State<IperTable> {
                   },
                   child: const Text('Limpiar Filtros'),
                 ),
-
                 // Lista filtrada
                 Expanded(
                   child: ListView.builder(
@@ -128,7 +174,8 @@ class _IperTableState extends State<IperTable> {
                       return Card(
                         margin: const EdgeInsets.all(8.0),
                         color: getColorForEvaluacion(
-                            listaFiltrada[index].evaluacion),
+                          listaFiltrada[index].evaluacion,
+                        ),
                         child: ListTile(
                           title: RichText(
                             text: TextSpan(
@@ -137,8 +184,9 @@ class _IperTableState extends State<IperTable> {
                                 const TextSpan(
                                   text: 'Evaluacion de riesgos: ',
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.0),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0,
+                                  ),
                                 ),
                                 TextSpan(
                                   text: listaFiltrada[index].evaluacion,
@@ -231,7 +279,7 @@ class _IperTableState extends State<IperTable> {
                                   style: DefaultTextStyle.of(context).style,
                                   children: [
                                     const TextSpan(
-                                      text: 'Jerarquia del control: ',
+                                      text: 'Jerarquíadel control: ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),

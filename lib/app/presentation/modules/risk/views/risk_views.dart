@@ -7,11 +7,13 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../../../../data/services/remote/token_manager.dart';
+import '../../../global/widgets/custom_AppBar.dart';
 import '../../home/views/home_view.dart';
+import 'iper_view.dart';
 import '../sources/list_risk.dart';
 
 class RiskPage extends StatefulWidget {
-  RiskPage({Key? key}) : super(key: key);
+  const RiskPage({super.key, required String initialCompany});
 
   @override
   State<RiskPage> createState() => _RiskPageState();
@@ -49,9 +51,8 @@ class _RiskPageState extends State<RiskPage> {
           getWrappedButtonValue(ListDropdownRisk.puesto, _currentIndexPuesto);
       formData['area'] =
           getWrappedButtonValue(ListDropdownRisk.areas, _currentIndexArea);
-      formData['tipo'] = getWrappedButtonValue(
-          ListDropdownRisk.tipo.map((item) => item['value']).toList(),
-          _currentIndexTipo);
+      formData['tipo'] =
+          getWrappedButtonValue(ListDropdownRisk.tipo, _currentIndexTipo);
       formData['probabilidad'] = getWrappedButtonValue(
           ListDropdownRisk.probabilidad.map((item) => item['value']).toList(),
           _currentIndexProbabilidad);
@@ -59,8 +60,7 @@ class _RiskPageState extends State<RiskPage> {
           ListDropdownRisk.gravedad.map((item) => item['value']).toList(),
           _currentIndexGravedad);
       formData['clasificaMC'] = getWrappedButtonValue(
-          ListDropdownRisk.clasificaMC.map((item) => item['value']).toList(),
-          _currentIndexClasificaMC);
+          ListDropdownRisk.clasificaMC, _currentIndexClasificaMC);
 
       print('JSON enviado a la API:');
       print(jsonEncode(formData));
@@ -75,13 +75,11 @@ class _RiskPageState extends State<RiskPage> {
       );
 
       if (responsePost.statusCode == 201) {
-        print('Información enviada correctamente.');
-
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Vamos'),
+              title: const Text('Riesgo agregado a la matriz'),
               content: const Text('La identificación se creó correctamente.'),
               actions: [
                 TextButton(
@@ -92,6 +90,16 @@ class _RiskPageState extends State<RiskPage> {
                     );
                   },
                   child: const Text('Volver a inicio'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const IperTable()),
+                    );
+                  },
+                  child: const Text('Ir al IPER'),
                 ),
               ],
             );
@@ -116,8 +124,14 @@ class _RiskPageState extends State<RiskPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Carga de peligros y riesgos'),
+      appBar: const CustomAppBar(
+        titleWidget: Text(
+          'Relevamiento Riesgos',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 238, 183, 19),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: FormBuilder(
@@ -151,7 +165,12 @@ class _RiskPageState extends State<RiskPage> {
                     height: 20,
                   ),
                   Text(
-                      'El puesto que eligió: ${ListDropdownRisk.puesto[_currentIndexPuesto]}'),
+                    'El puesto que eligió: ${ListDropdownRisk.puesto[_currentIndexPuesto]}',
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue),
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
@@ -201,7 +220,12 @@ class _RiskPageState extends State<RiskPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                      'El área que eligió es: ${ListDropdownRisk.areas[_currentIndexArea]}'),
+                    'El área que eligió es: ${ListDropdownRisk.areas[_currentIndexArea]}',
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue),
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
@@ -271,8 +295,8 @@ class _RiskPageState extends State<RiskPage> {
                       ),
                       items: ListDropdownRisk.fuente
                           .map((fuente) => DropdownMenuItem(
-                                value: fuente['value'],
-                                child: Text(fuente['label'] ?? ''),
+                                value: fuente,
+                                child: Text(fuente),
                               ))
                           .toList(),
                     ),
@@ -289,10 +313,9 @@ class _RiskPageState extends State<RiskPage> {
                         errorText: 'Este campo no puede estar vacío',
                       ),
                       items: ListDropdownRisk.incidentesPotenciales
-                          .map((incidentesPotenciales) => DropdownMenuItem(
-                                value: incidentesPotenciales['value'],
-                                child:
-                                    Text(incidentesPotenciales['label'] ?? ''),
+                          .map((incidente) => DropdownMenuItem(
+                                value: incidente,
+                                child: Text(incidente),
                               ))
                           .toList(),
                     ),
@@ -309,10 +332,13 @@ class _RiskPageState extends State<RiskPage> {
                         errorText: 'Este campo no puede estar vacío',
                       ),
                       items: ListDropdownRisk.consecuencia
-                          .map((consecuencia) => DropdownMenuItem(
-                                value: consecuencia['value'],
-                                child: Text(consecuencia['label'] ?? ''),
-                              ))
+                          .map<DropdownMenuItem<String>>(
+                              (consecuencia) => DropdownMenuItem(
+                                    value: consecuencia.toString(),
+                                    child: Text(
+                                      consecuencia.toString(),
+                                    ),
+                                  ))
                           .toList(),
                     ),
                   ),
@@ -323,7 +349,11 @@ class _RiskPageState extends State<RiskPage> {
                         height: 20,
                       ),
                       Text(
-                        'El tipo de tarea que eligió es: ${ListDropdownRisk.tipo[_currentIndexTipo]['label']}',
+                        'El tipo de tarea que eligió es: ${ListDropdownRisk.tipo[_currentIndexTipo]}',
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue),
                       ),
                       const SizedBox(
                         height: 10,
@@ -338,7 +368,7 @@ class _RiskPageState extends State<RiskPage> {
                         spacing: 10.0,
                         runSpacing: 10.0,
                         children: ListDropdownRisk.tipo.map((item) {
-                          String label = item['label'] ?? '';
+                          String label = item;
                           return ElevatedButton(
                             onPressed: () {
                               setState(() {
@@ -376,6 +406,10 @@ class _RiskPageState extends State<RiskPage> {
                       ),
                       Text(
                         'La probabilidad que eligió es: ${ListDropdownRisk.probabilidad[_currentIndexProbabilidad]['label']}',
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue),
                       ),
                       const SizedBox(
                         height: 10,
@@ -431,6 +465,10 @@ class _RiskPageState extends State<RiskPage> {
                       ),
                       Text(
                         'La gravedad que eligió es: ${ListDropdownRisk.gravedad[_currentIndexGravedad]['label']}',
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue),
                       ),
                       const SizedBox(
                         height: 10,
@@ -498,14 +536,10 @@ class _RiskPageState extends State<RiskPage> {
                         'Área: ${ListDropdownRisk.areas[_currentIndexArea]}',
                       ),
                       Text(
-                        'Fuente o Situación: ${ListDropdownRisk.fuente.firstWhere((item) => item['value'] == _formKey.currentState?.fields['fuente']?.value, orElse: () => {
-                              'label': 'N/A'
-                            })['label']}',
+                        'Fuente o Situación: ${_formKey.currentState?.fields['fuente']?.value ?? 'N/A'}',
                       ),
                       Text(
-                        'Incidente potencial: ${ListDropdownRisk.consecuencia.firstWhere((item) => item['value'] == _formKey.currentState?.fields['consecuencia']?.value, orElse: () => {
-                              'label': 'N/A'
-                            })['label']}',
+                        'Incidente potencial: ${_formKey.currentState?.fields['consecuencia']?.value ?? 'N/A'}',
                       ),
                       const SizedBox(
                         height: 20,
@@ -519,7 +553,11 @@ class _RiskPageState extends State<RiskPage> {
                         height: 20,
                       ),
                       Text(
-                        'La clasificación es: ${ListDropdownRisk.clasificaMC[_currentIndexClasificaMC]['label']}',
+                        'La clasificación es: ${ListDropdownRisk.clasificaMC[_currentIndexClasificaMC]}',
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue),
                       ),
                       const SizedBox(
                         height: 10,
@@ -534,7 +572,7 @@ class _RiskPageState extends State<RiskPage> {
                         spacing: 10.0,
                         runSpacing: 10.0,
                         children: ListDropdownRisk.clasificaMC.map((item) {
-                          String label = item['label'] ?? '';
+                          String label = item;
                           return ElevatedButton(
                             onPressed: () {
                               setState(() {
@@ -572,7 +610,8 @@ class _RiskPageState extends State<RiskPage> {
                       child: FormBuilderTextField(
                         name: 'medidaControl',
                         decoration: const InputDecoration(
-                          labelText: 'Describa la medida de Control',
+                          labelText:
+                              'Describa la medida de Control a implementar',
                           labelStyle: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -582,7 +621,7 @@ class _RiskPageState extends State<RiskPage> {
                         validator: FormBuilderValidators.required(
                           errorText: 'El campo no puede estar vacío',
                         ),
-                        maxLines: 5,
+                        maxLines: null,
                       ),
                     ),
                   ),

@@ -1,7 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:gestionmasso/app/data/services/remote/internet_checker.dart';
+import '../services/remote/internet_checker.dart';
 
-import 'package:gestionmasso/app/domain/repositories/connectivity_repository.dart';
+import '../../domain/repositories/connectivity_repository.dart';
 
 class ConnectivityRepositoryImpl implements ConnetivityRepository {
   final Connectivity _connectivity;

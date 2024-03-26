@@ -1,0 +1,200 @@
+// ignore_for_file: unnecessary_null_comparison
+
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:fl_chart/fl_chart.dart';
+
+import 'extimguisher_Empresa_Selection_view.dart';
+import 'sources/extintor_data_graphs.dart';
+
+class ExtintorChartsEnabled extends StatefulWidget {
+  const ExtintorChartsEnabled({Key? key, required this.selectedCompany})
+      : super(key: key);
+  final String selectedCompany;
+
+  @override
+  _ExtintorChartsState createState() => _ExtintorChartsState();
+}
+
+class _ExtintorChartsState extends State<ExtintorChartsEnabled> {
+  late List<ExtintorData> _extintorDataList = [];
+  late String _selectedCompany;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedCompany = widget.selectedCompany;
+    _fetchData(_selectedCompany);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Gráficos de Extintores'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.business),
+            onPressed: () {
+              _navigateToCompanySelection(context);
+            },
+          ),
+        ],
+      ),
+      body: _extintorDataList.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                children: _buildCharts(),
+              ),
+            ),
+    );
+  }
+
+  List<Widget> _buildCharts() {
+    List<Widget> charts = [];
+    final groupedData = _groupDataBySector(_extintorDataList);
+
+    groupedData.forEach((sector, sectorData) {
+      charts.add(
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            child: Column(
+              children: [
+                ListTile(
+                  title: Text(
+                    'Gráfico de Extintores - $sector',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: 300,
+                    height: 300,
+                    child: _buildPieChart(sectorData),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: _buildReferenceTable(sectorData),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    });
+    return charts;
+  }
+
+  Widget _buildPieChart(List<ExtintorData> sectorData) {
+    List<PieChartSectionData> sections = [];
+    for (final data in sectorData) {
+      sections.add(PieChartSectionData(
+        value: verificarValor(data.habilitados.toDouble()),
+        color: Colors.green,
+        title: 'En servicio',
+      ));
+      sections.add(PieChartSectionData(
+        value: verificarValor(data.deshabilitados.toDouble()),
+        color: Colors.red,
+        title: 'Fuera de servicio',
+      ));
+    }
+    return PieChart(
+      PieChartData(
+        sections: sections,
+      ),
+    );
+  }
+
+  Widget _buildReferenceTable(List<ExtintorData> sectorData) {
+    return DataTable(
+      columns: const [
+        DataColumn(label: Text('Estado')),
+        DataColumn(label: Text('Cantidad')),
+      ],
+      rows: [
+        DataRow(cells: [
+          const DataCell(Text('En servicio')),
+          DataCell(Text(_calculateTotalHabilitados(sectorData).toString())),
+        ]),
+        DataRow(cells: [
+          const DataCell(Text('Fuera de servicio')),
+          DataCell(Text(_calculateTotalDeshabilitados(sectorData).toString())),
+        ]),
+      ],
+    );
+  }
+
+  int _calculateTotalHabilitados(List<ExtintorData> sectorData) {
+    int total = 0;
+    for (final data in sectorData) {
+      total += data.habilitados;
+    }
+    return total;
+  }
+
+  int _calculateTotalDeshabilitados(List<ExtintorData> sectorData) {
+    int total = 0;
+    for (final data in sectorData) {
+      total += data.deshabilitados;
+    }
+    return total;
+  }
+
+  Future<void> _fetchData(String company) async {
+    final response = await http.get(
+      Uri.parse('http://10.0.2.2:8080/api/extinguishers/$company'),
+    );
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonData = json.decode(response.body);
+      setState(() {
+        _extintorDataList =
+            jsonData.map((json) => ExtintorData.fromJson(json)).toList();
+      });
+    } else {
+      throw Exception('Failed to load data from backend');
+    }
+  }
+
+  double verificarValor(double valor) {
+    if (valor != null && valor.isFinite && !valor.isNaN) {
+      return valor;
+    } else {
+      return 0.0;
+    }
+  }
+
+  Map<String, List<ExtintorData>> _groupDataBySector(
+      List<ExtintorData> extintorDataList) {
+    final Map<String, List<ExtintorData>> groupedData = {};
+    for (var data in extintorDataList) {
+      if (!groupedData.containsKey(data.sector)) {
+        groupedData[data.sector] = [];
+      }
+      groupedData[data.sector]!.add(data);
+    }
+    return groupedData;
+  }
+
+  void _navigateToCompanySelection(BuildContext context) async {
+    final selectedCompany = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            EmpresaSelectionScreen(initialCompany: _selectedCompany),
+      ),
+    );
+    if (selectedCompany != null) {
+      setState(() {
+        _selectedCompany = selectedCompany;
+      });
+      _fetchData(selectedCompany);
+    }
+  }
+}

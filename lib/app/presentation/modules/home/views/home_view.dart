@@ -5,13 +5,12 @@ import 'package:flutter/cupertino.dart';
 
 import '../../../../../main.dart';
 
-
-import '../../riesgos/views/riesgos_views.dart';
 import '../../sign_in/sign_in_view.dart';
-import 'validation/build_accident_module.dart';
+import '../sources/build_environment_module.dart';
+import '../sources/build_safety_module.dart';
 
 class HomeView extends StatelessWidget {
-  const HomeView({Key? key}) : super(key: key);
+  const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
     TabItem(
       Icons.warning,
       "Seguridad",
-      const Color.fromARGB(33, 1, 1, 22),
+      Colors.lightBlue.shade100,
       labelStyle: const TextStyle(
         fontWeight: FontWeight.normal,
       ),
@@ -57,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
     TabItem(
       CupertinoIcons.arrow_3_trianglepath,
       "Ambiente",
-      Colors.green,
+      Colors.teal.shade200,
       labelStyle: const TextStyle(
         color: Colors.green,
         fontWeight: FontWeight.bold,
@@ -132,50 +131,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
         return buildAccidentModule(context, selectedColor);
       case 1:
-        slogan = "Find, Check, Use";
-        selectedColor;
-        return Container(
-          color: selectedColor,
-          padding: const EdgeInsets.all(30.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 10,
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                width: double.infinity, // Ocupa el ancho de la pantalla
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RiskPage(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: selectedColor
-                        .withOpacity(0.8), // Color ligeramente más claro
-                  ),
-                  child: const Text('Inicio de Analisis de riesgo'),
-                ),
-              ),
-              const SizedBox(
-                height: 60,
-              ),
-              const Text(
-                'En esta sección usted puede cargar los accidentes. Debes tener en cuenta que la información debe reflejar todo lo que tienes evidencia',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white, // Establecer el color de texto
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
+        return buildEnviromentModule(context, selectedColor);
+
       case 2:
         slogan = "Receive, Review, Rip";
         break;
