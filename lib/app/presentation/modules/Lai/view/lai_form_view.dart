@@ -5,12 +5,16 @@ import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'dart:convert';
 
 import '../../../../data/services/remote/token_manager.dart';
+import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
+import '../../../global/widgets/custom_drawer.dart';
 import '../../home/views/home_view.dart';
 import '../sources/list_lai_dropdown.dart';
+import 'lai_table_view.dart';
 
 class LaiFormPage extends StatefulWidget {
   const LaiFormPage({
@@ -75,9 +79,6 @@ class _LaiPageState extends State<LaiFormPage> {
       formData['stateHolder'] = stateHolder;
       formData['legislation'] = legislation;
 
-      print('JSON enviado a la API:');
-      print(jsonEncode(formData));
-
       final responsePost = await http.post(
         Uri.parse(apiUrl),
         headers: {
@@ -106,12 +107,13 @@ class _LaiPageState extends State<LaiFormPage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    /* Navigator.pushReplacement(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const IperTable()),
+                          builder: (context) => const LaiScrem(
+                                initialCompany: '',
+                              )),
                     );
-                    */
                   },
                   child: const Text('Ir al LAI'),
                 ),
@@ -137,13 +139,16 @@ class _LaiPageState extends State<LaiFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
-      appBar: const CustomAppBar(
+      drawer: const CustomDrawer(),
+      appBar: CustomAppBar(
         titleWidget: Text(
           'Aspectos e impactos',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 238, 183, 19),
+            color: const Color.fromARGB(255, 238, 183, 19),
+            fontSize: fontSize,
           ),
         ),
       ),
@@ -160,6 +165,7 @@ class _LaiPageState extends State<LaiFormPage> {
                     child: FormBuilderDateTimePicker(
                       name: 'date',
                       inputType: InputType.date,
+                      format: DateFormat('dd, MMMM yyyy'),
                       firstDate: DateTime(2000),
                       lastDate: DateTime.now(),
                       decoration: const InputDecoration(
@@ -171,6 +177,25 @@ class _LaiPageState extends State<LaiFormPage> {
                       validator: FormBuilderValidators.required(
                         errorText: 'La fecha no puede estar vacía',
                       ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    width: 400,
+                    child: FormBuilderTextField(
+                      name: 'organization',
+                      decoration: const InputDecoration(
+                        labelText: 'Escriba aquí rl nombre de la organización',
+                        labelStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.all(10),
+                      ),
+                      validator: FormBuilderValidators.required(
+                        errorText: 'El campo no puede estar vacío',
+                      ),
+                      maxLines: 1,
                     ),
                   ),
                   const SizedBox(

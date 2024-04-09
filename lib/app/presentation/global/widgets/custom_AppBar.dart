@@ -1,11 +1,27 @@
-import 'package:flutter/material.dart';
+// ignore: file_names
+import 'package:flutter/material.dart'
+    show
+        AppBar,
+        BuildContext,
+        Icon,
+        IconButton,
+        Icons,
+        Image,
+        MaterialPageRoute,
+        Navigator,
+        PreferredSizeWidget,
+        Row,
+        Size,
+        SizedBox,
+        StatelessWidget,
+        Widget,
+        kToolbarHeight;
 
 import '../../modules/home/views/home_view.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const CustomAppBar({super.key, required this.titleWidget});
   final Widget titleWidget;
-
-  const CustomAppBar({Key? key, required this.titleWidget}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +41,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: const Icon(Icons.home),
           onPressed: () {
-            Navigator.pushReplacement(
+            Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const HomeView()),
+              (route) => false, // Elimina todas las rutas anteriores
             );
           },
         ),

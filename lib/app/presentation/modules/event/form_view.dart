@@ -63,8 +63,8 @@ class _MyFormState extends State<MyForm> {
   final String apiUrl = 'http://10.0.2.2:8080/api/events';
 
   int _currentSeverityIndex = 0;
-  int _currentbodyPartIndex = 0;
-  int _currentInjuryIndex = 0;
+  int _currentbodyPartIndex = -1;
+  int _currentInjuryIndex = -1;
   bool entry = false;
   bool accidentHistory = false;
   bool workOccasion = false;
@@ -281,99 +281,97 @@ class _MyFormState extends State<MyForm> {
             const SizedBox(
               height: 30,
             ),
-            Text(
-              'La parte del cuerpo es: ${ListDropdown.bodyPart[_currentbodyPartIndex]}',
-              style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            SizedBox(
-              width: 300,
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 5.0,
-                runSpacing: 5.0,
-                children: ListDropdown.bodyPart.map((bodyPart) {
-                  return ElevatedButton(
-                    onPressed: () {
+            Center(
+              child: Column(
+                children: [
+                  DropdownButtonFormField<String>(
+                    value: _currentbodyPartIndex == -1
+                        ? null
+                        : ListDropdown.bodyPart[_currentbodyPartIndex],
+                    onChanged: (String? newValue) {
                       setState(() {
                         _currentbodyPartIndex =
-                            ListDropdown.bodyPart.indexOf(bodyPart);
+                            ListDropdown.bodyPart.indexOf(newValue!);
                       });
                     },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: _currentbodyPartIndex ==
-                              ListDropdown.bodyPart.indexOf(bodyPart)
-                          ? Colors.white
-                          : Theme.of(context).primaryColor,
-                      backgroundColor: _currentbodyPartIndex ==
-                              ListDropdown.bodyPart.indexOf(bodyPart)
-                          ? Colors
-                              .red // Cambiado desde Theme.of(context).focusColor.red
-                          : Colors.white,
-                      side: BorderSide(
-                        color: _currentbodyPartIndex ==
-                                ListDropdown.bodyPart.indexOf(bodyPart)
-                            ? Colors.teal
-                            : Colors.grey,
-                      ),
+                    decoration: const InputDecoration(
+                      labelText: 'Parte del cuerpo',
+                      labelStyle: TextStyle(color: Colors.grey),
+                      border: OutlineInputBorder(),
                     ),
-                    child: Text(bodyPart),
-                  );
-                }).toList(),
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: null,
+                        child: Text(
+                          'Elija una parte del cuerpo',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                      ...ListDropdown.bodyPart.map((value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }),
+                    ],
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Por favor, elija un área';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
               ),
             ),
             const SizedBox(
               height: 30,
             ),
-            Text(
-              'El tipo de lesión es: ${ListDropdown.injury[_currentInjuryIndex]}',
-              style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue),
+            Center(
+              child: Column(
+                children: [
+                  DropdownButtonFormField<String>(
+                    value: _currentInjuryIndex == -1
+                        ? null
+                        : ListDropdown.injury[_currentInjuryIndex],
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _currentInjuryIndex =
+                            ListDropdown.injury.indexOf(newValue!);
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Lesión',
+                      labelStyle: TextStyle(color: Colors.grey),
+                      border: OutlineInputBorder(),
+                    ),
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: null,
+                        child: Text(
+                          'Elija una lesión',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                      ...ListDropdown.injury.map((value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }),
+                    ],
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Por favor, elija un lesión';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
             ),
             const SizedBox(
               height: 10,
-            ),
-            SizedBox(
-              width: 300,
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 5.0,
-                runSpacing: 5.0,
-                children: ListDropdown.injury.map((injury) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _currentInjuryIndex =
-                            ListDropdown.injury.indexOf(injury);
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: _currentInjuryIndex ==
-                              ListDropdown.injury.indexOf(injury)
-                          ? Colors.white
-                          : Theme.of(context).primaryColor,
-                      backgroundColor: _currentInjuryIndex ==
-                              ListDropdown.injury.indexOf(injury)
-                          ? Colors.red
-                          : Colors.white,
-                      side: BorderSide(
-                        color: _currentInjuryIndex ==
-                                ListDropdown.injury.indexOf(injury)
-                            ? Colors.teal
-                            : Colors.grey,
-                      ),
-                    ),
-                    child: Text(injury),
-                  );
-                }).toList(),
-              ),
             ),
             const SizedBox(
               height: 20,
@@ -381,7 +379,7 @@ class _MyFormState extends State<MyForm> {
             Row(
               children: [
                 const Text(
-                  '¿Existen State Holder relacionadas ?',
+                  '¿La antiguedad es: ?',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

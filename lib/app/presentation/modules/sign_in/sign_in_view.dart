@@ -19,6 +19,10 @@ class _SignInViewState extends State<SignInView> {
 
   bool _fetching = false;
 
+  double calculateTitleFontSize(BuildContext context) {
+    return MediaQuery.of(context).size.width * 0.04;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,17 +116,21 @@ class _SignInViewState extends State<SignInView> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const CreateUser()),
+                            builder: (context) => const CreateUser(),
+                          ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                      ),
-                      child: const Text(
-                        '¿No tienes cuenta? Regístrate aquí',
+                          // backgroundColor: Colors.orange,
+                          ),
+                      child: Text(
+                        'Regístrate aquí',
+                        textAlign: TextAlign
+                            .center, // Añade esta línea para centrar el texto
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
+                          color: const Color.fromARGB(255, 80, 79, 75),
+                          fontWeight: FontWeight.bold,
+                          fontSize: calculateTitleFontSize(context),
                         ),
                       ),
                     )

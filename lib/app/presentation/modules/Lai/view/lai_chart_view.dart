@@ -1,53 +1,57 @@
-// ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously, library_private_types_in_public_api
+// ignore_for_file: unnecessary_null_comparison, unused_element
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:fl_chart/fl_chart.dart';
+import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
-import '../sources/risk_data_graphs.dart';
-import 'risk_views.dart';
+import '../../../global/widgets/custom_drawer.dart';
+import '../sources/lai_data_graphs.dart';
+import '../sources/lai_data_out.dart';
+import 'lai_select_area.dart';
 
-class RiskCharts extends StatefulWidget {
-  const RiskCharts({
-    super.key,
+class LaiCharts extends StatefulWidget {
+  const LaiCharts({
+    Key? key,
     required this.selectedCompany,
     required this.selectedUrl,
     required this.selectedArea,
-    required this.selectedPosition,
-  });
+  }) : super(key: key);
   final String selectedCompany;
   final String selectedUrl;
   final String? selectedArea;
-  final String? selectedPosition;
 
   @override
-  _RiskChartsState createState() => _RiskChartsState();
+  _LaiChartsState createState() => _LaiChartsState();
 }
 
-class _RiskChartsState extends State<RiskCharts> {
-  late List<RiskData> _riskList = [];
-  late String _selectedCompany;
+class _LaiChartsState extends State<LaiCharts> {
+  late List<Lai> _laiList = [];
+  late String _selectedArea;
 
   @override
   void initState() {
     super.initState();
-    _fetchData(widget.selectedArea ?? '', widget.selectedPosition ?? '');
+    _fetchData(widget.selectedCompany, widget.selectedArea ?? '');
   }
 
   @override
   Widget build(BuildContext context) {
+    double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
-      appBar: const CustomAppBar(
+      drawer: const CustomDrawer(),
+      appBar: CustomAppBar(
         titleWidget: Text(
-          'Graficos de Riesgos',
+          'Graficos de Aspectos',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 238, 183, 19),
+            color: const Color.fromARGB(255, 238, 183, 19),
+            fontSize: fontSize,
           ),
         ),
       ),
-      body: _riskList.isEmpty
+      body: _laiList.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Column(
@@ -59,9 +63,9 @@ class _RiskChartsState extends State<RiskCharts> {
 
   List<Widget> _buildCharts() {
     List<Widget> charts = [];
-    final groupedData = _groupDataBySector(_riskList);
+    final groupedData = _groupDataBySector(_laiList.cast<LaiData>());
 
-    groupedData.forEach((sector, sectorData) {
+    groupedData.forEach((area, areaData) {
       charts.add(
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -70,7 +74,7 @@ class _RiskChartsState extends State<RiskCharts> {
               children: [
                 ListTile(
                   title: Text(
-                    'Estado - $sector',
+                    'Estado - $area',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -79,12 +83,12 @@ class _RiskChartsState extends State<RiskCharts> {
                   child: SizedBox(
                     width: 300,
                     height: 300,
-                    child: _buildPieChart(sectorData),
+                    child: _buildPieChart(areaData.cast<LaiData>()),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: _buildReferenceTable(sectorData),
+                  child: _buildReferenceTable(areaData),
                 ),
               ],
             ),
@@ -95,7 +99,7 @@ class _RiskChartsState extends State<RiskCharts> {
     return charts;
   }
 
-  Widget _buildPieChart(List<RiskData> sectorData) {
+  Widget _buildPieChart(List<LaiData> sectorData) {
     Map<String, double> categoryValues = {
       'Aceptable': 0.0,
       'Adecuado': 0.0,
@@ -111,13 +115,13 @@ class _RiskChartsState extends State<RiskCharts> {
       categoryValues['Inaceptable'] ??= 0;
 
       categoryValues['Aceptable'] =
-          (categoryValues['Aceptable'] ?? 0) + (data.aceptable ?? 0);
+          (categoryValues['Aceptable'] ?? 0) + (data.aceptable);
       categoryValues['Adecuado'] =
-          (categoryValues['Adecuado'] ?? 0) + (data.adecuado ?? 0);
+          (categoryValues['Adecuado'] ?? 0) + (data.adecuado);
       categoryValues['Tolerable'] =
-          (categoryValues['Tolerable'] ?? 0) + (data.tolerable ?? 0);
+          (categoryValues['Tolerable'] ?? 0) + (data.tolerable);
       categoryValues['Inaceptable'] =
-          (categoryValues['Inaceptable'] ?? 0) + (data.inaceptable ?? 0);
+          (categoryValues['Inaceptable'] ?? 0) + (data.inaceptable);
     }
 
     List<PieChartSectionData> sections = [];
@@ -139,7 +143,7 @@ class _RiskChartsState extends State<RiskCharts> {
     );
   }
 
-  Widget _buildReferenceTable(List<RiskData> sectorData) {
+  Widget _buildReferenceTable(List<LaiData> sectorData) {
     int totalAceptable = _calculateTotalAceptable(sectorData);
     int totalAdecuado = _calculateTotalAdecuados(sectorData);
     int totalTolerable = _calculateTotalTorelable(sectorData);
@@ -177,7 +181,7 @@ class _RiskChartsState extends State<RiskCharts> {
     );
   }
 
-  int _calculateTotalAceptable(List<RiskData> sectorData) {
+  int _calculateTotalAceptable(List<LaiData> sectorData) {
     int total = 0;
     for (final data in sectorData) {
       total += data.aceptable;
@@ -185,7 +189,7 @@ class _RiskChartsState extends State<RiskCharts> {
     return total;
   }
 
-  int _calculateTotalAdecuados(List<RiskData> sectorData) {
+  int _calculateTotalAdecuados(List<LaiData> sectorData) {
     int total = 0;
     for (final data in sectorData) {
       total += data.adecuado;
@@ -193,7 +197,7 @@ class _RiskChartsState extends State<RiskCharts> {
     return total;
   }
 
-  int _calculateTotalTorelable(List<RiskData> sectorData) {
+  int _calculateTotalTorelable(List<LaiData> sectorData) {
     int total = 0;
     for (final data in sectorData) {
       total += data.tolerable;
@@ -201,7 +205,7 @@ class _RiskChartsState extends State<RiskCharts> {
     return total;
   }
 
-  int _calculateTotalInaceptable(List<RiskData> sectorData) {
+  int _calculateTotalInaceptable(List<LaiData> sectorData) {
     int total = 0;
     for (final data in sectorData) {
       total += data.inaceptable;
@@ -225,10 +229,10 @@ class _RiskChartsState extends State<RiskCharts> {
   }
 
   Future<void> _fetchData(
-      String? selectedArea, String? selectedPosition) async {
+      String selectedOrganization, String? selectedArea) async {
     final response = await http.get(
       Uri.parse(
-          'http://10.0.2.2:8080/api/risk/countEvaluacion?area=$selectedArea&puesto=$selectedPosition'),
+          'http://10.0.2.2:8080/api/risk/countEvaluacion?organization=$selectedOrganization&area=$selectedArea'),
     );
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonData = json.decode(response.body);
@@ -241,13 +245,13 @@ class _RiskChartsState extends State<RiskCharts> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('No hay datos para esta selección'),
-              content: Text('Seleccione una selección diferente.'),
+              content: const Text('Seleccione una selección diferente.'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context); // Cerrar el diálogo
                   },
-                  child: Text('Volver Atrás'),
+                  child: const Text('Volver Atrás'),
                 ),
               ],
             );
@@ -256,7 +260,7 @@ class _RiskChartsState extends State<RiskCharts> {
         return;
       }
 
-      List<RiskData> riskDataList = [];
+      List<LaiData> laiDataList = [];
 
       jsonData.forEach((key, value) {
         // Obtener los valores de cada estado
@@ -269,9 +273,9 @@ class _RiskChartsState extends State<RiskCharts> {
         int total = aceptable + adecuado + tolerable + inaceptable;
 
         // Crear instancias de RiskData y agregarlas a la lista
-        riskDataList.add(RiskData(
-          sector: key.split(" - ")[0],
-          puesto: key.split(" - ")[1],
+        laiDataList.add(LaiData(
+          organization: key.split(" - ")[0],
+          area: key.split(" - ")[1],
           aceptable: aceptable,
           adecuado: adecuado,
           tolerable: tolerable,
@@ -281,7 +285,7 @@ class _RiskChartsState extends State<RiskCharts> {
       });
 
       setState(() {
-        _riskList = riskDataList;
+        _laiList = laiDataList.cast<Lai>();
       });
     } else {
       throw Exception('Failed to load data from backend');
@@ -296,35 +300,45 @@ class _RiskChartsState extends State<RiskCharts> {
     }
   }
 
-  Map<String, List<RiskData>> _groupDataBySector(List<RiskData> riskDataList) {
-    final Map<String, List<RiskData>> groupedData = {};
+  Map<String, List<LaiData>> _groupDataBySector(List<LaiData> laiDataList) {
+    final Map<String, List<LaiData>> groupedData = {};
 
-    for (final riskData in riskDataList) {
-      if (!groupedData.containsKey(riskData.sector)) {
-        groupedData[riskData.sector] = [];
+    for (final laiData in laiDataList) {
+      if (!groupedData.containsKey(laiData.area)) {
+        groupedData[laiData.area] = [];
       }
-      groupedData[riskData.sector]!.add(riskData);
+      groupedData[laiData.area]!.add(laiData);
     }
 
     return groupedData;
   }
 
   void _navigateToCompanySelection(BuildContext context) async {
-    final selectedCompany = await Navigator.push<String>(
+    final selectedOrganization = await Navigator.push<String>(
       context,
       MaterialPageRoute(
-        builder: (context) => RiskPage(initialCompany: _selectedCompany),
+        builder: (context) => const LaiAreaSelectionScreen(
+          organization: '',
+        ),
       ),
     );
-    if (selectedCompany != null) {
-      setState(() {
-        _selectedCompany = selectedCompany;
-      });
-
-      if (widget.selectedArea != null && widget.selectedPosition != null) {
-        _fetchData(widget.selectedArea!, widget.selectedPosition!);
+    if (selectedOrganization != null) {
+      if (_selectedArea != null) {
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LaiCharts(
+              selectedCompany:
+                  selectedOrganization, // Aquí proporciona un valor para initialCompany
+              selectedUrl: '',
+              selectedArea: _selectedArea,
+            ),
+          ),
+        );
+        _fetchData(selectedOrganization, _selectedArea);
       } else {
-        print('Error: selectedArea o selectedPosition es nulo.');
+        print('Error: selectedArea es nulo.');
       }
     }
   }

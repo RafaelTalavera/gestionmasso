@@ -4,26 +4,26 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../global/utils/caculate_font_sise.dart';
+import '../../../global/widgets/custom_AppBar.dart';
+import '../../../global/widgets/custom_drawer.dart';
 import 'extimguisher_graphs_bar.dart';
 import 'extimguisher_graphs_bar_enabled.dart';
 
 class Empresa {
-  final String nombre;
-
   Empresa(this.nombre);
+  final String nombre;
 }
 
 class EmpresaSelectionScreen extends StatefulWidget {
+  const EmpresaSelectionScreen({super.key, this.initialCompany});
   final String? initialCompany;
 
-  const EmpresaSelectionScreen({Key? key, this.initialCompany})
-      : super(key: key);
-
   @override
-  _EmpresaSelectionScreenState createState() => _EmpresaSelectionScreenState();
+  EmpresaSelectionScreenState createState() => EmpresaSelectionScreenState();
 }
 
-class _EmpresaSelectionScreenState extends State<EmpresaSelectionScreen> {
+class EmpresaSelectionScreenState extends State<EmpresaSelectionScreen> {
   late List<Empresa> _empresas = [];
   String? _selectedCompany;
 
@@ -36,9 +36,18 @@ class _EmpresaSelectionScreenState extends State<EmpresaSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Selección de Empresa'),
+      drawer: const CustomDrawer(),
+      appBar: CustomAppBar(
+        titleWidget: Text(
+          'Seleccione Empresa',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: const Color.fromARGB(255, 238, 183, 19),
+            fontSize: fontSize,
+          ),
+        ),
       ),
       body: _empresas.isEmpty
           ? const Center(child: CircularProgressIndicator())

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -6,63 +8,46 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../data/services/remote/token_manager.dart';
-import '../../global/widgets/custom_AppBar.dart';
+import '../../../../data/services/remote/token_manager.dart';
 
-import 'sources/extimguisher_table.dart';
+import '../../../global/utils/caculate_font_sise.dart';
+import '../../../global/widgets/custom_AppBar.dart';
+import '../../../global/widgets/custom_drawer.dart';
+import '../../risk/views/risk_screm_view.dart';
+import '../sources/extimguisher_table.dart';
 
 class ExtimguisherEditScreen extends StatefulWidget {
   const ExtimguisherEditScreen(
-      {Key? key, required this.extinguisher, required String extinguisherId})
-      : super(key: key);
+      {super.key, required this.extinguisher, required String extinguisherId});
 
   final Extimguisher extinguisher;
 
   @override
-  _ExtimguisherEditScreenState createState() => _ExtimguisherEditScreenState();
+  ExtimguisherEditScreenState createState() => ExtimguisherEditScreenState();
 }
 
-class _ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
-  final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
-  final TextEditingController _observacionesController =
-      TextEditingController();
+class ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
+  late Extimguisher newExtinguisher;
 
-  final String apiUrl = 'http://10.0.2.2:8080/api/extinguishers';
   bool access = false;
   bool presion = false;
   bool signaling = false;
 
-  void _submitForm() async {
-    String observacionesValue =
-        _formKey.currentState?.fields['observaciones']?.value ?? '';
-    String newSector = _formKey.currentState?.fields['sector']?.value ?? '';
+  final String apiUrl = 'http://10.0.2.2:8080/api/extinguishers';
 
-    print('Valor del campo sector: $newSector');
+  @override
+  void initState() {
+    super.initState();
+    newExtinguisher = widget.extinguisher.copyWith();
+  }
+
+  void _submitForm() async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     String? token = await TokenManager.getToken();
 
-    Extimguisher newExtimguisher = Extimguisher(
-      id: widget.extinguisher.id,
-      date: widget.extinguisher.date,
-      empresa: widget.extinguisher.empresa,
-      sector: widget.extinguisher.sector,
-      extId: widget.extinguisher.extId,
-      tipo: widget.extinguisher.tipo,
-      kg: widget.extinguisher.kg,
-      ubicacion: widget.extinguisher.ubicacion,
-      vencimiento: widget.extinguisher.vencimiento,
-      access: access,
-      signaling: signaling,
-      presion: presion,
-      observaciones: observacionesValue,
-      vigente: widget.extinguisher.vigente,
-      diferenciaEnDias: widget.extinguisher.diferenciaEnDias,
-      enabled: widget.extinguisher.enabled,
-      userId: widget.extinguisher.userId,
-    );
-
     print('JSON enviado a la API:');
-    print(jsonEncode(newExtimguisher));
+    print(jsonEncode(newExtinguisher));
 
     final responsePost = await http.put(
       Uri.parse('$apiUrl/${widget.extinguisher.id}/edit'),
@@ -70,7 +55,7 @@ class _ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode(newExtimguisher),
+      body: jsonEncode(newExtinguisher.toJson()),
     );
 
     if (responsePost.statusCode == 200) {
@@ -85,7 +70,13 @@ class _ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const IperTable(
+                          initialCompany: '',
+                        ),
+                      ));
                 },
                 child: const Text('OK'),
               ),
@@ -98,7 +89,7 @@ class _ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
         'Error al enviar la información. Código de respuesta: ${responsePost.statusCode}',
       );
 
-      ScaffoldMessenger.of(context).showSnackBar(
+      scaffoldMessenger.showSnackBar(
         const SnackBar(
           content: Text(
               'Error al enviar la información. Por favor, inténtelo de nuevo.'),
@@ -110,13 +101,16 @@ class _ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
-      appBar: const CustomAppBar(
+      drawer: const CustomDrawer(),
+      appBar: CustomAppBar(
         titleWidget: Text(
           'Control de Extintores',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 238, 183, 19),
+            color: const Color.fromARGB(255, 238, 183, 19),
+            fontSize: fontSize,
           ),
         ),
       ),
@@ -153,6 +147,7 @@ class _ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
               ),
               enabled: false,
             ),
+
             const SizedBox(height: 10),
             TextFormField(
               decoration: const InputDecoration(
@@ -162,6 +157,7 @@ class _ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
               initialValue: widget.extinguisher.tipo,
               enabled: false,
             ),
+
             const SizedBox(height: 10),
             TextFormField(
               decoration: const InputDecoration(
@@ -171,33 +167,45 @@ class _ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
               initialValue: widget.extinguisher.kg.toString(),
               enabled: false,
             ),
+
             const SizedBox(height: 10),
             FormBuilderDateTimePicker(
               name: 'date',
               inputType: InputType.date,
               firstDate: DateTime(2000),
               lastDate: DateTime.now(),
-              initialValue: widget.extinguisher.date,
               format: DateFormat('dd-MM-yyyy'),
               decoration: const InputDecoration(
                 labelText: 'Fecha del control',
                 border: OutlineInputBorder(),
               ),
+              initialValue: widget.extinguisher.date,
               enabled: true,
+              onChanged: (DateTime? selectedDate) {
+                setState(() {
+                  newExtinguisher = newExtinguisher.copyWith(
+                      date: selectedDate ?? DateTime.now());
+                });
+              },
             ),
             const SizedBox(height: 10),
             FormBuilderDateTimePicker(
-              name: 'vencimiento',
-              inputType: InputType.date,
-              firstDate: DateTime(2000),
-              initialValue: widget.extinguisher.vencimiento,
-              format: DateFormat('dd-MM-yyyy'),
-              decoration: const InputDecoration(
-                labelText: 'Nueva fecha de vencimiento',
-                border: OutlineInputBorder(),
-              ),
-              enabled: true,
-            ),
+                name: 'vencimiento',
+                inputType: InputType.date,
+                firstDate: DateTime(2000),
+                format: DateFormat('dd-MM-yyyy'),
+                decoration: const InputDecoration(
+                  labelText: 'Nueva fecha de vencimiento',
+                  border: OutlineInputBorder(),
+                ),
+                initialValue: widget.extinguisher.vencimiento,
+                enabled: true,
+                onChanged: (DateTime? selectedDate) {
+                  setState(() {
+                    newExtinguisher = newExtinguisher.copyWith(
+                        vencimiento: selectedDate ?? DateTime.now());
+                  });
+                }),
             const SizedBox(height: 10),
             const SizedBox(
               height: 20,
@@ -220,15 +228,15 @@ class _ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
                   height: 30.0,
                   onChanged: (value) {
                     setState(() {
-                      access = value;
+                      newExtinguisher = newExtinguisher.copyWith(access: value);
                     });
                   },
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  access ? ' Bueno' : ' Malo',
+                  newExtinguisher.access ? ' Bueno' : ' Malo',
                   style: TextStyle(
-                    color: access ? Colors.green : Colors.red,
+                    color: newExtinguisher.access ? Colors.green : Colors.red,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -256,15 +264,17 @@ class _ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
                   height: 30.0,
                   onChanged: (value) {
                     setState(() {
-                      signaling = value;
+                      newExtinguisher =
+                          newExtinguisher.copyWith(signaling: value);
                     });
                   },
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  signaling ? ' Buena' : ' Mala',
+                  newExtinguisher.signaling ? ' Buena' : ' Mala',
                   style: TextStyle(
-                    color: signaling ? Colors.green : Colors.red,
+                    color:
+                        newExtinguisher.signaling ? Colors.green : Colors.red,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -292,15 +302,16 @@ class _ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
                   height: 30.0,
                   onChanged: (value) {
                     setState(() {
-                      presion = value;
+                      newExtinguisher =
+                          newExtinguisher.copyWith(presion: value);
                     });
                   },
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  presion ? ' Buena' : ' Mala',
+                  newExtinguisher.presion ? ' Buena' : ' Mala',
                   style: TextStyle(
-                    color: presion ? Colors.green : Colors.red,
+                    color: newExtinguisher.presion ? Colors.green : Colors.red,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -310,16 +321,19 @@ class _ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
             const SizedBox(
               height: 20,
             ),
-            FormBuilderTextField(
-              name: 'observaciones',
-              maxLines: 3,
-              controller: _observacionesController,
+            TextFormField(
+              initialValue: widget.extinguisher.observaciones,
               decoration: const InputDecoration(
                 labelText: 'Observaciones',
                 border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.all(10),
-                suffixText: 'Observaciones',
               ),
+              enabled: true,
+              onChanged: (newValue) {
+                setState(() {
+                  newExtinguisher =
+                      newExtinguisher.copyWith(observaciones: newValue);
+                });
+              },
             ),
             ElevatedButton(
               onPressed: _submitForm,

@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../../../../../main.dart';
 
+import '../../../global/widgets/custom_drawer.dart';
 import '../../sign_in/sign_in_view.dart';
 import '../sources/build_environment_module.dart';
 import '../sources/build_safety_module.dart';
@@ -35,11 +36,10 @@ class MyHomePage extends StatefulWidget {
   final String? title;
 
   @override
-  // ignore: library_private_types_in_public_api
-  _MyHomePageState createState() => _MyHomePageState();
+  MyHomePageState createState() => MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class MyHomePageState extends State<MyHomePage> {
   int selectedPos = 0;
 
   double bottomNavBarHeight = 60;
@@ -48,15 +48,16 @@ class _MyHomePageState extends State<MyHomePage> {
     TabItem(
       Icons.warning,
       "Seguridad",
-      Colors.lightBlue.shade100,
+      const Color.fromARGB(255, 198, 197, 196),
       labelStyle: const TextStyle(
+        color: Color.fromARGB(255, 182, 33, 7),
         fontWeight: FontWeight.normal,
       ),
     ),
     TabItem(
       CupertinoIcons.arrow_3_trianglepath,
       "Ambiente",
-      Colors.teal.shade200,
+      Colors.teal.shade100,
       labelStyle: const TextStyle(
         color: Colors.green,
         fontWeight: FontWeight.bold,
@@ -86,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const CustomDrawer(),
       appBar: AppBar(
         title: Row(
           children: [

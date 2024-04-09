@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../modules/event/form_view.dart';
 import '../modules/home/views/home_view.dart';
-import '../modules/risk/views/risk_views.dart';
+import '../modules/risk/views/risk_form_views.dart';
 import '../modules/sign_in/sign_in_view.dart';
 import '../modules/splash/views/splash_view.dart';
 import 'routes.dart';

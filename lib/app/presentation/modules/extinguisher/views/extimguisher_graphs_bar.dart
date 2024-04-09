@@ -6,19 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:fl_chart/fl_chart.dart';
 
+import '../../../global/utils/caculate_font_sise.dart';
+import '../sources/extintor_data_graphs.dart';
 import 'extimguisher_Empresa_Selection_view.dart';
-import 'sources/extintor_data_graphs.dart';
 
-class ExtintorChartsEnabled extends StatefulWidget {
-  const ExtintorChartsEnabled({Key? key, required this.selectedCompany})
-      : super(key: key);
+class ExtintorCharts extends StatefulWidget {
+  const ExtintorCharts({super.key, required this.selectedCompany});
   final String selectedCompany;
 
   @override
-  _ExtintorChartsState createState() => _ExtintorChartsState();
+  ExtintorChartsState createState() => ExtintorChartsState();
 }
 
-class _ExtintorChartsState extends State<ExtintorChartsEnabled> {
+class ExtintorChartsState extends State<ExtintorCharts> {
   late List<ExtintorData> _extintorDataList = [];
   late String _selectedCompany;
 
@@ -31,9 +31,27 @@ class _ExtintorChartsState extends State<ExtintorChartsEnabled> {
 
   @override
   Widget build(BuildContext context) {
+    double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gráficos de Extintores'),
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/imagen/gmasso.png',
+              width: 40,
+              height: 40,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'Gráficos de Extintores',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: const Color.fromARGB(255, 238, 183, 19),
+                fontSize: fontSize,
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.business),
@@ -66,7 +84,7 @@ class _ExtintorChartsState extends State<ExtintorChartsEnabled> {
               children: [
                 ListTile(
                   title: Text(
-                    'Gráfico de Extintores - $sector',
+                    'Estado - $sector',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -95,14 +113,14 @@ class _ExtintorChartsState extends State<ExtintorChartsEnabled> {
     List<PieChartSectionData> sections = [];
     for (final data in sectorData) {
       sections.add(PieChartSectionData(
-        value: verificarValor(data.habilitados.toDouble()),
+        value: verificarValor(data.vigentes.toDouble()),
         color: Colors.green,
-        title: 'En servicio',
+        title: 'Vigentes',
       ));
       sections.add(PieChartSectionData(
-        value: verificarValor(data.deshabilitados.toDouble()),
+        value: verificarValor(data.vencidos.toDouble()),
         color: Colors.red,
-        title: 'Fuera de servicio',
+        title: 'Vencidos',
       ));
     }
     return PieChart(
@@ -120,29 +138,29 @@ class _ExtintorChartsState extends State<ExtintorChartsEnabled> {
       ],
       rows: [
         DataRow(cells: [
-          const DataCell(Text('En servicio')),
-          DataCell(Text(_calculateTotalHabilitados(sectorData).toString())),
+          const DataCell(Text('Vigentes')),
+          DataCell(Text(_calculateTotalVigentes(sectorData).toString())),
         ]),
         DataRow(cells: [
-          const DataCell(Text('Fuera de servicio')),
-          DataCell(Text(_calculateTotalDeshabilitados(sectorData).toString())),
+          const DataCell(Text('Vencidos')),
+          DataCell(Text(_calculateTotalVencidos(sectorData).toString())),
         ]),
       ],
     );
   }
 
-  int _calculateTotalHabilitados(List<ExtintorData> sectorData) {
+  int _calculateTotalVigentes(List<ExtintorData> sectorData) {
     int total = 0;
     for (final data in sectorData) {
-      total += data.habilitados;
+      total += data.vigentes;
     }
     return total;
   }
 
-  int _calculateTotalDeshabilitados(List<ExtintorData> sectorData) {
+  int _calculateTotalVencidos(List<ExtintorData> sectorData) {
     int total = 0;
     for (final data in sectorData) {
-      total += data.deshabilitados;
+      total += data.vencidos;
     }
     return total;
   }

@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
+import '../../../global/widgets/custom_drawer.dart';
+
 import '../sources/iper_table.dart';
+import 'risk_edit_view.dart';
 
 class IperTable extends StatefulWidget {
-  const IperTable({super.key});
+  const IperTable({super.key, required String initialCompany});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -15,10 +19,11 @@ class IperTable extends StatefulWidget {
 }
 
 class _IperTableState extends State<IperTable> {
-  late List<Iper> ipers;
+  late List<Risk> risks;
   String? filtroEvaluacion;
   String? filtroPuesto;
   String? filtroArea;
+  String? filtroOrganizacion;
 
   Color getColorForEvaluacion(String evaluacion) {
     switch (evaluacion.toLowerCase()) {
@@ -38,7 +43,7 @@ class _IperTableState extends State<IperTable> {
   @override
   void initState() {
     super.initState();
-    ipers = <Iper>[];
+    risks = <Risk>[];
     fetchData();
   }
 
@@ -48,39 +53,47 @@ class _IperTableState extends State<IperTable> {
     if (response.statusCode == 200) {
       final List<dynamic> jsonData =
           json.decode(utf8.decode(response.bodyBytes));
-      ipers = jsonData.map((json) => Iper.fromJson(json)).toList();
+      risks = jsonData.map((json) => Risk.fromJson(json)).toList();
       setState(() {});
     } else {
       throw Exception('Error al cargar datos desde el backend');
     }
   }
 
-  List<Iper> get listaFiltrada {
-    return ipers.where((iper) {
+  List<Risk> get listaFiltrada {
+    return risks.where((risk) {
       bool cumpleFiltroEvaluacion =
-          filtroEvaluacion == null || iper.evaluacion == filtroEvaluacion;
+          filtroEvaluacion == null || risk.evaluacion == filtroEvaluacion;
       bool cumpleFiltroPuesto =
-          filtroPuesto == null || iper.puesto == filtroPuesto;
-      bool cumpleFiltroArea = filtroArea == null || iper.area == filtroArea;
+          filtroPuesto == null || risk.puesto == filtroPuesto;
+      bool cumpleFiltroArea = filtroArea == null || risk.area == filtroArea;
+      bool cumpleFiltroOrganizacion =
+          filtroOrganizacion == null || risk.organization == filtroOrganizacion;
 
-      return cumpleFiltroEvaluacion && cumpleFiltroPuesto && cumpleFiltroArea;
+      return cumpleFiltroEvaluacion &&
+          cumpleFiltroPuesto &&
+          cumpleFiltroArea &&
+          cumpleFiltroOrganizacion;
     }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
+    double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
-      appBar: const CustomAppBar(
+      drawer: const CustomDrawer(),
+      appBar: CustomAppBar(
         titleWidget: Text(
           'Matriz IPER',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 238, 183, 19),
+            color: const Color.fromARGB(255, 238, 183, 19),
+            fontSize: fontSize,
           ),
         ),
       ),
       // ignore: unnecessary_null_comparison
-      body: ipers == null
+      body: risks == null
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
@@ -94,22 +107,16 @@ class _IperTableState extends State<IperTable> {
                     ),
                   ),
                 ),
-                // Agregar filtros según sea necesario
-                // Filtros en una tarjeta horizontal
-
                 SingleChildScrollView(
                   child: Center(
                     child: Card(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
-                          // Cambiado de Row a Column
                           children: [
                             Row(
-                              // Fila para los dos primeros filtros
                               children: [
                                 const SizedBox(width: 20.0),
-                                // Filtro por Evaluación
                                 Flexible(
                                   child: DropdownButton<String>(
                                     value: filtroEvaluacion,
@@ -122,9 +129,7 @@ class _IperTableState extends State<IperTable> {
                                     items: obtenerItemsFiltro('evaluacion'),
                                   ),
                                 ),
-
                                 const SizedBox(width: 110.0),
-                                // Filtro por Puesto
                                 Flexible(
                                   child: DropdownButton<String>(
                                     value: filtroPuesto,
@@ -139,7 +144,16 @@ class _IperTableState extends State<IperTable> {
                                 ),
                               ],
                             ),
-                            // Filtro por Área debajo
+                            DropdownButton<String>(
+                              value: filtroOrganizacion,
+                              hint: const Text('Organización'),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  filtroOrganizacion = newValue;
+                                });
+                              },
+                              items: obtenerItemsFiltro('organizacion'),
+                            ),
                             DropdownButton<String>(
                               value: filtroArea,
                               hint: const Text('Área'),
@@ -166,7 +180,6 @@ class _IperTableState extends State<IperTable> {
                   },
                   child: const Text('Limpiar Filtros'),
                 ),
-                // Lista filtrada
                 Expanded(
                   child: ListView.builder(
                     itemCount: listaFiltrada.length,
@@ -198,6 +211,21 @@ class _IperTableState extends State<IperTable> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              RichText(
+                                text: TextSpan(
+                                  style: DefaultTextStyle.of(context).style,
+                                  children: [
+                                    const TextSpan(
+                                      text: 'organization: ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    TextSpan(
+                                      text: listaFiltrada[index].organization,
+                                    ),
+                                  ],
+                                ),
+                              ),
                               RichText(
                                 text: TextSpan(
                                   style: DefaultTextStyle.of(context).style,
@@ -335,8 +363,72 @@ class _IperTableState extends State<IperTable> {
                                   ],
                                 ),
                               ),
-
-                              // Agrega más información según sea necesario
+                              RichText(
+                                text: TextSpan(
+                                  style: DefaultTextStyle.of(context).style,
+                                  children: [
+                                    const TextSpan(
+                                      text: 'Fecha de revalidación: ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    TextSpan(
+                                      text: DateFormat('yyyy-MM-dd').format(
+                                          listaFiltrada[index].dateOfRevision),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                  style: DefaultTextStyle.of(context).style,
+                                  children: [
+                                    const TextSpan(
+                                      text: 'Usuario: ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    TextSpan(
+                                      text: listaFiltrada[index].userId,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                RiskEditScreen(
+                                              iperId: listaFiltrada[index]
+                                                  .id
+                                                  .toString(), // Convertir a String
+                                              risk: listaFiltrada[index],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                          Colors.green,
+                                        ),
+                                        foregroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                          Colors.white,
+                                        ),
+                                      ),
+                                      child: const Text('Actualizar'),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ),
@@ -352,16 +444,19 @@ class _IperTableState extends State<IperTable> {
   List<DropdownMenuItem<String>> obtenerItemsFiltro(String tipoFiltro) {
     Set<String> valoresUnicos = {};
 
-    for (var iper in ipers) {
+    for (var risk in risks) {
       switch (tipoFiltro) {
         case 'area':
-          valoresUnicos.add(iper.area);
+          valoresUnicos.add(risk.area);
           break;
         case 'puesto':
-          valoresUnicos.add(iper.puesto);
+          valoresUnicos.add(risk.puesto);
           break;
         case 'evaluacion':
-          valoresUnicos.add(iper.evaluacion);
+          valoresUnicos.add(risk.evaluacion);
+          break;
+        case 'organizacion':
+          valoresUnicos.add(risk.organization);
           break;
 
         // Puedes agregar más casos según los filtros que necesites

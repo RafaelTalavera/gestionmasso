@@ -64,6 +64,46 @@ class Extimguisher {
     };
   }
 
+  Extimguisher copyWith({
+    String? id,
+    DateTime? date,
+    String? empresa,
+    String? sector,
+    String? extId,
+    String? tipo,
+    double? kg,
+    String? ubicacion,
+    DateTime? vencimiento,
+    int? diferenciaEnDias,
+    bool? access,
+    bool? signaling,
+    bool? presion,
+    String? observaciones,
+    bool? vigente,
+    bool? enabled,
+    String? userId,
+  }) {
+    return Extimguisher(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      empresa: empresa ?? this.empresa,
+      sector: sector ?? this.sector,
+      extId: extId ?? this.extId,
+      tipo: tipo ?? this.tipo,
+      kg: kg ?? this.kg,
+      ubicacion: ubicacion ?? this.ubicacion,
+      vencimiento: vencimiento ?? this.vencimiento,
+      diferenciaEnDias: diferenciaEnDias ?? this.diferenciaEnDias,
+      access: access ?? this.access,
+      signaling: signaling ?? this.signaling,
+      presion: presion ?? this.presion,
+      observaciones: observaciones ?? this.observaciones,
+      vigente: vigente ?? this.vigente,
+      enabled: enabled ?? this.enabled,
+      userId: userId ?? this.userId,
+    );
+  }
+
   final String id;
   final DateTime date;
   final String empresa;

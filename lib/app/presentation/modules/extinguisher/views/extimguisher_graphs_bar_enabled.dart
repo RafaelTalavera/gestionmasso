@@ -3,22 +3,24 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import '../../../global/utils/caculate_font_sise.dart';
+import '../../../global/widgets/custom_drawer.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:fl_chart/fl_chart.dart';
 
+import '../sources/extintor_data_graphs.dart';
 import 'extimguisher_Empresa_Selection_view.dart';
-import 'sources/extintor_data_graphs.dart';
 
-class ExtintorCharts extends StatefulWidget {
-  const ExtintorCharts({Key? key, required this.selectedCompany})
-      : super(key: key);
+class ExtintorChartsEnabled extends StatefulWidget {
+  const ExtintorChartsEnabled({super.key, required this.selectedCompany});
   final String selectedCompany;
 
   @override
-  _ExtintorChartsState createState() => _ExtintorChartsState();
+  ExtintorChartsState createState() => ExtintorChartsState();
 }
 
-class _ExtintorChartsState extends State<ExtintorCharts> {
+class ExtintorChartsState extends State<ExtintorChartsEnabled> {
   late List<ExtintorData> _extintorDataList = [];
   late String _selectedCompany;
 
@@ -31,9 +33,18 @@ class _ExtintorChartsState extends State<ExtintorCharts> {
 
   @override
   Widget build(BuildContext context) {
+    double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
+      drawer: const CustomDrawer(),
       appBar: AppBar(
-        title: const Text('Gráficos de Extintores'),
+        title: Text(
+          'Gráficos de Extintores',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: const Color.fromARGB(255, 238, 183, 19),
+            fontSize: fontSize,
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.business),
@@ -66,7 +77,7 @@ class _ExtintorChartsState extends State<ExtintorCharts> {
               children: [
                 ListTile(
                   title: Text(
-                    'Estado - $sector',
+                    'Gráfico de Extintores - $sector',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -95,14 +106,14 @@ class _ExtintorChartsState extends State<ExtintorCharts> {
     List<PieChartSectionData> sections = [];
     for (final data in sectorData) {
       sections.add(PieChartSectionData(
-        value: verificarValor(data.vigentes.toDouble()),
+        value: verificarValor(data.habilitados.toDouble()),
         color: Colors.green,
-        title: 'Vigentes',
+        title: 'En servicio',
       ));
       sections.add(PieChartSectionData(
-        value: verificarValor(data.vencidos.toDouble()),
+        value: verificarValor(data.deshabilitados.toDouble()),
         color: Colors.red,
-        title: 'Vencidos',
+        title: 'Fuera de servicio',
       ));
     }
     return PieChart(
@@ -120,29 +131,29 @@ class _ExtintorChartsState extends State<ExtintorCharts> {
       ],
       rows: [
         DataRow(cells: [
-          const DataCell(Text('Vigentes')),
-          DataCell(Text(_calculateTotalVigentes(sectorData).toString())),
+          const DataCell(Text('En servicio')),
+          DataCell(Text(_calculateTotalHabilitados(sectorData).toString())),
         ]),
         DataRow(cells: [
-          const DataCell(Text('Vencidos')),
-          DataCell(Text(_calculateTotalVencidos(sectorData).toString())),
+          const DataCell(Text('Fuera de servicio')),
+          DataCell(Text(_calculateTotalDeshabilitados(sectorData).toString())),
         ]),
       ],
     );
   }
 
-  int _calculateTotalVigentes(List<ExtintorData> sectorData) {
+  int _calculateTotalHabilitados(List<ExtintorData> sectorData) {
     int total = 0;
     for (final data in sectorData) {
-      total += data.vigentes;
+      total += data.habilitados;
     }
     return total;
   }
 
-  int _calculateTotalVencidos(List<ExtintorData> sectorData) {
+  int _calculateTotalDeshabilitados(List<ExtintorData> sectorData) {
     int total = 0;
     for (final data in sectorData) {
-      total += data.vencidos;
+      total += data.deshabilitados;
     }
     return total;
   }

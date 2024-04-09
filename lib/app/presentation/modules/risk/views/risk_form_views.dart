@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'dart:convert';
 
 import '../../../../data/services/remote/token_manager.dart';
+import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
+import '../../../global/widgets/custom_drawer.dart';
 import '../../home/views/home_view.dart';
-import 'iper_view.dart';
+import 'risk_screm_view.dart';
 import '../sources/list_risk.dart';
 
 class RiskPage extends StatefulWidget {
@@ -21,10 +24,14 @@ class RiskPage extends StatefulWidget {
 
 class _RiskPageState extends State<RiskPage> {
   final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
+
   final String apiUrl = 'http://10.0.2.2:8080/api/risk';
 
-  int _currentIndexPuesto = 0;
-  int _currentIndexArea = 0;
+  int _currentIndexPuesto = -1;
+  int _currentIndexArea = -1;
+  int _currentIndexConsecuencia = -1;
+  int _currentIndexIncidentesPotenciales = -1;
+  int _currentIndexFuente = -1;
   int _currentIndexTipo = 0;
   int _currentIndexProbabilidad = 0;
   int _currentIndexGravedad = 0;
@@ -53,6 +60,13 @@ class _RiskPageState extends State<RiskPage> {
           getWrappedButtonValue(ListDropdownRisk.areas, _currentIndexArea);
       formData['tipo'] =
           getWrappedButtonValue(ListDropdownRisk.tipo, _currentIndexTipo);
+      formData['consecuencia'] = getWrappedButtonValue(
+          ListDropdownRisk.consecuencia, _currentIndexConsecuencia);
+      formData['fuente'] =
+          getWrappedButtonValue(ListDropdownRisk.fuente, _currentIndexFuente);
+      formData['incidentesPotenciales'] = getWrappedButtonValue(
+          ListDropdownRisk.incidentesPotenciales,
+          _currentIndexIncidentesPotenciales);
       formData['probabilidad'] = getWrappedButtonValue(
           ListDropdownRisk.probabilidad.map((item) => item['value']).toList(),
           _currentIndexProbabilidad);
@@ -96,7 +110,9 @@ class _RiskPageState extends State<RiskPage> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const IperTable()),
+                          builder: (context) => const IperTable(
+                                initialCompany: '',
+                              )),
                     );
                   },
                   child: const Text('Ir al IPER'),
@@ -123,13 +139,18 @@ class _RiskPageState extends State<RiskPage> {
 
   @override
   Widget build(BuildContext context) {
+    final double availableWidth = MediaQuery.of(context).size.width;
+    double fontSize = Utils.calculateTitleFontSize(context);
+
     return Scaffold(
-      appBar: const CustomAppBar(
+      drawer: const CustomDrawer(),
+      appBar: CustomAppBar(
         titleWidget: Text(
           'Relevamiento Riesgos',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 238, 183, 19),
+            color: const Color.fromARGB(255, 238, 183, 19),
+            fontSize: fontSize,
           ),
         ),
       ),
@@ -147,14 +168,19 @@ class _RiskPageState extends State<RiskPage> {
                   ),
                   Center(
                     child: SizedBox(
-                      width: 300,
+                      width: availableWidth * 0.9,
                       child: FormBuilderDateTimePicker(
                         name: 'date',
                         inputType: InputType.date,
                         firstDate: DateTime(2000),
+                        format: DateFormat('dd, MMMM yyyy'),
                         lastDate: DateTime.now(),
                         decoration: const InputDecoration(
-                            labelText: 'Fecha del analisis'),
+                          labelText: 'Fecha del analisis',
+                          labelStyle: TextStyle(color: Colors.grey),
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.all(10),
+                        ),
                         validator: FormBuilderValidators.required(
                           errorText: 'La fecha no puede estar vacía',
                         ),
@@ -162,110 +188,120 @@ class _RiskPageState extends State<RiskPage> {
                     ),
                   ),
                   const SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    'El puesto que eligió: ${ListDropdownRisk.puesto[_currentIndexPuesto]}',
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue),
-                  ),
-                  const SizedBox(
                     height: 10,
                   ),
                 ],
               ),
-              Center(
-                child: SizedBox(
-                  width: 400,
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 5.0,
-                    runSpacing: 5.0,
-                    children: ListDropdownRisk.puesto.map((puesto) {
-                      return ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _currentIndexPuesto =
-                                ListDropdownRisk.puesto.indexOf(puesto);
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: _currentIndexPuesto ==
-                                  ListDropdownRisk.puesto.indexOf(puesto)
-                              ? Colors.white
-                              : Theme.of(context).primaryColor,
-                          backgroundColor: _currentIndexPuesto ==
-                                  ListDropdownRisk.puesto.indexOf(puesto)
-                              ? Theme.of(context).primaryColor
-                              : Colors.white,
-                          side: BorderSide(
-                            color: _currentIndexPuesto ==
-                                    ListDropdownRisk.puesto.indexOf(puesto)
-                                ? Colors.teal
-                                : Colors.grey,
-                          ),
-                        ),
-                        child: Text(puesto),
-                      );
-                    }).toList(),
+              SizedBox(
+                width: 350,
+                child: FormBuilderTextField(
+                  name: 'organization',
+                  decoration: const InputDecoration(
+                    labelText: 'Nombre de la organización',
+                    labelStyle: TextStyle(color: Colors.grey),
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.all(10),
                   ),
+                  validator: FormBuilderValidators.required(
+                    errorText: 'El campo no puede estar vacío',
+                  ),
+                  maxLines: 1,
                 ),
               ),
               const SizedBox(
                 height: 20,
               ),
               Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'El área que eligió es: ${ListDropdownRisk.areas[_currentIndexArea]}',
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Center(
-                    child: SizedBox(
-                      width: 400,
-                      child: Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 5.0,
-                        runSpacing: 5.0,
-                        children: ListDropdownRisk.areas.map((area) {
-                          return ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _currentIndexArea =
-                                    ListDropdownRisk.areas.indexOf(area);
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: _currentIndexArea ==
-                                      ListDropdownRisk.areas.indexOf(area)
-                                  ? Colors.white
-                                  : Theme.of(context).primaryColor,
-                              backgroundColor: _currentIndexArea ==
-                                      ListDropdownRisk.areas.indexOf(area)
-                                  ? Theme.of(context).primaryColor
-                                  : Colors.white,
-                              side: BorderSide(
-                                color: _currentIndexArea ==
-                                        ListDropdownRisk.areas.indexOf(area)
-                                    ? const Color.fromARGB(255, 203, 125, 0)
-                                    : Colors.grey,
-                              ),
-                            ),
-                            child: Text(area),
-                          );
-                        }).toList(),
+                  SizedBox(
+                    width: 350,
+                    child: DropdownButtonFormField<String>(
+                      value: _currentIndexArea == -1
+                          ? null
+                          : ListDropdownRisk.areas[_currentIndexArea],
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _currentIndexArea =
+                              ListDropdownRisk.areas.indexOf(newValue!);
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        labelText: 'Área',
+                        labelStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(),
                       ),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: null,
+                          child: Text(
+                            'Elija un área',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                        ...ListDropdownRisk.areas.map((value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }),
+                      ],
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Por favor, elija un área';
+                        }
+                        return null;
+                      },
                     ),
                   ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    width: 350,
+                    child: DropdownButtonFormField<String>(
+                      value: _currentIndexPuesto == -1
+                          ? null
+                          : ListDropdownRisk.puesto[_currentIndexPuesto],
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _currentIndexPuesto =
+                              ListDropdownRisk.puesto.indexOf(newValue!);
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        labelText: 'Puesto de trabajo',
+                        labelStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(),
+                      ),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: null,
+                          child: Text(
+                            'Elija un puesto de trabajo',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                        ...ListDropdownRisk.puesto.map((value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }),
+                      ],
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Por favor, elija un área';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   const SizedBox(
                     height: 20,
                   ),
@@ -274,72 +310,147 @@ class _RiskPageState extends State<RiskPage> {
                     child: FormBuilderTextField(
                       name: 'tarea',
                       decoration: const InputDecoration(
-                          labelText:
-                              'Escriba aquí la actividad, proceso o instalación relacionada'),
+                        labelText: 'Escriba aquí la actividad',
+                        labelStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.all(10),
+                      ),
                       validator: FormBuilderValidators.required(
                         errorText: 'El campo no puede estar vacío',
                       ),
                       maxLines: 2,
                     ),
                   ),
-                  SizedBox(
-                    width: 350,
-                    child: FormBuilderDropdown(
-                      name: 'fuente',
-                      decoration: const InputDecoration(
-                        labelText: 'Fuente o Situación ',
-                        hintText: 'Selecciona una severidad',
-                      ),
-                      validator: FormBuilderValidators.required(
-                        errorText: 'El campo severidad no puede estar vacío',
-                      ),
-                      items: ListDropdownRisk.fuente
-                          .map((fuente) => DropdownMenuItem(
-                                value: fuente,
-                                child: Text(fuente),
-                              ))
-                          .toList(),
-                    ),
+                  const SizedBox(
+                    height: 20,
                   ),
                   SizedBox(
                     width: 350,
-                    child: FormBuilderDropdown(
-                      name: 'incidentesPotenciales',
+                    child: DropdownButtonFormField<String>(
+                      value: _currentIndexConsecuencia == -1
+                          ? null
+                          : ListDropdownRisk
+                              .consecuencia[_currentIndexConsecuencia],
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _currentIndexConsecuencia =
+                              ListDropdownRisk.consecuencia.indexOf(newValue!);
+                        });
+                      },
                       decoration: const InputDecoration(
-                        labelText: 'Incidente potencial',
-                        hintText: 'Selecciona un incidente potencial',
+                        labelText: 'Consecuencia',
+                        labelStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(),
                       ),
-                      validator: FormBuilderValidators.required(
-                        errorText: 'Este campo no puede estar vacío',
-                      ),
-                      items: ListDropdownRisk.incidentesPotenciales
-                          .map((incidente) => DropdownMenuItem(
-                                value: incidente,
-                                child: Text(incidente),
-                              ))
-                          .toList(),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: null,
+                          child: Text(
+                            'Elija una consecuencia',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                        ...ListDropdownRisk.consecuencia.map((value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }),
+                      ],
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Por favor, una consecuencia';
+                        }
+                        return null;
+                      },
                     ),
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
                   SizedBox(
                     width: 350,
-                    child: FormBuilderDropdown(
-                      name: 'consecuencia',
+                    child: DropdownButtonFormField<String>(
+                      value: _currentIndexFuente == -1
+                          ? null
+                          : ListDropdownRisk.fuente[_currentIndexFuente],
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _currentIndexFuente =
+                              ListDropdownRisk.fuente.indexOf(newValue!);
+                        });
+                      },
                       decoration: const InputDecoration(
-                        labelText: 'Consecuencias ',
-                        hintText: 'Selecciona una consecuencia',
+                        labelText: 'Fuente',
+                        labelStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(),
                       ),
-                      validator: FormBuilderValidators.required(
-                        errorText: 'Este campo no puede estar vacío',
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: null,
+                          child: Text(
+                            'Elija una fuente del evento',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                        ...ListDropdownRisk.fuente.map((value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }),
+                      ],
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Por favor, una fuente';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    width: 350,
+                    child: DropdownButtonFormField<String>(
+                      value: _currentIndexIncidentesPotenciales == -1
+                          ? null
+                          : ListDropdownRisk.incidentesPotenciales[
+                              _currentIndexIncidentesPotenciales],
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _currentIndexIncidentesPotenciales = ListDropdownRisk
+                              .incidentesPotenciales
+                              .indexOf(newValue!);
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        labelText: 'Incidentes potenciales',
+                        labelStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(),
                       ),
-                      items: ListDropdownRisk.consecuencia
-                          .map<DropdownMenuItem<String>>(
-                              (consecuencia) => DropdownMenuItem(
-                                    value: consecuencia.toString(),
-                                    child: Text(
-                                      consecuencia.toString(),
-                                    ),
-                                  ))
-                          .toList(),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: null,
+                          child: Text(
+                            'Elija un incidente potencial',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                        ...ListDropdownRisk.incidentesPotenciales.map((value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }),
+                      ],
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Por favor, un incidente potencial';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   Column(
@@ -351,8 +462,8 @@ class _RiskPageState extends State<RiskPage> {
                       Text(
                         'El tipo de tarea que eligió es: ${ListDropdownRisk.tipo[_currentIndexTipo]}',
                         style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
                             color: Colors.blue),
                       ),
                       const SizedBox(
@@ -407,8 +518,8 @@ class _RiskPageState extends State<RiskPage> {
                       Text(
                         'La probabilidad que eligió es: ${ListDropdownRisk.probabilidad[_currentIndexProbabilidad]['label']}',
                         style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
                             color: Colors.blue),
                       ),
                       const SizedBox(
@@ -466,8 +577,8 @@ class _RiskPageState extends State<RiskPage> {
                       Text(
                         'La gravedad que eligió es: ${ListDropdownRisk.gravedad[_currentIndexGravedad]['label']}',
                         style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
                             color: Colors.blue),
                       ),
                       const SizedBox(
@@ -517,46 +628,13 @@ class _RiskPageState extends State<RiskPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const SizedBox(
-                        height: 30,
-                      ),
-                      const Text(
-                        'Establecer medida de control',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Puesto: ${ListDropdownRisk.puesto[_currentIndexPuesto]}',
-                      ),
-                      Text(
-                        'Área: ${ListDropdownRisk.areas[_currentIndexArea]}',
-                      ),
-                      Text(
-                        'Fuente o Situación: ${_formKey.currentState?.fields['fuente']?.value ?? 'N/A'}',
-                      ),
-                      Text(
-                        'Incidente potencial: ${_formKey.currentState?.fields['consecuencia']?.value ?? 'N/A'}',
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(
                         height: 20,
                       ),
                       Text(
                         'La clasificación es: ${ListDropdownRisk.clasificaMC[_currentIndexClasificaMC]}',
                         style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
                             color: Colors.blue),
                       ),
                       const SizedBox(
@@ -603,6 +681,9 @@ class _RiskPageState extends State<RiskPage> {
                       ),
                     ),
                   ),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   SizedBox(
                     width: 350,
                     child: Container(
@@ -610,13 +691,13 @@ class _RiskPageState extends State<RiskPage> {
                       child: FormBuilderTextField(
                         name: 'medidaControl',
                         decoration: const InputDecoration(
-                          labelText:
-                              'Describa la medida de Control a implementar',
+                          labelText: 'Describa la medida de Control',
                           labelStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.normal,
                             fontSize: 16,
                             color: Colors.blue,
                           ),
+                          border: OutlineInputBorder(),
                         ),
                         validator: FormBuilderValidators.required(
                           errorText: 'El campo no puede estar vacío',

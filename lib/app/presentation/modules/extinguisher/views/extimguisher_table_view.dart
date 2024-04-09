@@ -5,19 +5,20 @@ import 'package:pretty_qr_code/pretty_qr_code.dart';
 
 import 'dart:convert';
 
-import '../../global/widgets/custom_AppBar.dart';
-
-import 'extimguisher_EditScreen_view.dart';
-import 'sources/extimguisher_table.dart';
+import '../../../global/utils/caculate_font_sise.dart';
+import '../../../global/widgets/custom_AppBar.dart';
+import '../../../global/widgets/custom_drawer.dart';
+import '../sources/extimguisher_table.dart';
+import 'extimguisher_edit_view.dart';
 
 class ExtimguishersScreen extends StatefulWidget {
-  const ExtimguishersScreen({Key? key}) : super(key: key);
+  const ExtimguishersScreen({super.key});
 
   @override
-  _ExtimguishersScreenState createState() => _ExtimguishersScreenState();
+  ExtimguishersScreenState createState() => ExtimguishersScreenState();
 }
 
-class _ExtimguishersScreenState extends State<ExtimguishersScreen> {
+class ExtimguishersScreenState extends State<ExtimguishersScreen> {
   List<Extimguisher> extimguishers = [];
   String? selectedCompany;
   String? selectedSector;
@@ -41,7 +42,6 @@ class _ExtimguishersScreenState extends State<ExtimguishersScreen> {
         final List<dynamic> jsonData =
             json.decode(utf8.decode(response.bodyBytes));
 
-        print('Datos JSON recibidos desde el backend: $jsonData');
         List<Extimguisher> fetchedExtimguishers =
             jsonData.map((json) => Extimguisher.fromJson(json)).toList();
         setState(() {
@@ -50,9 +50,8 @@ class _ExtimguishersScreenState extends State<ExtimguishersScreen> {
       } else {
         throw Exception('Error al cargar datos desde el backend');
       }
-    } catch (error) {
-      print('Error al cargar datos: $error');
-    }
+      // ignore: empty_catches
+    } catch (error) {}
   }
 
   String getStateText(bool state) {
@@ -69,13 +68,16 @@ class _ExtimguishersScreenState extends State<ExtimguishersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
-      appBar: const CustomAppBar(
+      drawer: const CustomDrawer(),
+      appBar: CustomAppBar(
         titleWidget: Text(
           'Control de Extintores',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 238, 183, 19),
+            color: const Color.fromARGB(255, 238, 183, 19),
+            fontSize: fontSize,
           ),
         ),
       ),
@@ -271,7 +273,7 @@ class _ExtimguishersScreenState extends State<ExtimguishersScreen> {
                                     : extinguisher.diferenciaEnDias < 15
                                         ? Colors.orange
                                         : extinguisher.diferenciaEnDias < 30
-                                            ? Colors.yellow
+                                            ? Colors.black
                                             : Colors.green,
                               ),
                             ),
@@ -289,11 +291,9 @@ class _ExtimguishersScreenState extends State<ExtimguishersScreen> {
                                         .resolveWith<Color>(
                                       (Set<MaterialState> states) {
                                         if (extinguisher.enabled) {
-                                          return Colors
-                                              .orange; // Color naranja cuando está en reserva
+                                          return Colors.orange;
                                         } else {
-                                          return Colors
-                                              .orange; // Color verde cuando se puede activar
+                                          return Colors.orange;
                                         }
                                       },
                                     ),
@@ -424,7 +424,7 @@ class _ExtimguishersScreenState extends State<ExtimguishersScreen> {
                   item,
                   style: const TextStyle(
                     fontWeight: FontWeight.normal,
-                    color: Colors.blue, // Aplicar estilo rojo al texto
+                    color: Colors.blue,
                   ),
                 ),
               );

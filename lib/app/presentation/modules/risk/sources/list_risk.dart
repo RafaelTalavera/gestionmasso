@@ -2,6 +2,7 @@ class ListDropdownRisk {
   static List<String> fuente = [
     'Protección inexistente',
     'Protección insuficiente',
+    'Falta de capacitación',
     'Falta de manuales',
     'Falla en aislación',
     'Falta de protección',
@@ -12,8 +13,11 @@ class ListDropdownRisk {
     'Bloqueo desconectado',
     'Espacio reducido',
     'Espacio confinado',
+    'Equipos y herramientas inadecuados',
     'Superficies calientes',
     'Trabajo en Altura',
+    'Técnica de levantamiento inadecuada',
+    'Sobrecarga de peso',
   ];
 
   static List<String> incidentesPotenciales = [
@@ -22,8 +26,11 @@ class ListDropdownRisk {
     'Contacto con objetos calientes',
     'Contacto con fuego',
     'Contacto con electricidad',
+    'Contacto con onjetos cortantes',
     'Contacto con objetos punzocortantes',
     'Contacto con sustancias químicas',
+    'Contanto con partes en movimientos',
+    'Contacto con particulas en suspención',
     'Golpeado con objeto',
     'Golpeado por objeto',
     'Golpeado contra objetos',
@@ -44,7 +51,6 @@ class ListDropdownRisk {
     'Asfixia',
     'Cortes',
     'Contusiones',
-    'Efectos de la electricidad',
     'Efectos de la electricidad',
     'Fracturas',
     'Hipotermia',
@@ -103,6 +109,7 @@ class ListDropdownRisk {
     'Eliminación',
     'Sustitución',
     'Confinamiento',
+    'Procedimiento de trabajo',
     'Protección Personal',
   ];
 }

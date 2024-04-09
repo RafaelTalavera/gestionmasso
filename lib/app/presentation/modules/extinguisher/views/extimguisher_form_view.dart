@@ -7,11 +7,13 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '../../../data/services/remote/token_manager.dart';
-import '../../global/widgets/custom_AppBar.dart';
-import '../home/views/home_view.dart';
+import '../../../../data/services/remote/token_manager.dart';
+import '../../../global/utils/caculate_font_sise.dart';
+import '../../../global/widgets/custom_AppBar.dart';
+import '../../../global/widgets/custom_drawer.dart';
+import '../../home/views/home_view.dart';
+import '../sources/List_extimguisher.dart';
 import 'extimguisher_table_view.dart';
-import 'sources/List_extimguisher.dart';
 
 class ExtinguerPage extends StatefulWidget {
   const ExtinguerPage({Key? key});
@@ -111,13 +113,16 @@ class _ExtPageState extends State<ExtinguerPage> {
 
   @override
   Widget build(BuildContext context) {
+    double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
-      appBar: const CustomAppBar(
+      drawer: const CustomDrawer(),
+      appBar:  CustomAppBar(
         titleWidget: Text(
           'Carga de Extintores',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 238, 183, 19),
+            color: const Color.fromARGB(255, 238, 183, 19),
+            fontSize: fontSize,
           ),
         ),
       ),
@@ -363,7 +368,7 @@ class _ExtPageState extends State<ExtinguerPage> {
                         color: Colors.black,
                       ),
                     ),
-                    const SizedBox(width: 170),
+                    const SizedBox(width: 174),
                     AdvancedSwitch(
                       activeColor: Colors.green,
                       inactiveColor: Colors.red,
