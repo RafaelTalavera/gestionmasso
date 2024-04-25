@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../../Lai/view/lai_form_view.dart';
-
-import '../../Lai/view/lai_selec_organization.dart';
+import '../../Lai/view/lai_form_organization_select_view.dart';
+import '../../Lai/view/lai_selec_organization_chart.dart';
 import '../../Lai/view/lai_table_view.dart';
+
+import '../../consumo/views/consumo_organization_select_view.dart';
+import '../../consumo/views/consumo_selec_organization.dart';
+import '../../consumo/views/consumo_table_view.dart';
 
 Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
   return Container(
@@ -12,14 +15,14 @@ Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
     child: ListView(
       children: [
         const SizedBox(
-          height: 20,
+          height: 60,
         ),
         const Center(
           child: Text(
             'Apectos ambientales',
             style: TextStyle(
-              color: Color.fromARGB(255, 21, 20, 20),
-              fontSize: 20.0,
+              color: Color.fromARGB(255, 238, 183, 19),
+              fontSize: 26,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -29,7 +32,7 @@ Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
         ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 0.1),
-          width: double.infinity, // Ocupa el ancho de la pantalla
+          width: double.infinity,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -38,7 +41,8 @@ Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const LaiFormPage(),
+                      builder: (context) =>
+                          const LaiOrganizationSelectionScreen(),
                     ),
                   );
                 },
@@ -46,7 +50,7 @@ Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  backgroundColor: Colors.blueGrey.shade300,
+                  backgroundColor: Colors.lightGreen.shade700,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 13.0,
                     vertical: 15.0,
@@ -62,7 +66,7 @@ Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'Alta LAI  ',
+                      '  Alta LAI  ',
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
@@ -77,14 +81,14 @@ Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const LaiScrem(
+                      builder: (context) => const LaiScreen(
                         initialCompany: '',
                       ),
                     ),
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueGrey.shade300,
+                  backgroundColor: Colors.lightGreen.shade700,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -102,7 +106,7 @@ Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'Ver IPER ',
+                      '   Ver LAI    ',
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
@@ -122,7 +126,7 @@ Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
                       ));
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueGrey.shade300,
+                  backgroundColor: Colors.lightGreen.shade700,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -143,6 +147,144 @@ Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
                       'Estadistica',
                       style: TextStyle(
                         fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 40,
+        ),
+        const Center(
+          child: Text(
+            'Invetario de Hidrocarburos',
+            style: TextStyle(
+              color: Color.fromARGB(255, 238, 183, 19),
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 0.1),
+          width: double.infinity,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const OrganizationSelectionScreen(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.lightGreen.shade700,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 13.0,
+                    vertical: 15.0,
+                  ),
+                ),
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.local_gas_station,
+                      color: Colors.white,
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      ' Consumo ',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ConsumoTable(),
+                      ));
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.lightGreen.shade700,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 13.0,
+                    vertical: 15.0,
+                  ),
+                ),
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.list_alt,
+                      color: Colors.white,
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      ' Registros ',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const ConsumoOrganizationSelectionScreen(),
+                      ));
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.lightGreen.shade700,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 13.0,
+                    vertical: 15.0,
+                  ),
+                ),
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.factory,
+                      color: Colors.white,
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Organización',
+                      style: TextStyle(
+                        fontSize: 14,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),

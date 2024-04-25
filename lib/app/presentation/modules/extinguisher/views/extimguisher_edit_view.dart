@@ -12,9 +12,9 @@ import '../../../../data/services/remote/token_manager.dart';
 
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
-import '../../../global/widgets/custom_drawer.dart';
-import '../../risk/views/risk_screm_view.dart';
+
 import '../sources/extimguisher_table.dart';
+import 'extimguisher_table_view.dart';
 
 class ExtimguisherEditScreen extends StatefulWidget {
   const ExtimguisherEditScreen(
@@ -73,9 +73,7 @@ class ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const IperTable(
-                          initialCompany: '',
-                        ),
+                        builder: (context) => const ExtimguishersScreen(),
                       ));
                 },
                 child: const Text('OK'),
@@ -103,10 +101,9 @@ class ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
   Widget build(BuildContext context) {
     double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
-      drawer: const CustomDrawer(),
       appBar: CustomAppBar(
         titleWidget: Text(
-          'Control de Extintores',
+          'Actualizar',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: const Color.fromARGB(255, 238, 183, 19),

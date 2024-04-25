@@ -8,7 +8,7 @@ import 'package:fl_chart/fl_chart.dart';
 
 import '../../../global/utils/caculate_font_sise.dart';
 import '../sources/extintor_data_graphs.dart';
-import 'extimguisher_Empresa_Selection_view.dart';
+import 'extimguisher_organization_selection_chart_view.dart';
 
 class ExtintorCharts extends StatefulWidget {
   const ExtintorCharts({super.key, required this.selectedCompany});
@@ -204,8 +204,7 @@ class ExtintorChartsState extends State<ExtintorCharts> {
     final selectedCompany = await Navigator.push<String>(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            EmpresaSelectionScreen(initialCompany: _selectedCompany),
+        builder: (context) => const EmpresaSelectionScreen(),
       ),
     );
     if (selectedCompany != null) {

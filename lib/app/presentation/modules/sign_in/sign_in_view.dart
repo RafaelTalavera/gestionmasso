@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../../../main.dart';
 import '../home/views/home_view.dart';
+import '../user/forgot_password_page.dart';
 import '../user/user_create_views.dart';
 
 class SignInView extends StatefulWidget {
@@ -133,7 +134,36 @@ class _SignInViewState extends State<SignInView> {
                           fontSize: calculateTitleFontSize(context),
                         ),
                       ),
-                    )
+                    ),
+                    const SizedBox(height: 10), // Espacio adicional
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Olvidaste tu contraseña?',
+                          style: TextStyle(
+                            color: Colors.blue,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const ForgotPasswordPage(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            'Recupérala aquí',
+                            style: TextStyle(
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

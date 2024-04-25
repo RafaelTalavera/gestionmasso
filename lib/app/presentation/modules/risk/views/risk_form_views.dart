@@ -10,13 +10,19 @@ import 'dart:convert';
 import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
-import '../../../global/widgets/custom_drawer.dart';
 import '../../home/views/home_view.dart';
-import 'risk_screm_view.dart';
-import '../sources/list_risk.dart';
+import 'risk_table_screm_view.dart';
+import '../sources/risk_list_dropdown.dart';
 
 class RiskPage extends StatefulWidget {
-  const RiskPage({super.key, required String initialCompany});
+  const RiskPage({
+    super.key,
+    required String initialCompany,
+    required this.id,
+    required this.name,
+  });
+  final String id;
+  final String name;
 
   @override
   State<RiskPage> createState() => _RiskPageState();
@@ -75,9 +81,7 @@ class _RiskPageState extends State<RiskPage> {
           _currentIndexGravedad);
       formData['clasificaMC'] = getWrappedButtonValue(
           ListDropdownRisk.clasificaMC, _currentIndexClasificaMC);
-
-      print('JSON enviado a la API:');
-      print(jsonEncode(formData));
+      formData['organizationId'] = widget.id;
 
       final responsePost = await http.post(
         Uri.parse(apiUrl),
@@ -122,10 +126,6 @@ class _RiskPageState extends State<RiskPage> {
           },
         );
       } else {
-        print(
-          'Error al enviar la información. Código de respuesta: ${responsePost.statusCode}',
-        );
-
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -143,7 +143,6 @@ class _RiskPageState extends State<RiskPage> {
     double fontSize = Utils.calculateTitleFontSize(context);
 
     return Scaffold(
-      drawer: const CustomDrawer(),
       appBar: CustomAppBar(
         titleWidget: Text(
           'Relevamiento Riesgos',
@@ -168,7 +167,7 @@ class _RiskPageState extends State<RiskPage> {
                   ),
                   Center(
                     child: SizedBox(
-                      width: availableWidth * 0.9,
+                      width: availableWidth * 0.89,
                       child: FormBuilderDateTimePicker(
                         name: 'date',
                         inputType: InputType.date,
@@ -193,9 +192,11 @@ class _RiskPageState extends State<RiskPage> {
                 ],
               ),
               SizedBox(
-                width: 350,
+                width: availableWidth * 0.89,
                 child: FormBuilderTextField(
-                  name: 'organization',
+                  name: 'nameOrganization',
+                  initialValue: widget.name,
+                  readOnly: true,
                   decoration: const InputDecoration(
                     labelText: 'Nombre de la organización',
                     labelStyle: TextStyle(color: Colors.grey),
@@ -215,7 +216,7 @@ class _RiskPageState extends State<RiskPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: 350,
+                    width: availableWidth * 0.89,
                     child: DropdownButtonFormField<String>(
                       value: _currentIndexArea == -1
                           ? null
@@ -258,7 +259,7 @@ class _RiskPageState extends State<RiskPage> {
                     height: 20,
                   ),
                   SizedBox(
-                    width: 350,
+                    width: availableWidth * 0.89,
                     child: DropdownButtonFormField<String>(
                       value: _currentIndexPuesto == -1
                           ? null
@@ -306,7 +307,7 @@ class _RiskPageState extends State<RiskPage> {
                     height: 20,
                   ),
                   SizedBox(
-                    width: 350,
+                    width: availableWidth * 0.89,
                     child: FormBuilderTextField(
                       name: 'tarea',
                       decoration: const InputDecoration(
@@ -325,7 +326,7 @@ class _RiskPageState extends State<RiskPage> {
                     height: 20,
                   ),
                   SizedBox(
-                    width: 350,
+                    width: availableWidth * 0.89,
                     child: DropdownButtonFormField<String>(
                       value: _currentIndexConsecuencia == -1
                           ? null
@@ -369,7 +370,7 @@ class _RiskPageState extends State<RiskPage> {
                     height: 20,
                   ),
                   SizedBox(
-                    width: 350,
+                    width: availableWidth * 0.89,
                     child: DropdownButtonFormField<String>(
                       value: _currentIndexFuente == -1
                           ? null
@@ -412,7 +413,7 @@ class _RiskPageState extends State<RiskPage> {
                     height: 20,
                   ),
                   SizedBox(
-                    width: 350,
+                    width: availableWidth * 0.89,
                     child: DropdownButtonFormField<String>(
                       value: _currentIndexIncidentesPotenciales == -1
                           ? null
@@ -473,7 +474,7 @@ class _RiskPageState extends State<RiskPage> {
                   ),
                   Center(
                     child: SizedBox(
-                      width: 400,
+                      width: availableWidth * 0.89,
                       child: Wrap(
                         alignment: WrapAlignment.center,
                         spacing: 10.0,
@@ -529,7 +530,7 @@ class _RiskPageState extends State<RiskPage> {
                   ),
                   Center(
                     child: SizedBox(
-                      width: 400,
+                      width: availableWidth * 0.89,
                       child: Wrap(
                         alignment: WrapAlignment.center,
                         spacing: 10.0,
@@ -588,7 +589,7 @@ class _RiskPageState extends State<RiskPage> {
                   ),
                   Center(
                     child: SizedBox(
-                      width: 400,
+                      width: availableWidth * 0.89,
                       child: Wrap(
                         alignment: WrapAlignment.center,
                         spacing: 10.0,
@@ -644,7 +645,7 @@ class _RiskPageState extends State<RiskPage> {
                   ),
                   Center(
                     child: SizedBox(
-                      width: 400,
+                      width: availableWidth * 0.89,
                       child: Wrap(
                         alignment: WrapAlignment.center,
                         spacing: 10.0,
@@ -685,7 +686,7 @@ class _RiskPageState extends State<RiskPage> {
                     height: 20,
                   ),
                   SizedBox(
-                    width: 350,
+                    width: availableWidth * 0.89,
                     child: Container(
                       alignment: Alignment.centerRight,
                       child: FormBuilderTextField(

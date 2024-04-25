@@ -10,13 +10,18 @@ import 'dart:convert';
 import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
-import '../../../global/widgets/custom_drawer.dart';
 import '../../home/views/home_view.dart';
 import '../sources/List_extimguisher.dart';
 import 'extimguisher_table_view.dart';
 
 class ExtinguerPage extends StatefulWidget {
-  const ExtinguerPage({Key? key});
+  const ExtinguerPage({
+    super.key,
+    required this.id,
+    required this.name,
+  });
+  final String id;
+  final String name;
 
   @override
   State<ExtinguerPage> createState() => _ExtPageState();
@@ -43,9 +48,7 @@ class _ExtPageState extends State<ExtinguerPage> {
       formData['signaling'] = signaling;
       formData['presion'] = presion;
       formData['enabled'] = true;
-
-      print('JSON enviado a la API:');
-      print(jsonEncode(formData));
+      formData['organizationId'] = widget.id;
 
       final responsePost = await http.post(
         Uri.parse(apiUrl),
@@ -96,10 +99,6 @@ class _ExtPageState extends State<ExtinguerPage> {
           },
         );
       } else {
-        print(
-          'Error al enviar la información. Código de respuesta: ${responsePost.statusCode}',
-        );
-
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -115,8 +114,7 @@ class _ExtPageState extends State<ExtinguerPage> {
   Widget build(BuildContext context) {
     double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
-      drawer: const CustomDrawer(),
-      appBar:  CustomAppBar(
+      appBar: CustomAppBar(
         titleWidget: Text(
           'Carga de Extintores',
           style: TextStyle(
@@ -202,7 +200,9 @@ class _ExtPageState extends State<ExtinguerPage> {
                   height: 20,
                 ),
                 FormBuilderTextField(
-                  name: 'empresa',
+                  name: 'nameOrganization',
+                  initialValue: widget.name,
+                  readOnly: true,
                   decoration: const InputDecoration(
                     labelText: 'Empresa',
                     border: OutlineInputBorder(),
@@ -296,7 +296,7 @@ class _ExtPageState extends State<ExtinguerPage> {
                         color: Colors.black,
                       ),
                     ),
-                    const SizedBox(width: 175),
+                    const SizedBox(width: 165),
                     AdvancedSwitch(
                       activeColor: Colors.green,
                       inactiveColor: Colors.red,
@@ -332,7 +332,7 @@ class _ExtPageState extends State<ExtinguerPage> {
                         color: Colors.black,
                       ),
                     ),
-                    const SizedBox(width: 130),
+                    const SizedBox(width: 120),
                     AdvancedSwitch(
                       activeColor: Colors.green,
                       inactiveColor: Colors.red,
@@ -368,7 +368,7 @@ class _ExtPageState extends State<ExtinguerPage> {
                         color: Colors.black,
                       ),
                     ),
-                    const SizedBox(width: 174),
+                    const SizedBox(width: 164),
                     AdvancedSwitch(
                       activeColor: Colors.green,
                       inactiveColor: Colors.red,

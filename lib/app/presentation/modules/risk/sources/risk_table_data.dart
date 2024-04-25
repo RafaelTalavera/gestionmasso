@@ -1,7 +1,7 @@
 class Risk {
   Risk(
       {required this.id,
-      required this.organization,
+      required this.nameOrganization,
       required this.puesto,
       required this.area,
       required this.tarea,
@@ -21,7 +21,7 @@ class Risk {
   factory Risk.fromJson(Map<String, dynamic> json) {
     return Risk(
       id: json['id'] ?? '',
-      organization: json['organization'] ?? '',
+      nameOrganization: json['nameOrganization'] ?? '',
       puesto: json['puesto'] ?? '',
       area: json['area'] ?? '',
       tarea: json['tarea'] ?? '',
@@ -43,7 +43,7 @@ class Risk {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'organization': organization,
+      'nameOrganization': nameOrganization,
       'puesto': puesto,
       'area': area,
       'tarea': tarea,
@@ -64,7 +64,7 @@ class Risk {
 
   Risk copyWith({
     String? id,
-    String? organization,
+    String? nameOrganization,
     String? puesto,
     String? area,
     String? tarea,
@@ -83,7 +83,7 @@ class Risk {
   }) {
     return Risk(
       id: id ?? this.id,
-      organization: organization ?? this.organization,
+      nameOrganization: nameOrganization ?? this.nameOrganization,
       puesto: puesto ?? this.puesto,
       area: area ?? this.area,
       tarea: tarea ?? this.tarea,
@@ -104,7 +104,7 @@ class Risk {
   }
 
   final String id;
-  final String organization;
+  final String nameOrganization;
   final String puesto;
   final String area;
   final String tarea;

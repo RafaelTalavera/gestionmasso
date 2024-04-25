@@ -11,7 +11,6 @@ import 'dart:convert';
 import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
-import '../../../global/widgets/custom_drawer.dart';
 import '../../home/views/home_view.dart';
 import '../sources/list_lai_dropdown.dart';
 import 'lai_table_view.dart';
@@ -19,7 +18,11 @@ import 'lai_table_view.dart';
 class LaiFormPage extends StatefulWidget {
   const LaiFormPage({
     super.key,
+    required this.id,
+    required this.name,
   });
+  final String id;
+  final String name;
 
   @override
   State<LaiFormPage> createState() => _LaiPageState();
@@ -79,6 +82,8 @@ class _LaiPageState extends State<LaiFormPage> {
       formData['stateHolder'] = stateHolder;
       formData['legislation'] = legislation;
 
+      formData['organizationId'] = widget.id;
+
       final responsePost = await http.post(
         Uri.parse(apiUrl),
         headers: {
@@ -110,7 +115,7 @@ class _LaiPageState extends State<LaiFormPage> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const LaiScrem(
+                          builder: (context) => const LaiScreen(
                                 initialCompany: '',
                               )),
                     );
@@ -141,7 +146,6 @@ class _LaiPageState extends State<LaiFormPage> {
   Widget build(BuildContext context) {
     double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
-      drawer: const CustomDrawer(),
       appBar: CustomAppBar(
         titleWidget: Text(
           'Aspectos e impactos',
@@ -185,7 +189,9 @@ class _LaiPageState extends State<LaiFormPage> {
                   SizedBox(
                     width: 400,
                     child: FormBuilderTextField(
-                      name: 'organization',
+                      name: 'nameOrganization',
+                      initialValue: widget.name,
+                      readOnly: true,
                       decoration: const InputDecoration(
                         labelText: 'Escriba aquí rl nombre de la organización',
                         labelStyle: TextStyle(color: Colors.grey),

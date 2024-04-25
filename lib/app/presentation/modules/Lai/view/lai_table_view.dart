@@ -1,24 +1,24 @@
-// ignore_for_file: unnecessary_null_comparison
-
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
-import '../../../global/widgets/custom_drawer.dart';
 import '../sources/lai_data_out.dart';
+import 'package:http/http.dart' as http;
+
 import 'lai_edit_view.dart';
 
-class LaiScrem extends StatefulWidget {
-  const LaiScrem({super.key, required String initialCompany});
+class LaiScreen extends StatefulWidget {
+  const LaiScreen({super.key, required String initialCompany});
 
   @override
   LaiTableState createState() => LaiTableState();
 }
 
-class LaiTableState extends State<LaiScrem> {
+class LaiTableState extends State<LaiScreen> {
   late List<Lai> lais;
   String? filtroMeaningfulness;
   String? filtroCycle;
@@ -48,13 +48,20 @@ class LaiTableState extends State<LaiScrem> {
   }
 
   Future<void> fetchData() async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8080/api/lai'));
+    String? token = await TokenManager.getToken();
+    final url = Uri.parse('http://10.0.2.2:8080/api/lai/list');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        // Otros encabezados si es necesario
+      },
+    );
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData =
           json.decode(utf8.decode(response.bodyBytes));
-      // Imprimir el JSON decodificado
-      print(jsonData);
 
       lais = jsonData.map((json) => Lai.fromJson(json)).toList();
       setState(() {});
@@ -65,8 +72,8 @@ class LaiTableState extends State<LaiScrem> {
 
   List<Lai> get listaFiltrada {
     return lais.where((lai) {
-      bool cumpleFiltroOrganizacion =
-          filtroOrganization == null || lai.organization == filtroOrganization;
+      bool cumpleFiltroOrganizacion = filtroOrganization == null ||
+          lai.nameOrganization == filtroOrganization;
       bool cumpleFiltroEvaluacion = filtroMeaningfulness == null ||
           lai.meaningfulness == filtroMeaningfulness;
       bool cumpleFiltroCycle = filtroCycle == null || lai.cycle == filtroCycle;
@@ -83,7 +90,6 @@ class LaiTableState extends State<LaiScrem> {
   Widget build(BuildContext context) {
     double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
-      drawer: const CustomDrawer(),
       appBar: CustomAppBar(
         titleWidget: Text(
           'Matriz LAI',
@@ -94,6 +100,7 @@ class LaiTableState extends State<LaiScrem> {
           ),
         ),
       ),
+      // ignore: unnecessary_null_comparison
       body: lais == null
           ? const Center(child: CircularProgressIndicator())
           : Column(
@@ -235,7 +242,7 @@ class LaiTableState extends State<LaiScrem> {
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
-                                text: listaFiltrada[index].organization,
+                                text: listaFiltrada[index].nameOrganization,
                               ),
                             ],
                           ),
@@ -527,7 +534,7 @@ class LaiTableState extends State<LaiScrem> {
           valoresUnicos.add(lai.meaningfulness);
           break;
         case 'organization':
-          valoresUnicos.add(lai.organization);
+          valoresUnicos.add(lai.nameOrganization);
           break;
       }
     }

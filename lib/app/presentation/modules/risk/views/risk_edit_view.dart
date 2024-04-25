@@ -12,10 +12,9 @@ import 'package:http/http.dart' as http;
 import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
-import '../../../global/widgets/custom_drawer.dart';
-import '../sources/iper_table.dart';
-import '../sources/list_risk.dart';
-import 'risk_screm_view.dart';
+import '../sources/risk_table_data.dart';
+import '../sources/risk_list_dropdown.dart';
+import 'risk_table_screm_view.dart';
 
 class RiskEditScreen extends StatefulWidget {
   const RiskEditScreen({super.key, required this.risk, required String iperId});
@@ -44,9 +43,6 @@ class RiskEditScreenState extends State<RiskEditScreen> {
 
     String? token = await TokenManager.getToken();
 
-    print('JSON enviado a la API:');
-    print(jsonEncode(newRisk));
-
     final responsePost = await http.put(
       Uri.parse('$apiUrl/${widget.risk.id}/edit'),
       headers: {
@@ -62,9 +58,9 @@ class RiskEditScreenState extends State<RiskEditScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Extintor actualizado correctamente'),
+            title: const Text('IPER actualizado correctamente'),
             content: const Text(
-                'La información del extintor se actualizó correctamente.'),
+                'La información del IPER se actualizó correctamente.'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -84,10 +80,6 @@ class RiskEditScreenState extends State<RiskEditScreen> {
         },
       );
     } else {
-      print(
-        'Error al enviar la información. Código de respuesta: ${responsePost.statusCode}',
-      );
-
       scaffoldMessenger.showSnackBar(
         const SnackBar(
           content: Text(
@@ -102,10 +94,9 @@ class RiskEditScreenState extends State<RiskEditScreen> {
   Widget build(BuildContext context) {
     double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
-      drawer: const CustomDrawer(),
       appBar: CustomAppBar(
         titleWidget: Text(
-          'Revision IPER',
+          'Editar IPER',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: const Color.fromARGB(255, 238, 183, 19),
@@ -133,12 +124,13 @@ class RiskEditScreenState extends State<RiskEditScreen> {
             ),
             const SizedBox(height: 20),
             TextFormField(
-              initialValue: widget.risk.organization,
+              initialValue: widget.risk.nameOrganization,
               decoration: const InputDecoration(
                 labelText: 'Nombre de la organización',
                 border: OutlineInputBorder(),
               ),
-              enabled: false,
+              enabled:
+                  false, // Este campo está deshabilitado y no se puede editar
             ),
             const SizedBox(height: 20),
             TextFormField(
@@ -316,6 +308,11 @@ class RiskEditScreenState extends State<RiskEditScreen> {
                 border: OutlineInputBorder(),
               ),
               enabled: true,
+              onChanged: (newValue) {
+                setState(() {
+                  newRisk = newRisk.copyWith(medidaControl: newValue);
+                });
+              },
             ),
             const SizedBox(
               height: 20,
@@ -330,6 +327,8 @@ class RiskEditScreenState extends State<RiskEditScreen> {
                 labelText: 'Fecha de Revisión',
                 border: OutlineInputBorder(),
               ),
+              initialValue: DateTime
+                  .now(), // Establecer el valor inicial como la fecha de hoy
               enabled: true,
               validator: FormBuilderValidators.required(
                 errorText: 'La fecha de revisión no puede estar vacía',

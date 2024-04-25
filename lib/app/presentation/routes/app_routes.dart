@@ -15,7 +15,7 @@ Map<String, Widget Function(BuildContext)> get appRoutes {
     Routes.formularioAccid: (context) => const FormularioAccid(),
     Routes.table: (context) => Table(),
     Routes.riesgo: (context) => const RiskPage(
-          initialCompany: '',
+          initialCompany: '', id: '', name: '',
         ),
   };
 }

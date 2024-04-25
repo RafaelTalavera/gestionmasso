@@ -72,7 +72,7 @@ class LaiEditScreenState extends State<LaiEditScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const LaiScrem(
+                      builder: (context) => const LaiScreen(
                         initialCompany: '',
                       ),
                     ),

@@ -4,13 +4,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import '../../../global/utils/caculate_font_sise.dart';
-import '../../../global/widgets/custom_drawer.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:fl_chart/fl_chart.dart';
 
 import '../sources/extintor_data_graphs.dart';
-import 'extimguisher_Empresa_Selection_view.dart';
+import 'extimguisher_organization_selection_chart_view.dart';
 
 class ExtintorChartsEnabled extends StatefulWidget {
   const ExtintorChartsEnabled({super.key, required this.selectedCompany});
@@ -35,7 +34,6 @@ class ExtintorChartsState extends State<ExtintorChartsEnabled> {
   Widget build(BuildContext context) {
     double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
-      drawer: const CustomDrawer(),
       appBar: AppBar(
         title: Text(
           'Gráficos de Extintores',
@@ -197,8 +195,7 @@ class ExtintorChartsState extends State<ExtintorChartsEnabled> {
     final selectedCompany = await Navigator.push<String>(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            EmpresaSelectionScreen(initialCompany: _selectedCompany),
+        builder: (context) => const EmpresaSelectionScreen(),
       ),
     );
     if (selectedCompany != null) {

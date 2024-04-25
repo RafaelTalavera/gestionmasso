@@ -20,7 +20,10 @@ import 'package:flutter/material.dart'
 import '../../modules/home/views/home_view.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({super.key, required this.titleWidget});
+  const CustomAppBar({
+    super.key,
+    required this.titleWidget,
+  });
   final Widget titleWidget;
 
   @override

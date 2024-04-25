@@ -7,6 +7,7 @@ import '../../../../../main.dart';
 
 import '../../../global/widgets/custom_drawer.dart';
 import '../../sign_in/sign_in_view.dart';
+import '../sources/build_configurations_module.dart';
 import '../sources/build_environment_module.dart';
 import '../sources/build_safety_module.dart';
 
@@ -48,26 +49,29 @@ class MyHomePageState extends State<MyHomePage> {
     TabItem(
       Icons.warning,
       "Seguridad",
-      const Color.fromARGB(255, 198, 197, 196),
-      labelStyle: const TextStyle(
-        color: Color.fromARGB(255, 182, 33, 7),
-        fontWeight: FontWeight.normal,
-      ),
-    ),
-    TabItem(
-      CupertinoIcons.arrow_3_trianglepath,
-      "Ambiente",
-      Colors.teal.shade100,
+      Colors.teal.shade50,
       labelStyle: const TextStyle(
         color: Colors.green,
         fontWeight: FontWeight.bold,
       ),
     ),
     TabItem(
-      CupertinoIcons.chart_bar_fill,
-      "Reports",
-      Colors.red,
-      circleStrokeColor: Colors.black,
+      CupertinoIcons.leaf_arrow_circlepath,
+      "Ambiente",
+      Colors.teal.shade50,
+      labelStyle: const TextStyle(
+        color: Colors.green,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    TabItem(
+      CupertinoIcons.gear,
+      "Configuración",
+      Colors.teal.shade50,
+      labelStyle: const TextStyle(
+        color: Colors.green,
+        fontWeight: FontWeight.bold,
+      ),
     ),
     TabItem(
       Icons.notifications,
@@ -136,8 +140,8 @@ class MyHomePageState extends State<MyHomePage> {
         return buildEnviromentModule(context, selectedColor);
 
       case 2:
-        slogan = "Receive, Review, Rip";
-        break;
+        return ConfigurationModule(selectedColor: selectedColor);
+
       case 3:
         slogan = "Noise, Panic, Ignore";
         break;

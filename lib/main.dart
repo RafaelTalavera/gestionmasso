@@ -18,7 +18,7 @@ void main() {
       authenticationRepository: AuthenticationRepositoryImpl(
         const FlutterSecureStorage(),
       ),
-      autoOpenKeyboard: true, // Agregar la variable global aquí
+      autoOpenKeyboard: true, 
       child: const MyApp(),
     ),
   );

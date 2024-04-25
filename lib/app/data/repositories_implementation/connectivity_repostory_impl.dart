@@ -4,10 +4,10 @@ import '../services/remote/internet_checker.dart';
 import '../../domain/repositories/connectivity_repository.dart';
 
 class ConnectivityRepositoryImpl implements ConnetivityRepository {
-  final Connectivity _connectivity;
-  final InternetChecker _internetChecker;
 
   ConnectivityRepositoryImpl(this._connectivity, this._internetChecker);
+  final Connectivity _connectivity;
+  final InternetChecker _internetChecker;
 
   @override
   Future<bool> get hasInternet async {

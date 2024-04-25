@@ -83,7 +83,7 @@ class ListDropdownLai {
   static List<Map<String, dynamic>> tipo = [
     {'label': 'Rutinario', 'value': 'Rutinario'},
     {'label': 'No rutinario', 'value': 'No rutinario'},
-    {'label': 'Emergncia', 'value': 'Emergencia'}
+    {'label': 'Emergencia', 'value': 'Emergencia'}
   ];
 
   static List<Map<String, String>> frequency = [

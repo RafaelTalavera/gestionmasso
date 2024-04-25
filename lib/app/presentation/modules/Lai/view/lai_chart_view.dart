@@ -13,27 +13,27 @@ import 'lai_select_area.dart';
 
 class LaiCharts extends StatefulWidget {
   const LaiCharts({
-    Key? key,
-    required this.selectedCompany,
+    super.key,
+    required this.nameOrganization,
     required this.selectedUrl,
     required this.selectedArea,
-  }) : super(key: key);
-  final String selectedCompany;
+  });
+  final String nameOrganization;
   final String selectedUrl;
   final String? selectedArea;
 
   @override
-  _LaiChartsState createState() => _LaiChartsState();
+  LaiChartsState createState() => LaiChartsState();
 }
 
-class _LaiChartsState extends State<LaiCharts> {
+class LaiChartsState extends State<LaiCharts> {
   late List<Lai> _laiList = [];
   late String _selectedArea;
 
   @override
   void initState() {
     super.initState();
-    _fetchData(widget.selectedCompany, widget.selectedArea ?? '');
+    _fetchData(widget.nameOrganization, widget.selectedArea ?? '');
   }
 
   @override
@@ -232,14 +232,14 @@ class _LaiChartsState extends State<LaiCharts> {
       String selectedOrganization, String? selectedArea) async {
     final response = await http.get(
       Uri.parse(
-          'http://10.0.2.2:8080/api/risk/countEvaluacion?organization=$selectedOrganization&area=$selectedArea'),
+          'http://10.0.2.2:8080/api/lai/countMeaningfulness?nameOrganization=$selectedOrganization&area=$selectedArea'),
     );
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonData = json.decode(response.body);
-      print('JSON recibido: $jsonData');
 
       if (jsonData.isEmpty) {
         // Mostrar el diálogo
+        // ignore: use_build_context_synchronously
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -274,7 +274,7 @@ class _LaiChartsState extends State<LaiCharts> {
 
         // Crear instancias de RiskData y agregarlas a la lista
         laiDataList.add(LaiData(
-          organization: key.split(" - ")[0],
+          nameOrganization: key.split(" - ")[0],
           area: key.split(" - ")[1],
           aceptable: aceptable,
           adecuado: adecuado,
@@ -318,7 +318,7 @@ class _LaiChartsState extends State<LaiCharts> {
       context,
       MaterialPageRoute(
         builder: (context) => const LaiAreaSelectionScreen(
-          organization: '',
+          nameOrganization: '',
         ),
       ),
     );
@@ -329,7 +329,7 @@ class _LaiChartsState extends State<LaiCharts> {
           context,
           MaterialPageRoute(
             builder: (context) => LaiCharts(
-              selectedCompany:
+              nameOrganization:
                   selectedOrganization, // Aquí proporciona un valor para initialCompany
               selectedUrl: '',
               selectedArea: _selectedArea,
@@ -337,9 +337,7 @@ class _LaiChartsState extends State<LaiCharts> {
           ),
         );
         _fetchData(selectedOrganization, _selectedArea);
-      } else {
-        print('Error: selectedArea es nulo.');
-      }
+      } else {}
     }
   }
 }

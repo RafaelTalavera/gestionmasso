@@ -50,6 +50,8 @@ dependencies:
   flutter_advanced_switch: ^3.1.0
   pretty_qr_code: ^3.3.0
   fl_chart: ^0.66.2
+  mailer: ^6.1.0
+  graphic: ^2.2.1
 
 
 dev_dependencies:

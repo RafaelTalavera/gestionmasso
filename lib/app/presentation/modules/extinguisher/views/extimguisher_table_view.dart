@@ -5,9 +5,9 @@ import 'package:pretty_qr_code/pretty_qr_code.dart';
 
 import 'dart:convert';
 
+import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
-import '../../../global/widgets/custom_drawer.dart';
 import '../sources/extimguisher_table.dart';
 import 'extimguisher_edit_view.dart';
 
@@ -34,9 +34,17 @@ class ExtimguishersScreenState extends State<ExtimguishersScreen> {
   }
 
   Future<void> fetchData() async {
+    String? token = await TokenManager.getToken();
+
     try {
-      final response =
-          await http.get(Uri.parse('http://10.0.2.2:8080/api/extinguishers'));
+      final url = Uri.parse('http://10.0.2.2:8080/api/extinguishers/list');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonData =
@@ -70,7 +78,6 @@ class ExtimguishersScreenState extends State<ExtimguishersScreen> {
   Widget build(BuildContext context) {
     double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
-      drawer: const CustomDrawer(),
       appBar: CustomAppBar(
         titleWidget: Text(
           'Control de Extintores',
@@ -302,8 +309,7 @@ class ExtimguishersScreenState extends State<ExtimguishersScreen> {
                                     extinguisher.enabled
                                         ? 'Activar'
                                         : 'Desactivar',
-                                    style: const TextStyle(
-                                        color: Colors.white), // Texto en blanco
+                                    style: const TextStyle(color: Colors.white),
                                   ),
                                 ),
                                 const SizedBox(height: 10),
@@ -317,8 +323,7 @@ class ExtimguishersScreenState extends State<ExtimguishersScreen> {
                                           builder: (context) =>
                                               ExtimguisherEditScreen(
                                             extinguisherId: extinguisher.id,
-                                            extinguisher:
-                                                extinguisher, // Pasar el objeto Extimguisher
+                                            extinguisher: extinguisher,
                                           ),
                                         ),
                                       );

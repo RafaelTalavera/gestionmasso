@@ -7,7 +7,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import '../sign_in/sign_in_view.dart';
 
 class CreateUser extends StatefulWidget {
-  const CreateUser({Key? key}) : super(key: key);
+  const CreateUser({super.key});
 
   @override
   State<CreateUser> createState() => _CreateUserState();
@@ -174,9 +174,15 @@ class _CreateUserState extends State<CreateUser> {
                         decoration: const InputDecoration(
                           labelText: 'Escriba aquí su email',
                         ),
-                        validator: FormBuilderValidators.required(
-                          errorText: 'El campo no puede estar vacío',
-                        ),
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                            errorText: 'El campo no puede estar vacío',
+                          ),
+                          FormBuilderValidators.email(
+                            errorText:
+                                'El formato del correo electrónico no es válido',
+                          ),
+                        ]),
                       ),
                       FormBuilderTextField(
                         name: 'phone',

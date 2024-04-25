@@ -6,6 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
 import '../sources/lai_data_graphs.dart';
@@ -26,7 +27,6 @@ class LaiCharts extends StatefulWidget {
 
 class _RiskChartsState extends State<LaiCharts> {
   late List<LaiData> _laiList = [];
-  late String _selectedCompany;
 
   @override
   void initState() {
@@ -226,15 +226,21 @@ class _RiskChartsState extends State<LaiCharts> {
   }
 
   Future<void> _fetchData(String? selectedCompany, String? selectedArea) async {
-    final String url =
-        'http://10.0.2.2:8080/api/lai/countMeaningfulness?organization=$selectedCompany&area=$selectedArea';
-    print('URL enviada: $url'); // Imprimir la URL
+    String? token = await TokenManager.getToken();
 
-    final response = await http.get(Uri.parse(url));
+    final url = Uri.parse(
+        'http://10.0.2.2:8080/api/lai/countMeaningfulness?nameOrganization=$selectedCompany&area=$selectedArea');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        // Otros encabezados si es necesario
+      },
+    );
     if (response.statusCode == 200) {
       final String responseBody = utf8.decode(response.bodyBytes);
       final Map<String, dynamic> jsonData = json.decode(responseBody);
-      print('JSON recibido: $jsonData');
 
       if (jsonData.isEmpty) {
         // Mostrar el diálogo
@@ -267,12 +273,10 @@ class _RiskChartsState extends State<LaiCharts> {
         int tolerable = value['Tolerable'] ?? 0;
         int inaceptable = value['Inaceptable'] ?? 0;
 
-        // Calcular el total sumando los valores de cada estado
         int total = aceptable + adecuado + tolerable + inaceptable;
 
-        // Crear instancias de RiskData y agregarlas a la lista
         laiDataList.add(LaiData(
-          organization: key.split(" - ")[0],
+          nameOrganization: key.split(" - ")[0],
           area: key.split(" - ")[1],
           aceptable: aceptable,
           adecuado: adecuado,
@@ -315,19 +319,18 @@ class _RiskChartsState extends State<LaiCharts> {
     final selectedCompany = await Navigator.push<String>(
       context,
       MaterialPageRoute(
-        builder: (context) => LaiScrem(initialCompany: _selectedCompany),
-      ),
+          builder: (context) => const LaiScreen(
+                initialCompany: '',
+              )),
     );
     if (selectedCompany != null) {
-      setState(() {
-        _selectedCompany = selectedCompany;
-      });
+      setState(() {});
 
       if (widget.selectedCompany != null && widget.selectedArea != null) {
         _fetchData(widget.selectedCompany, widget.selectedArea);
-      } else {
-        print('Error: selectedArea o selectedPosition es nulo.');
-      }
+      } else {}
     }
   }
 }
+
+class LaiScrem {}

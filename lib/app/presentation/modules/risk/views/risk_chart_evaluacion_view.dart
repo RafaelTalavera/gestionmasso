@@ -233,12 +233,11 @@ class _RiskChartsState extends State<RiskCharts> {
       String? selectedPosition) async {
     final response = await http.get(
       Uri.parse(
-          'http://10.0.2.2:8080/api/risk/countEvaluacion?organization=$selectedCompany&area=$selectedArea&puesto=$selectedPosition'),
+          'http://10.0.2.2:8080/api/risk/countEvaluacion?nameOrganization=$selectedCompany&area=$selectedArea&puesto=$selectedPosition'),
     );
     if (response.statusCode == 200) {
       final String responseBody = utf8.decode(response.bodyBytes);
       final Map<String, dynamic> jsonData = json.decode(responseBody);
-      print('JSON recibido: $jsonData');
 
       if (jsonData.isEmpty) {
         // Mostrar el diálogo
@@ -247,13 +246,13 @@ class _RiskChartsState extends State<RiskCharts> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('No hay datos para esta selección'),
-              content: Text('Seleccione una selección diferente.'),
+              content: const Text('Seleccione una selección diferente.'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context); // Cerrar el diálogo
                   },
-                  child: Text('Volver Atrás'),
+                  child: const Text('Volver Atrás'),
                 ),
               ],
             );
@@ -320,7 +319,11 @@ class _RiskChartsState extends State<RiskCharts> {
     final selectedCompany = await Navigator.push<String>(
       context,
       MaterialPageRoute(
-        builder: (context) => RiskPage(initialCompany: _selectedCompany),
+        builder: (context) => RiskPage(
+          initialCompany: _selectedCompany,
+          id: '',
+          name: '',
+        ),
       ),
     );
     if (selectedCompany != null) {
@@ -333,9 +336,7 @@ class _RiskChartsState extends State<RiskCharts> {
           widget.selectedPosition != null) {
         _fetchData(widget.selectedCompany, widget.selectedArea!,
             widget.selectedPosition!);
-      } else {
-        print('Error: selectedArea o selectedPosition es nulo.');
-      }
+      } else {}
     }
   }
 }

@@ -3,77 +3,116 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
-import '../../../global/widgets/custom_drawer.dart';
+import '../sources/accidents_table_data.dart';
 
-import '../sources/iper_table.dart';
-import 'risk_edit_view.dart';
-
-class IperTable extends StatefulWidget {
-  const IperTable({super.key, required String initialCompany});
+class AccidentsTable extends StatefulWidget {
+  const AccidentsTable({
+    super.key,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
   _IperTableState createState() => _IperTableState();
 }
 
-class _IperTableState extends State<IperTable> {
-  late List<Risk> risks;
-  String? filtroEvaluacion;
-  String? filtroPuesto;
+class _IperTableState extends State<AccidentsTable> {
+  late List<Accidents> accidents;
+  String? filtroAlta;
   String? filtroArea;
-  String? filtroOrganizacion;
-
-  Color getColorForEvaluacion(String evaluacion) {
-    switch (evaluacion.toLowerCase()) {
-      case 'aceptable':
-        return Colors.orange.shade50;
-      case 'adecuado':
-        return Colors.orange.shade50;
-      case 'tolerable':
-        return Colors.orange.shade100;
-      case 'inaceptable':
-        return Colors.orange.shade600;
-      default:
-        return Colors.white;
-    }
-  }
+  String? filtroPuesto;
+  String? filtroSeverity;
+  String? filtroNameOrganization;
 
   @override
   void initState() {
     super.initState();
-    risks = <Risk>[];
+    accidents = <Accidents>[];
     fetchData();
   }
 
   Future<void> fetchData() async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8080/api/risk'));
+    String? token = await TokenManager.getToken();
+
+    final url = Uri.parse('http://10.0.2.2:8080/api/accidents/list');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData =
           json.decode(utf8.decode(response.bodyBytes));
-      risks = jsonData.map((json) => Risk.fromJson(json)).toList();
+      accidents = jsonData.map((json) => Accidents.fromJson(json)).toList();
       setState(() {});
     } else {
       throw Exception('Error al cargar datos desde el backend');
     }
   }
 
-  List<Risk> get listaFiltrada {
-    return risks.where((risk) {
-      bool cumpleFiltroEvaluacion =
-          filtroEvaluacion == null || risk.evaluacion == filtroEvaluacion;
-      bool cumpleFiltroPuesto =
-          filtroPuesto == null || risk.puesto == filtroPuesto;
-      bool cumpleFiltroArea = filtroArea == null || risk.area == filtroArea;
-      bool cumpleFiltroOrganizacion =
-          filtroOrganizacion == null || risk.organization == filtroOrganizacion;
+  Future<void> _showDatePickerDialog(Accidents accident) async {
+    DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: accident.dateAlta ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+    );
+    if (selectedDate != null) {
+      setState(() {
+        accident.dateAlta = selectedDate;
+      });
+      await _updateAccidentDateAlta(accident.id, selectedDate);
+      await fetchData();
+    }
+  }
 
-      return cumpleFiltroEvaluacion &&
-          cumpleFiltroPuesto &&
+  Future<void> _updateAccidentDateAlta(
+      String accidentId, DateTime dateAlta) async {
+    String? token = await TokenManager.getToken();
+    final url =
+        Uri.parse('http://10.0.2.2:8080/api/accidents/$accidentId/dateAlta');
+
+    // Imprimir el URL antes de realizar la solicitud HTTP
+    print('URL: $url');
+    final response = await http.put(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'dateAlta': DateFormat('yyyy-MM-dd').format(dateAlta)}),
+    );
+    if (response.statusCode == 200) {
+      // Actualización exitosa
+    } else {
+      throw Exception('Error al actualizar la fecha de alta');
+    }
+  }
+
+  List<Accidents> get listaFiltrada {
+    return accidents.where((accidets) {
+      // ignore: unrelated_type_equality_checks
+      bool cumpleFiltroAlta = filtroAlta == null ||
+          (filtroAlta == 'Si' && accidets.alta) ||
+          (filtroAlta == 'No' && !accidets.alta);
+      bool cumpleFiltroArea = filtroArea == null || accidets.area == filtroArea;
+      bool cumpleFiltroPuesto =
+          filtroPuesto == null || accidets.puesto == filtroPuesto;
+      bool cumpleFiltroSeverity =
+          filtroSeverity == null || accidets.severity == filtroSeverity;
+      bool cumpleFiltroNameOrganization = filtroNameOrganization == null ||
+          accidets.nameOrganization == filtroNameOrganization;
+
+      return cumpleFiltroAlta &&
           cumpleFiltroArea &&
-          cumpleFiltroOrganizacion;
+          cumpleFiltroPuesto &&
+          cumpleFiltroSeverity &&
+          cumpleFiltroNameOrganization;
     }).toList();
   }
 
@@ -81,10 +120,9 @@ class _IperTableState extends State<IperTable> {
   Widget build(BuildContext context) {
     double fontSize = Utils.calculateTitleFontSize(context);
     return Scaffold(
-      drawer: const CustomDrawer(),
       appBar: CustomAppBar(
         titleWidget: Text(
-          'Matriz IPER',
+          'Listado de accidentes',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: const Color.fromARGB(255, 238, 183, 19),
@@ -93,7 +131,7 @@ class _IperTableState extends State<IperTable> {
         ),
       ),
       // ignore: unnecessary_null_comparison
-      body: risks == null
+      body: accidents == null
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
@@ -111,52 +149,50 @@ class _IperTableState extends State<IperTable> {
                   child: Center(
                     child: Card(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(5.0),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment
+                              .stretch, // Alinear los elementos al inicio
                           children: [
-                            Row(
-                              children: [
-                                const SizedBox(width: 20.0),
-                                Flexible(
-                                  child: DropdownButton<String>(
-                                    value: filtroEvaluacion,
-                                    hint: const Text('Evaluación'),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        filtroEvaluacion = newValue;
-                                      });
-                                    },
-                                    items: obtenerItemsFiltro('evaluacion'),
-                                  ),
-                                ),
-                                const SizedBox(width: 110.0),
-                                Flexible(
-                                  child: DropdownButton<String>(
-                                    value: filtroPuesto,
-                                    hint: const Text('Puesto'),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        filtroPuesto = newValue;
-                                      });
-                                    },
-                                    items: obtenerItemsFiltro('puesto'),
-                                  ),
-                                ),
-                              ],
-                            ),
                             DropdownButton<String>(
-                              value: filtroOrganizacion,
+                              value: filtroNameOrganization,
                               hint: const Text('Organización'),
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  filtroOrganizacion = newValue;
+                                  filtroNameOrganization = newValue;
                                 });
                               },
-                              items: obtenerItemsFiltro('organizacion'),
+                              items: obtenerItemsFiltro('nameOrganization'),
                             ),
+                            const SizedBox(
+                                height: 5.0), // Espacio entre los filtros
+                            DropdownButton<String>(
+                              value: filtroAlta,
+                              hint: const Text('¿Tiene el alta?'),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  filtroAlta = newValue;
+                                });
+                              },
+                              items: obtenerItemsFiltro('alta'),
+                            ),
+                            const SizedBox(
+                                height: 5.0), // Espacio entre los filtros
+                            DropdownButton<String>(
+                              value: filtroPuesto,
+                              hint: const Text('Puesto'),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  filtroPuesto = newValue;
+                                });
+                              },
+                              items: obtenerItemsFiltro('puesto'),
+                            ),
+                            const SizedBox(
+                                height: 5.0), // Espacio entre los filtros
                             DropdownButton<String>(
                               value: filtroArea,
-                              hint: const Text('Área'),
+                              hint: const Text('Area'),
                               onChanged: (String? newValue) {
                                 setState(() {
                                   filtroArea = newValue;
@@ -173,9 +209,11 @@ class _IperTableState extends State<IperTable> {
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      filtroEvaluacion = null;
-                      filtroPuesto = null;
+                      filtroAlta = null;
                       filtroArea = null;
+                      filtroPuesto = null;
+                      filtroSeverity = null;
+                      filtroNameOrganization = null;
                     });
                   },
                   child: const Text('Limpiar Filtros'),
@@ -186,23 +224,20 @@ class _IperTableState extends State<IperTable> {
                     itemBuilder: (context, index) {
                       return Card(
                         margin: const EdgeInsets.all(8.0),
-                        color: getColorForEvaluacion(
-                          listaFiltrada[index].evaluacion,
-                        ),
                         child: ListTile(
                           title: RichText(
                             text: TextSpan(
                               style: DefaultTextStyle.of(context).style,
                               children: [
                                 const TextSpan(
-                                  text: 'Evaluacion de riesgos: ',
+                                  text: 'Organización: ',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16.0,
                                   ),
                                 ),
                                 TextSpan(
-                                  text: listaFiltrada[index].evaluacion,
+                                  text: listaFiltrada[index].nameOrganization,
                                   style: const TextStyle(fontSize: 16.0),
                                 ),
                               ],
@@ -216,12 +251,12 @@ class _IperTableState extends State<IperTable> {
                                   style: DefaultTextStyle.of(context).style,
                                   children: [
                                     const TextSpan(
-                                      text: 'organization: ',
+                                      text: 'Área: ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),
                                     TextSpan(
-                                      text: listaFiltrada[index].organization,
+                                      text: listaFiltrada[index].area,
                                     ),
                                   ],
                                 ),
@@ -246,12 +281,12 @@ class _IperTableState extends State<IperTable> {
                                   style: DefaultTextStyle.of(context).style,
                                   children: [
                                     const TextSpan(
-                                      text: 'Área: ',
+                                      text: 'Clasificación: ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),
                                     TextSpan(
-                                      text: listaFiltrada[index].area,
+                                      text: listaFiltrada[index].severity,
                                     ),
                                   ],
                                 ),
@@ -261,28 +296,14 @@ class _IperTableState extends State<IperTable> {
                                   style: DefaultTextStyle.of(context).style,
                                   children: [
                                     const TextSpan(
-                                      text: 'Fuente: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    TextSpan(
-                                      text: listaFiltrada[index].fuente,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  style: DefaultTextStyle.of(context).style,
-                                  children: [
-                                    const TextSpan(
-                                      text: 'Potencial Incidente: ',
+                                      text: 'Dias Perdidos: ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),
                                     TextSpan(
                                       text: listaFiltrada[index]
-                                          .incidentesPotenciales,
+                                          .lostDay
+                                          .toString(),
                                     ),
                                   ],
                                 ),
@@ -292,12 +313,15 @@ class _IperTableState extends State<IperTable> {
                                   style: DefaultTextStyle.of(context).style,
                                   children: [
                                     const TextSpan(
-                                      text: 'Consecuencia: ',
+                                      text: 'Alta: ',
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     TextSpan(
-                                      text: listaFiltrada[index].consecuencia,
+                                      text: listaFiltrada[index].alta
+                                          ? 'Si'
+                                          : 'No',
                                     ),
                                   ],
                                 ),
@@ -307,74 +331,33 @@ class _IperTableState extends State<IperTable> {
                                   style: DefaultTextStyle.of(context).style,
                                   children: [
                                     const TextSpan(
-                                      text: 'Jerarquíadel control: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    TextSpan(
-                                      text: listaFiltrada[index].clasificaMC,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  style: DefaultTextStyle.of(context).style,
-                                  children: [
-                                    const TextSpan(
-                                      text: 'Medida de control: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    TextSpan(
-                                      text: listaFiltrada[index].medidaControl,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  style: DefaultTextStyle.of(context).style,
-                                  children: [
-                                    const TextSpan(
-                                      text: 'Tipo: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    TextSpan(
-                                      text: listaFiltrada[index].tipo,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  style: DefaultTextStyle.of(context).style,
-                                  children: [
-                                    const TextSpan(
-                                      text: 'Fecha del análisis: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    TextSpan(
-                                      text: DateFormat('yyyy-MM-dd')
-                                          .format(listaFiltrada[index].date),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  style: DefaultTextStyle.of(context).style,
-                                  children: [
-                                    const TextSpan(
-                                      text: 'Fecha de revalidación: ',
+                                      text: 'Fecha del accidente: ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),
                                     TextSpan(
                                       text: DateFormat('yyyy-MM-dd').format(
-                                          listaFiltrada[index].dateOfRevision),
+                                          listaFiltrada[index].dateEvent),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                  style: DefaultTextStyle.of(context).style,
+                                  children: [
+                                    const TextSpan(
+                                      text: 'Fecha de alta: ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: listaFiltrada[index].dateAlta !=
+                                              null
+                                          ? DateFormat('yyyy-MM-dd').format(
+                                              listaFiltrada[index].dateAlta!)
+                                          : 'Sin fecha de alta', // Puedes cambiar el texto para manejar el caso nulo
                                     ),
                                   ],
                                 ),
@@ -401,18 +384,8 @@ class _IperTableState extends State<IperTable> {
                                     padding: const EdgeInsets.all(5.0),
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                RiskEditScreen(
-                                              iperId: listaFiltrada[index]
-                                                  .id
-                                                  .toString(), // Convertir a String
-                                              risk: listaFiltrada[index],
-                                            ),
-                                          ),
-                                        );
+                                        _showDatePickerDialog(
+                                            listaFiltrada[index]);
                                       },
                                       style: ButtonStyle(
                                         backgroundColor:
@@ -424,7 +397,7 @@ class _IperTableState extends State<IperTable> {
                                           Colors.white,
                                         ),
                                       ),
-                                      child: const Text('Actualizar'),
+                                      child: const Text('Actualizar Alta'),
                                     ),
                                   ),
                                 ],
@@ -444,22 +417,23 @@ class _IperTableState extends State<IperTable> {
   List<DropdownMenuItem<String>> obtenerItemsFiltro(String tipoFiltro) {
     Set<String> valoresUnicos = {};
 
-    for (var risk in risks) {
+    for (var acc in accidents) {
       switch (tipoFiltro) {
+        case 'alta':
+          valoresUnicos.add(acc.alta ? 'Si' : 'No');
+          break;
         case 'area':
-          valoresUnicos.add(risk.area);
+          valoresUnicos.add(acc.area);
           break;
         case 'puesto':
-          valoresUnicos.add(risk.puesto);
+          valoresUnicos.add(acc.puesto);
           break;
-        case 'evaluacion':
-          valoresUnicos.add(risk.evaluacion);
+        case 'severity':
+          valoresUnicos.add(acc.severity);
           break;
-        case 'organizacion':
-          valoresUnicos.add(risk.organization);
+        case 'nameOrganization':
+          valoresUnicos.add(acc.nameOrganization);
           break;
-
-        // Puedes agregar más casos según los filtros que necesites
       }
     }
 

@@ -2,7 +2,7 @@ class Lai {
   Lai({
     required this.id,
     required this.date,
-    required this.organization,
+    required this.nameOrganization,
     required this.area,
     required this.tipo,
     required this.activity,
@@ -26,7 +26,7 @@ class Lai {
     return Lai(
       id: json['id'],
       date: DateTime.parse(json['date']),
-      organization: json['organization'],
+      nameOrganization: json['nameOrganization'],
       area: json['area'],
       tipo: json['tipo'],
       activity: json['activity'],
@@ -53,7 +53,7 @@ class Lai {
     return {
       'id': id,
       'date': date.toIso8601String(),
-      'organization': organization,
+      'nameOrganization': nameOrganization,
       'area': area,
       'tipo': tipo,
       'activity': activity,
@@ -77,7 +77,7 @@ class Lai {
   Lai copyWith({
     String? id,
     DateTime? date,
-    String? organization,
+    String? nameOrganization,
     String? area,
     String? tipo,
     String? activity,
@@ -99,7 +99,7 @@ class Lai {
     return Lai(
       id: id ?? this.id,
       date: date ?? this.date,
-      organization: organization ?? this.organization,
+      nameOrganization: nameOrganization ?? this.nameOrganization,
       area: area ?? this.area,
       tipo: tipo ?? this.tipo,
       activity: activity ?? this.activity,
@@ -123,7 +123,7 @@ class Lai {
   final String id; // Definir el campo 'id' como String
   final DateTime date;
   final String area;
-  final String organization;
+  final String nameOrganization;
   final String tipo;
   final String activity;
   final String aspect;

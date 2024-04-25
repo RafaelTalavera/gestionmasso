@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../modules/Lai/view/lai_form_view.dart';
+import '../../modules/Lai/view/lai_form_organization_select_view.dart';
 import '../../modules/Lai/view/lai_table_view.dart';
 
-import '../../modules/extinguisher/views/extimguisher_Empresa_Selection_view.dart';
+import '../../modules/extinguisher/views/extimguisher_organization_selection_chart_view.dart';
 import '../../modules/extinguisher/views/extimguisher_form_view.dart';
 import '../../modules/extinguisher/views/extimguisher_table_view.dart';
-import '../../modules/risk/views/risk_screm_view.dart';
+import '../../modules/risk/views/risk_table_screm_view.dart';
 
-import '../../modules/risk/views/risk_selec_organization.dart';
+import '../../modules/risk/views/risk_selec_organization_chart.dart';
 import '../../modules/risk/views/risk_form_views.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -120,6 +120,8 @@ class CustomDrawer extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => const RiskPage(
                         initialCompany: '',
+                        id: '',
+                        name: '',
                       ),
                     ),
                   );
@@ -149,7 +151,8 @@ class CustomDrawer extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => OrganizationSelectionScreen(),
+                        builder: (context) =>
+                            const OrganizationSelectionScreen(),
                       ));
                 },
               ),
@@ -180,7 +183,10 @@ class CustomDrawer extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ExtinguerPage(),
+                        builder: (context) => const ExtinguerPage(
+                          id: '',
+                          name: '',
+                        ),
                       ));
                 },
               ),
@@ -250,7 +256,8 @@ class CustomDrawer extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const LaiFormPage(),
+                      builder: (context) =>
+                          const LaiOrganizationSelectionScreen(),
                     ),
                   );
                 },
@@ -264,7 +271,7 @@ class CustomDrawer extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const LaiScrem(
+                      builder: (context) => const LaiScreen(
                         initialCompany: '',
                       ),
                     ),
@@ -302,7 +309,7 @@ class CustomDrawer extends StatelessWidget {
                 },
               ),
               ListTile(
-                title: const Text('Huella de Carbono'),
+                title: const Text('Invetario de Carbono'),
                 onTap: () {
                   // Aquí puedes definir la acción cuando se selecciona el segundo elemento del Drawer
                 },
