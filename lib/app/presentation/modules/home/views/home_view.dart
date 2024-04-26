@@ -7,7 +7,7 @@ import '../../../../../main.dart';
 
 import '../../../global/widgets/custom_drawer.dart';
 import '../../sign_in/sign_in_view.dart';
-import '../sources/build_configurations_module.dart';
+import '../sources/build_dicionary_module.dart';
 import '../sources/build_environment_module.dart';
 import '../sources/build_safety_module.dart';
 
@@ -65,8 +65,8 @@ class MyHomePageState extends State<MyHomePage> {
       ),
     ),
     TabItem(
-      CupertinoIcons.gear,
-      "Configuración",
+      CupertinoIcons.book_circle,
+      "Referencias",
       Colors.teal.shade50,
       labelStyle: const TextStyle(
         color: Colors.green,

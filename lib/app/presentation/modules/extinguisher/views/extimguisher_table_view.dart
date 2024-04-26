@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -418,8 +420,7 @@ class ExtimguishersScreenState extends State<ExtimguishersScreen> {
           DropdownButton<String>(
             value: value,
             onChanged: (String? newValue) {
-              print(
-                  'Nuevo valor seleccionado en onChanged: $newValue'); // Agregar print aquí
+              // Agregar print aquí
               onChanged(newValue);
             },
             items: items.map<DropdownMenuItem<String>>((String item) {
