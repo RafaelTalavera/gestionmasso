@@ -6,8 +6,9 @@ import 'package:flutter/cupertino.dart';
 import '../../../../../main.dart';
 
 import '../../../global/widgets/custom_drawer.dart';
+import '../../extinguisher/views/extimguisher_notification.dart';
 import '../../sign_in/sign_in_view.dart';
-import '../sources/build_dicionary_module.dart';
+import '../sources/build_configurations_module.dart';
 import '../sources/build_environment_module.dart';
 import '../sources/build_safety_module.dart';
 
@@ -65,8 +66,8 @@ class MyHomePageState extends State<MyHomePage> {
       ),
     ),
     TabItem(
-      CupertinoIcons.book_circle,
-      "Referencias",
+      CupertinoIcons.book,
+      "Referencia",
       Colors.teal.shade50,
       labelStyle: const TextStyle(
         color: Colors.green,
@@ -86,6 +87,21 @@ class MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _navigationController = CircularBottomNavigationController(selectedPos);
+
+    // Llamar a fetchDataAndNotify al iniciar la pantalla
+    fetchDataAndNotify();
+  }
+
+  Future<void> fetchDataAndNotify() async {
+    // Lógica para obtener datos y enviar notificaciones
+    // Crear una instancia de GlobalKey<NavigatorState>
+    final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+    // Crear una instancia de DataFetcher y pasar navigatorKey como argumento
+    DataFetcher dataFetcher = DataFetcher(navigatorKey);
+
+    // Llamar fetchDataAndNotify
+    await dataFetcher.fetchDataAndNotify();
   }
 
   @override
@@ -108,7 +124,9 @@ class MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             onPressed: () async {
-              Injector.of(context).authenticationRepository.singOut();
+              Injector.of(context, listen: false)
+                  .authenticationRepository
+                  .singOut();
 
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => const SignInView()));

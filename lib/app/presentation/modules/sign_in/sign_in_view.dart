@@ -180,7 +180,9 @@ class _SignInViewState extends State<SignInView> {
     });
 
     try {
-      final result = await Injector.of(context).authenticationRepository.signIn(
+      final result = await Injector.of(context, listen: false)
+          .authenticationRepository
+          .signIn(
             _username,
             _password,
           );

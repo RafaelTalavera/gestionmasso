@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Routes {
   Routes._(); //constructor privado no se instancia.
 
@@ -8,4 +10,8 @@ class Routes {
   static const riesgo = '/riesgo';
   static const causa = '/causa';
   static const table = '/table';
+
+  static const notification = '/notification';
+
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
