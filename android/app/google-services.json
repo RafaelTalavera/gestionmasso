@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "44569320465",
+    "project_id": "gmasso-bed73",
+    "storage_bucket": "gmasso-bed73.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44569320465:android:dc3f04d73b41651458a5b0",
+        "android_client_info": {
+          "package_name": "app.gestionmasso.gestionmasso"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCfSqV0Un-Ov_LbBYeCaH32T5kgMNL2ug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

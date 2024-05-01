@@ -52,6 +52,9 @@ dependencies:
   flutter_local_notifications: ^9.4.0
   provider:
   flutter_native_timezone_updated_gradle: ^2.0.3
+  firebase_core: ^2.27.0
+  firebase_database: ^10.4.9
+  firebase_messaging: ^14.7.19 
 
 
 

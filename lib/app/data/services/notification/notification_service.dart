@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone_updated_gradle/flutter_native_timezone.dart';
 
@@ -11,14 +12,14 @@ class CustomNotification {
   final String title;
   final String body;
   final String? payload;
-  //final RemoteMessage? remoteMessage;
+  final RemoteMessage? remoteMessage;
 
   CustomNotification({
     required this.id,
     required this.title,
     required this.body,
     this.payload,
-    // this.remoteMessage,
+    this.remoteMessage,
   });
 }
 
