@@ -1,8 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'dart:convert';
@@ -36,6 +39,33 @@ class _AccidentsPageState extends State<AccidentsPage> {
   int _currentIndexPuesto = -1;
   int _currentIndexArea = -1;
   int _currentIndexSeverity = -1;
+
+  final String interstitialAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/1033173712';
+
+  InterstitialAd? _interstitialAd;
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+        },
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInterstitialAd();
+  }
 
   String getWrappedButtonValue(List<String?> options, int currentIndex) {
     List<String> nonNullOptions =
@@ -79,6 +109,7 @@ class _AccidentsPageState extends State<AccidentsPage> {
       );
 
       if (responsePost.statusCode == 201) {
+        _showInterstitialAd();
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -119,6 +150,12 @@ class _AccidentsPageState extends State<AccidentsPage> {
         );
       }
     }
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.show();
+    } else {}
   }
 
   @override

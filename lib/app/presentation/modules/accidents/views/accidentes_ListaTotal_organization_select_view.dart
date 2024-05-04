@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -21,9 +24,31 @@ class OrganizationSelectionScreenState
   List<Map<String, String>> organizations = [];
   bool loading = true;
 
+  final String interstitialAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/1033173712';
+
+  InterstitialAd? _interstitialAd;
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+        },
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
+    _loadInterstitialAd();
     _fetchOrganizations();
   }
 
@@ -57,9 +82,13 @@ class OrganizationSelectionScreenState
       } else {
         throw Exception('Failed to load organizations');
       }
-    } catch (e) {
-      print('Error fetching organizations: $e');
-    }
+    } catch (e) {}
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.show();
+    } else {}
   }
 
   @override
@@ -121,6 +150,7 @@ class OrganizationSelectionScreenState
                                           const OrganizationFormPage(),
                                     ),
                                   );
+                                  _showInterstitialAd();
                                 },
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,
@@ -159,6 +189,7 @@ class OrganizationSelectionScreenState
                                       ),
                                     ),
                                   );
+                                  _showInterstitialAd();
                                 },
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,

@@ -1,16 +1,19 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
-import '../../home/views/home_view.dart';
+
 import '../sources/List_extimguisher.dart';
 import 'extimguisher_table_view.dart';
 
@@ -20,14 +23,15 @@ class ExtinguerPage extends StatefulWidget {
     required this.id,
     required this.name,
   });
+
   final String id;
   final String name;
 
   @override
-  State<ExtinguerPage> createState() => _ExtPageState();
+  State<ExtinguerPage> createState() => _ExtinguerPageState();
 }
 
-class _ExtPageState extends State<ExtinguerPage> {
+class _ExtinguerPageState extends State<ExtinguerPage> {
   final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
   final String apiUrl = 'http://10.0.2.2:8080/api/extinguishers';
 
@@ -35,6 +39,33 @@ class _ExtPageState extends State<ExtinguerPage> {
   bool access = false;
   bool presion = false;
   bool signaling = false;
+
+  final String interstitialAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/1033173712';
+
+  InterstitialAd? _interstitialAd;
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+        },
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInterstitialAd();
+  }
 
   void _submitForm() async {
     String? token = await TokenManager.getToken();
@@ -60,6 +91,7 @@ class _ExtPageState extends State<ExtinguerPage> {
       );
 
       if (responsePost.statusCode == 201) {
+        _showInterstitialAd();
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -67,22 +99,6 @@ class _ExtPageState extends State<ExtinguerPage> {
               title: const Text('Extintor agregado correctamente'),
               content: const Text('La identificación se creó correctamente.'),
               actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Cerrar el diálogo actual
-                    _formKey.currentState!.reset(); // Restablecer el formulario
-                  },
-                  child: const Text('Seguir cargando'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const HomeView()),
-                    );
-                  },
-                  child: const Text('Volver a inicio'),
-                ),
                 TextButton(
                   onPressed: () {
                     Navigator.pushReplacement(
@@ -108,6 +124,12 @@ class _ExtPageState extends State<ExtinguerPage> {
         );
       }
     }
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.show();
+    } else {}
   }
 
   @override
@@ -411,7 +433,10 @@ class _ExtPageState extends State<ExtinguerPage> {
                   height: 20,
                 ),
                 ElevatedButton(
-                  onPressed: _submitForm,
+                  onPressed: () {
+                    _submitForm();
+                    _showInterstitialAd();
+                  },
                   child: const Text('Enviar'),
                 ),
               ],

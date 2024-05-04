@@ -37,7 +37,6 @@ class OrganizationSelectionScreenState
         url,
         headers: {
           'Authorization': 'Bearer $token',
-          // Otros encabezados si es necesario
         },
       );
 
@@ -52,7 +51,7 @@ class OrganizationSelectionScreenState
 
         setState(() {
           organizations = fetchedOrganizations;
-          loading = false; // Indica que la carga ha terminado
+          loading = false;
         });
       } else {
         throw Exception('Failed to load organizations');
@@ -81,7 +80,7 @@ class OrganizationSelectionScreenState
           children: [
             const SizedBox(height: 20),
             const Text(
-              'Seleccione una organización para cargar los datos o cargue una nueva',
+              'Seleccione una organización existente o cargue una nueva.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.blue,
@@ -186,14 +185,11 @@ class OrganizationSelectionScreenState
                               ),
                               child: ElevatedButton(
                                 onPressed: () {
-                                  print(
-                                      'Botón presionado para la organización: ${organizations[index]['name']}');
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => AccidentsPage(
-                                        id: organizations[index][
-                                            'id']!, // Pasa el ID de la organización seleccionada
+                                        id: organizations[index]['id']!,
                                         name: organizations[index]['name']!,
                                       ),
                                     ),

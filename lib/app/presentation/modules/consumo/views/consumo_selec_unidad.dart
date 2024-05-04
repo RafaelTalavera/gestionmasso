@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -25,11 +28,33 @@ class UnidadeSelectionScreenState extends State<ConsumoUnidadSelectionScreen> {
   List<String> unidades = [];
   bool loading = true;
 
+  final String interstitialAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/1033173712';
+
+  InterstitialAd? _interstitialAd;
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+        },
+      ),
+    );
+  }
+
   get nameOrganizations => null; // Variable para controlar la carga de datos
 
   @override
   void initState() {
     super.initState();
+    _loadInterstitialAd();
     _fetchUnidades();
   }
 
@@ -63,6 +88,12 @@ class UnidadeSelectionScreenState extends State<ConsumoUnidadSelectionScreen> {
             false; // Marcar la carga como completa incluso si hay un error
       });
     }
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.show();
+    } else {}
   }
 
   @override
@@ -116,6 +147,7 @@ class UnidadeSelectionScreenState extends State<ConsumoUnidadSelectionScreen> {
                                         ),
                                       ),
                                     );
+                                    _showInterstitialAd();
                                   },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,

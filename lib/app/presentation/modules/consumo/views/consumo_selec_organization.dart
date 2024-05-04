@@ -19,7 +19,7 @@ class ConsumoOrganizationSelectionScreen extends StatefulWidget {
 class OrganizationSelectionScreenState
     extends State<ConsumoOrganizationSelectionScreen> {
   List<String> organizations = [];
-  bool loading = true; // Variable para controlar la carga de datos
+  bool loading = true;
 
   @override
   void initState() {
@@ -35,7 +35,6 @@ class OrganizationSelectionScreenState
         url,
         headers: {
           'Authorization': 'Bearer $token',
-          // Otros encabezados si es necesario
         },
       );
 
@@ -45,15 +44,14 @@ class OrganizationSelectionScreenState
 
         setState(() {
           organizations = fetchedOrganizations;
-          loading = false; // Marcar la carga como completa
+          loading = false;
         });
       } else {
         throw Exception('Failed to load organizations');
       }
     } catch (e) {
       setState(() {
-        loading =
-            false; // Marcar la carga como completa incluso si hay un error
+        loading = false;
       });
     }
   }

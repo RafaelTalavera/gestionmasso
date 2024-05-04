@@ -55,6 +55,7 @@ dependencies:
   firebase_core: ^2.27.0
   firebase_database: ^10.4.9
   firebase_messaging: ^14.7.19 
+  google_mobile_ads: ^5.0.0
 
 
 

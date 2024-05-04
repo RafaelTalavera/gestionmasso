@@ -1,10 +1,12 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
@@ -34,11 +36,33 @@ class ConsumoEditScreenState extends State<ConsumoEditScreen> {
 
   String? unidadSeleccionada;
 
+  final String interstitialAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/1033173712';
+
+  InterstitialAd? _interstitialAd;
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+        },
+      ),
+    );
+  }
+
   final String apiUrl = 'http://10.0.2.2:8080/api/consumo';
 
   @override
   void initState() {
     super.initState();
+    _loadInterstitialAd();
     newConsumo = widget.consumo.copyWith();
     consumoController.text = widget.consumo.consumo.toString();
   }
@@ -94,6 +118,12 @@ class ConsumoEditScreenState extends State<ConsumoEditScreen> {
         ),
       );
     }
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.show();
+    } else {}
   }
 
   @override
@@ -216,7 +246,10 @@ class ConsumoEditScreenState extends State<ConsumoEditScreen> {
             ),
             Center(
               child: ElevatedButton(
-                onPressed: _submitForm,
+                onPressed: () {
+                  _submitForm();
+                  _showInterstitialAd();
+                },
                 child: const Text('Enviar'),
               ),
             ),

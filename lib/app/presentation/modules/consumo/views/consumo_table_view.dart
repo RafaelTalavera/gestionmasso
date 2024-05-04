@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -26,9 +28,31 @@ class IperTableState extends State<ConsumoTable> {
   String? filtroNameOrganizacion;
   String? filtroTipoFuente;
 
+  final String interstitialAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/1033173712';
+
+  InterstitialAd? _interstitialAd;
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+        },
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
+    _loadInterstitialAd();
     consumos = <Consumo>[];
     fetchData();
   }
@@ -73,6 +97,12 @@ class IperTableState extends State<ConsumoTable> {
           cumpleFiltroCombustible &&
           cumpleFiltroNameOrganizacion;
     }).toList();
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.show();
+    } else {}
   }
 
   @override
@@ -185,6 +215,7 @@ class IperTableState extends State<ConsumoTable> {
                       filtroCombustible = null;
                       filtroNameOrganizacion = null;
                       filtroTipoFuente = null;
+                      _showInterstitialAd();
                     });
                   },
                   child: const Text('Limpiar Filtros'),

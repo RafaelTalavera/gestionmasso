@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
 
@@ -24,10 +27,38 @@ class EmpresaSelectionScreen extends StatefulWidget {
 class EmpresaSelectionScreenState extends State<EmpresaSelectionScreen> {
   late List<Empresa> _empresas = [];
 
+  final String interstitialAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/1033173712';
+
+  InterstitialAd? _interstitialAd;
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+        },
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     _fetchCompanies();
+    _loadInterstitialAd();
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.show();
+    } else {}
   }
 
   @override
@@ -80,6 +111,7 @@ class EmpresaSelectionScreenState extends State<EmpresaSelectionScreen> {
                                     ),
                                   ),
                                 );
+                                _showInterstitialAd();
                               },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
@@ -132,6 +164,7 @@ class EmpresaSelectionScreenState extends State<EmpresaSelectionScreen> {
                                     ),
                                   ),
                                 );
+                                _showInterstitialAd();
                               },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
@@ -158,8 +191,17 @@ class EmpresaSelectionScreenState extends State<EmpresaSelectionScreen> {
   }
 
   Future<void> _fetchCompanies() async {
-    final response = await http
-        .get(Uri.parse('http://10.0.2.2:8080/api/extinguishers/companies'));
+    String? token = await TokenManager.getToken();
+
+    final url = Uri.parse('http://10.0.2.2:8080/api/extinguishers/companies');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        // Otros encabezados si es necesario
+      },
+    );
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = json.decode(response.body);
       final empresas =

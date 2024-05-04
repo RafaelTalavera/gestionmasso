@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'app/data/repositories_implementation/authentication_repository_impl.dart';
 import 'app/data/repositories_implementation/connectivity_repostory_impl.dart';
 import 'app/data/services/notification/firebase_messaging_service.dart';
@@ -21,6 +22,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  MobileAds.instance.initialize();
 
   final notificationService = NotificationService();
 

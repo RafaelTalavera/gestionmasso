@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
 
@@ -28,9 +29,18 @@ class OrganizationSelectionScreenState
   }
 
   Future<void> _fetchOrganizations() async {
+    String? token = await TokenManager.getToken();
+
     try {
+      final url =
+          await Uri.parse('http://10.0.2.2:8080/api/risk/organizations');
+
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8080/api/risk/organizations'),
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          // Otros encabezados si es necesario
+        },
       );
 
       if (response.statusCode == 200) {
@@ -118,13 +128,15 @@ class OrganizationSelectionScreenState
             ),
           ] else ...[
             const SizedBox(height: 20),
-            const Text(
-              'No hay organizaciones para mostrar',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.red,
-                fontSize: 14.0,
-                fontWeight: FontWeight.normal,
+            const Center(
+              child: Text(
+                'No hay organizaciones para mostrar',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.normal,
+                ),
               ),
             ),
           ],

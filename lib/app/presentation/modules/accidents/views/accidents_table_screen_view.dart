@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -26,9 +28,31 @@ class _IperTableState extends State<AccidentsTable> {
   String? filtroSeverity;
   String? filtroNameOrganization;
 
+  final String interstitialAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/1033173712';
+
+  InterstitialAd? _interstitialAd;
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+        },
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
+    _loadInterstitialAd();
     accidents = <Accidents>[];
     fetchData();
   }
@@ -46,6 +70,7 @@ class _IperTableState extends State<AccidentsTable> {
     );
 
     if (response.statusCode == 200) {
+      _loadInterstitialAd();
       final List<dynamic> jsonData =
           json.decode(utf8.decode(response.bodyBytes));
       accidents = jsonData.map((json) => Accidents.fromJson(json)).toList();
@@ -77,8 +102,6 @@ class _IperTableState extends State<AccidentsTable> {
     final url =
         Uri.parse('http://10.0.2.2:8080/api/accidents/$accidentId/dateAlta');
 
-    // Imprimir el URL antes de realizar la solicitud HTTP
-    print('URL: $url');
     final response = await http.put(
       url,
       headers: {
@@ -88,7 +111,7 @@ class _IperTableState extends State<AccidentsTable> {
       body: jsonEncode({'dateAlta': DateFormat('yyyy-MM-dd').format(dateAlta)}),
     );
     if (response.statusCode == 200) {
-      // Actualización exitosa
+      _showInterstitialAd();
     } else {
       throw Exception('Error al actualizar la fecha de alta');
     }
@@ -114,6 +137,12 @@ class _IperTableState extends State<AccidentsTable> {
           cumpleFiltroSeverity &&
           cumpleFiltroNameOrganization;
     }).toList();
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.show();
+    } else {}
   }
 
   @override
@@ -214,6 +243,7 @@ class _IperTableState extends State<AccidentsTable> {
                       filtroPuesto = null;
                       filtroSeverity = null;
                       filtroNameOrganization = null;
+                      _showInterstitialAd(); // Llamar a _showInterstitialAd() aquí
                     });
                   },
                   child: const Text('Limpiar Filtros'),

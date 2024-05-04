@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -45,6 +46,7 @@ class _CreateUserState extends State<CreateUser> {
       // Agrega el campo "role" con el valor "ADMINISTRATOR"
       formData["role"] = "ADMINISTRATOR";
 
+      print('JSON enviado al backend: ${jsonEncode(formData)}');
       final responsePost = await http.post(
         Uri.parse(apiUrl),
         headers: {
@@ -140,6 +142,10 @@ class _CreateUserState extends State<CreateUser> {
                         validator: FormBuilderValidators.required(
                           errorText: 'El campo no puede estar vacío',
                         ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(
+                              r'[a-z]')), // Solo admite letras minúsculas
+                        ],
                         onChanged: (value) {
                           setState(() {
                             _username = value ??

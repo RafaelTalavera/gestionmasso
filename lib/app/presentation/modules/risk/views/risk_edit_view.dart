@@ -1,11 +1,13 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
@@ -32,10 +34,38 @@ class RiskEditScreenState extends State<RiskEditScreen> {
 
   final String apiUrl = 'http://10.0.2.2:8080/api/risk';
 
+  final String interstitialAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/1033173712';
+
+  InterstitialAd? _interstitialAd;
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+        },
+      ),
+    );
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.show();
+    } else {}
+  }
+
   @override
   void initState() {
     super.initState();
     newRisk = widget.risk.copyWith();
+    _loadInterstitialAd();
   }
 
   void _submitForm() async {
@@ -72,6 +102,7 @@ class RiskEditScreenState extends State<RiskEditScreen> {
                       ),
                     ),
                   );
+                  _showInterstitialAd();
                 },
                 child: const Text('OK'),
               ),

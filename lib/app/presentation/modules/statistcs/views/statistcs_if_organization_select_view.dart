@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -21,11 +24,32 @@ class OrganizationSelectionScreenState
     extends State<StatistcsIFOrgaSelectionScreen> {
   List<Map<String, String>> organizations = [];
   bool loading = true;
+  final String interstitialAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/1033173712';
+
+  InterstitialAd? _interstitialAd;
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+        },
+      ),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
     _fetchOrganizations();
+    _loadInterstitialAd();
   }
 
   Future<void> _fetchOrganizations() async {
@@ -38,7 +62,7 @@ class OrganizationSelectionScreenState
         url,
         headers: {
           'Authorization': 'Bearer $token',
-          // Otros encabezados si es necesario
+         
         },
       );
 
@@ -58,8 +82,14 @@ class OrganizationSelectionScreenState
       } else {
         throw Exception('Failed to load organizations');
       }
-    // ignore: empty_catches
+      // ignore: empty_catches
     } catch (e) {}
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.show();
+    } else {}
   }
 
   @override
@@ -159,6 +189,7 @@ class OrganizationSelectionScreenState
                                       ),
                                     ),
                                   );
+                                  _showInterstitialAd();
                                 },
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,

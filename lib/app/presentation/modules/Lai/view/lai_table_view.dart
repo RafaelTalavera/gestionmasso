@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../data/services/remote/token_manager.dart';
@@ -25,6 +27,27 @@ class LaiTableState extends State<LaiScreen> {
   String? filtroArea;
   String? filtroOrganization;
 
+  final String interstitialAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/1033173712';
+
+  InterstitialAd? _interstitialAd;
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+        },
+      ),
+    );
+  }
+
   Color getColorForEvaluacion(String evaluacion) {
     switch (evaluacion.toLowerCase()) {
       case 'aceptable':
@@ -43,6 +66,7 @@ class LaiTableState extends State<LaiScreen> {
   @override
   void initState() {
     super.initState();
+    _loadInterstitialAd();
     lais = <Lai>[];
     fetchData();
   }
@@ -84,6 +108,12 @@ class LaiTableState extends State<LaiScreen> {
           cumpleFiltroCycle &&
           cumpleFiltroArea;
     }).toList();
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.show();
+    } else {}
   }
 
   @override
@@ -201,6 +231,7 @@ class LaiTableState extends State<LaiScreen> {
                                     filtroMeaningfulness = null;
                                     filtroCycle = null;
                                     filtroArea = null;
+                                    _showInterstitialAd();
                                   });
                                 },
                                 child: const Text('Limpiar Filtros'),
@@ -492,6 +523,7 @@ class LaiTableState extends State<LaiScreen> {
                                           ),
                                         ),
                                       );
+                                     
                                     },
                                     style: ButtonStyle(
                                       backgroundColor:

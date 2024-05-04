@@ -86,7 +86,7 @@ class OrganizationSelectionScreenState
               height: 20,
             ),
             const Text(
-              'Seleccione una organización para cargar los datos o cargue una nueva',
+              'Seleccione una organización existente o cargue una nueva.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.blue,

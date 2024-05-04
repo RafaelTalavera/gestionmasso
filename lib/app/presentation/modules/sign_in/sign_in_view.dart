@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../../../main.dart';
+import '../../../data/services/notification/firebase_messaging_service.dart';
+import '../../../data/services/notification/notification_service.dart';
 import '../home/views/home_view.dart';
 import '../user/forgot_password_page.dart';
 import '../user/user_create_views.dart';
@@ -26,6 +28,8 @@ class _SignInViewState extends State<SignInView> {
 
   @override
   Widget build(BuildContext context) {
+    final notificationService =
+        Injector.of(context, listen: false).notificationService;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -102,7 +106,7 @@ class _SignInViewState extends State<SignInView> {
                           onPressed: () {
                             final isValid = _formKey.currentState!.validate();
                             if (isValid) {
-                              _submit(context);
+                              _submit(context, notificationService);
                             }
                           },
                           icon: const Icon(
@@ -174,7 +178,8 @@ class _SignInViewState extends State<SignInView> {
     );
   }
 
-  Future<void> _submit(BuildContext context) async {
+  Future<void> _submit(
+      BuildContext context, NotificationService notificationService) async {
     setState(() {
       _fetching = true;
     });
@@ -199,11 +204,12 @@ class _SignInViewState extends State<SignInView> {
           );
         },
         (user) async {
-          // Extraer el token del usuario o realizar cualquier lógica adicional
-          final token = user.token; // Ajusta esto según tu implementación real
+          final token = user.token;
 
-          // Guardar el token en un lugar seguro, por ejemplo, FlutterSecureStorage
           await _saveToken(context, token);
+
+          await FirebaseMessagingService(notificationService)
+              .getDeviceFirebaseToken();
 
           setState(() {
             _fetching = false;

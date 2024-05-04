@@ -1,6 +1,9 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
@@ -29,10 +32,32 @@ class ExtimguishersScreenState extends State<ExtimguishersScreen> {
   String? selectedEnabled;
   int? selectedRange;
 
+  final String interstitialAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/1033173712';
+
+  InterstitialAd? _interstitialAd;
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+        },
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     fetchData();
+    _loadInterstitialAd();
   }
 
   Future<void> fetchData() async {
@@ -57,6 +82,7 @@ class ExtimguishersScreenState extends State<ExtimguishersScreen> {
         setState(() {
           extimguishers = fetchedExtimguishers;
         });
+        _showInterstitialAd();
       } else {
         throw Exception('Error al cargar datos desde el backend');
       }
@@ -74,6 +100,12 @@ class ExtimguishersScreenState extends State<ExtimguishersScreen> {
 
   Color getStateColor(bool state) {
     return state ? Colors.green : Colors.red;
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.show();
+    } else {}
   }
 
   @override
@@ -257,7 +289,7 @@ class ExtimguishersScreenState extends State<ExtimguishersScreen> {
                               ),
                             ),
                             Text(
-                              'Señaliación: ${getStateText2(extinguisher.signaling)}',
+                              'Señalización: ${getStateText2(extinguisher.signaling)}',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: getStateColor(extinguisher.signaling),
@@ -294,6 +326,7 @@ class ExtimguishersScreenState extends State<ExtimguishersScreen> {
                                       extinguisher.id,
                                       !extinguisher.enabled,
                                     );
+                                    _showInterstitialAd();
                                   },
                                   style: ButtonStyle(
                                     backgroundColor: MaterialStateProperty
@@ -479,6 +512,8 @@ class ExtimguishersScreenState extends State<ExtimguishersScreen> {
 
       if (response.statusCode == 200) {
         // Si la solicitud fue exitosa, actualiza el estado local del campo enabled
+
+        _showInterstitialAd();
         setState(() {
           final index = extimguishers
               .indexWhere((extinguisher) => extinguisher.id == extinguisherId);
@@ -486,14 +521,9 @@ class ExtimguishersScreenState extends State<ExtimguishersScreen> {
             extimguishers[index].enabled = newStatus;
           }
         });
-        print('Estado de enabled actualizado exitosamente');
-      } else {
-        print(
-            'Error al actualizar el estado de enabled en el backend. Código de respuesta: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Error al enviar la solicitud al backend: $error');
-    }
+      } else {}
+      // ignore: empty_catches
+    } catch (error) {}
   }
 
   void _generateQRCode(Extimguisher extinguisher) {

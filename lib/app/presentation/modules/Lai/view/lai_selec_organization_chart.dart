@@ -29,14 +29,12 @@ class OrganizationSelectionScreenState
   Future<void> _fetchOrganizations() async {
     String? token = await TokenManager.getToken();
     try {
-      final url =
-          await Uri.parse('http://10.0.2.2:8080/api/lai/nameOrganizations');
+      final url = Uri.parse('http://10.0.2.2:8080/api/lai/nameOrganizations');
 
       final response = await http.get(
         url,
         headers: {
           'Authorization': 'Bearer $token',
-          // Otros encabezados si es necesario
         },
       );
 
@@ -75,13 +73,15 @@ class OrganizationSelectionScreenState
             const SizedBox(
               height: 20,
             ),
-            const Text(
-              'Seleccione una organización para ver la información',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.blue,
-                fontSize: 14,
-                fontWeight: FontWeight.normal,
+            const Center(
+              child: Text(
+                'Seleccione una organización para ver la información',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                ),
               ),
             ),
             const SizedBox(height: 40),
@@ -100,6 +100,7 @@ class OrganizationSelectionScreenState
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.bold,
                               ),
+                              textAlign: TextAlign.center,
                             ),
                           ],
                         )
