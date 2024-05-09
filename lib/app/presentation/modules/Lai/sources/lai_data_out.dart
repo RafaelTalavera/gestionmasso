@@ -43,7 +43,7 @@ class Lai {
       typeOfControl: json['typeOfControl'],
       descriptionOfControl: json['descriptionOfControl'],
       dateOfRevision: json['dateOfRevision'] != null
-          ? DateTime.parse(json['dateOfRevision']!)
+          ? DateTime.parse(json['dateOfRevision'])
           : null,
       userId: json['userId'],
     );
@@ -120,25 +120,24 @@ class Lai {
     );
   }
 
-  final String id; // Definir el campo 'id' como String
+  final String id;
   final DateTime date;
-  final String area;
   final String nameOrganization;
-  final String tipo;
+  final String area;
+  final String tipo; //este
   final String activity;
-  final String aspect;
-  final String impact;
+  final String aspect; //este
+  final String impact; //este
   final String temporality;
   final String description;
   final String cycle;
-  final int frequency; // Definir el campo 'frequency' como int
-  final int damage; // Definir el campo 'damage' como int
+  final int frequency; 
+  final int damage; 
   final bool stateHolder;
   final bool legislation;
-  final String meaningfulness;
-  final String typeOfControl;
-  final String descriptionOfControl;
-  final DateTime?
-      dateOfRevision; // Definir el campo 'dateOfRevision' como DateTime opcional
+  final String meaningfulness; //este
+  final String? typeOfControl; 
+  final String? descriptionOfControl; //este
+  final DateTime? dateOfRevision; // este
   final String userId;
 }

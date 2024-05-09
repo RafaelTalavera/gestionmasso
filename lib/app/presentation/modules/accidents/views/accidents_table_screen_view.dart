@@ -13,7 +13,10 @@ import '../sources/accidents_table_data.dart';
 class AccidentsTable extends StatefulWidget {
   const AccidentsTable({
     super.key,
+    required this.organization,
   });
+
+  final String organization;
 
   @override
   // ignore: library_private_types_in_public_api
@@ -60,7 +63,8 @@ class _IperTableState extends State<AccidentsTable> {
   Future<void> fetchData() async {
     String? token = await TokenManager.getToken();
 
-    final url = Uri.parse('http://10.0.2.2:8080/api/accidents/list');
+    final url = Uri.parse(
+        'http://10.0.2.2:8080/api/accidents/organization/${widget.organization}');
 
     final response = await http.get(
       url,
@@ -183,16 +187,6 @@ class _IperTableState extends State<AccidentsTable> {
                           crossAxisAlignment: CrossAxisAlignment
                               .stretch, // Alinear los elementos al inicio
                           children: [
-                            DropdownButton<String>(
-                              value: filtroNameOrganization,
-                              hint: const Text('Organización'),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  filtroNameOrganization = newValue;
-                                });
-                              },
-                              items: obtenerItemsFiltro('nameOrganization'),
-                            ),
                             const SizedBox(
                                 height: 5.0), // Espacio entre los filtros
                             DropdownButton<String>(
@@ -311,6 +305,21 @@ class _IperTableState extends State<AccidentsTable> {
                                   style: DefaultTextStyle.of(context).style,
                                   children: [
                                     const TextSpan(
+                                      text: 'Nombre: ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    TextSpan(
+                                      text: listaFiltrada[index].name,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                  style: DefaultTextStyle.of(context).style,
+                                  children: [
+                                    const TextSpan(
                                       text: 'Clasificación: ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold),
@@ -388,21 +397,6 @@ class _IperTableState extends State<AccidentsTable> {
                                           ? DateFormat('yyyy-MM-dd').format(
                                               listaFiltrada[index].dateAlta!)
                                           : 'Sin fecha de alta', // Puedes cambiar el texto para manejar el caso nulo
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  style: DefaultTextStyle.of(context).style,
-                                  children: [
-                                    const TextSpan(
-                                      text: 'Usuario: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    TextSpan(
-                                      text: listaFiltrada[index].userId,
                                     ),
                                   ],
                                 ),

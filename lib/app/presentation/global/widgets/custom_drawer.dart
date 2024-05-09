@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
 
 import '../../modules/Lai/view/lai_form_organization_select_view.dart';
-import '../../modules/Lai/view/lai_table_view.dart';
+import '../../modules/Lai/view/lai_selec_organization_chart.dart';
+import '../../modules/Lai/view/lai_table_organization_select_view .dart';
 
+import '../../modules/accidents/views/accidentes_form_organization_select_view.dart';
+import '../../modules/accidents/views/accidentes_organization_select_table_view .dart';
+import '../../modules/consumo/views/consumo_organization_select_table_view .dart';
+import '../../modules/consumo/views/consumo_organization_select_view.dart';
+import '../../modules/consumo/views/consumo_selec_organization.dart';
+import '../../modules/extinguisher/views/extimguisher_form_organization_select_view.dart';
 import '../../modules/extinguisher/views/extimguisher_organization_selection_chart_view.dart';
-import '../../modules/extinguisher/views/extimguisher_form_view.dart';
-import '../../modules/extinguisher/views/extimguisher_table_view.dart';
-import '../../modules/risk/views/risk_table_screm_view.dart';
+
+import '../../modules/extinguisher/views/extimguisher_table_organization.dart';
+
+import '../../modules/risk/views/risk_form_organization_select_view.dart';
+import '../../modules/risk/views/risk_table_organization.dart';
 
 import '../../modules/risk/views/risk_selec_organization_chart.dart';
-import '../../modules/risk/views/risk_form_views.dart';
+import '../../modules/statistcs/views/statistcs_if_organization_select_view.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -118,11 +127,8 @@ class CustomDrawer extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const RiskPage(
-                        initialCompany: '',
-                        id: '',
-                        name: '',
-                      ),
+                      builder: (context) =>
+                          const RiskOrganizationSelectionScreen(),
                     ),
                   );
                 },
@@ -136,9 +142,8 @@ class CustomDrawer extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const IperTable(
-                          initialCompany: '',
-                        ),
+                        builder: (context) =>
+                            const OrganizationTableSelectionScreen(),
                       ));
                 },
               ),
@@ -183,10 +188,8 @@ class CustomDrawer extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ExtinguerPage(
-                          id: '',
-                          name: '',
-                        ),
+                        builder: (context) =>
+                            const ExtimguisherOrganizationSelectionScreen(),
                       ));
                 },
               ),
@@ -199,7 +202,8 @@ class CustomDrawer extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ExtimguishersScreen(),
+                        builder: (context) =>
+                            const OrganizationTableExtimguisherSelectionScreen(),
                       ));
                 },
               ),
@@ -213,6 +217,66 @@ class CustomDrawer extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => const EmpresaSelectionScreen(),
+                      ));
+                },
+              ),
+            ],
+          ),
+          ExpansionTile(
+            title: const Row(
+              children: [
+                Icon(Icons.fire_extinguisher, color: Colors.red),
+                SizedBox(width: 8),
+                Text(
+                  'Accientología',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            children: [
+              ListTile(
+                title: const Text(
+                  'Craga de accidentes',
+                  style: TextStyle(color: Colors.red),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const AccidentesOrgaSelectionScreen(),
+                      ));
+                },
+              ),
+              ListTile(
+                title: const Text(
+                  'Listado de accidentes',
+                  style: TextStyle(color: Colors.red),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const AccOrgaTableSelectionScreen(),
+                      ));
+                },
+              ),
+              ListTile(
+                title: const Text(
+                  'Indice de frecuencia',
+                  style: TextStyle(color: Colors.red),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const StatistcsIFOrgaSelectionScreen(),
                       ));
                 },
               ),
@@ -250,7 +314,7 @@ class CustomDrawer extends StatelessWidget {
               ListTile(
                 title: const Text(
                   'Carga de aspectos e impactos',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: Colors.green),
                 ),
                 onTap: () {
                   Navigator.push(
@@ -265,15 +329,29 @@ class CustomDrawer extends StatelessWidget {
               ListTile(
                 title: const Text(
                   'Listado de A&I',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: Colors.green),
                 ),
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const LaiScreen(
-                        initialCompany: '',
-                      ),
+                      builder: (context) =>
+                          const LaiOrganizationSelectionTableScreen(),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text(
+                  'Ver graficos',
+                  style: TextStyle(color: Colors.green),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const LaiSelectionOrganizationScreen(),
                     ),
                   );
                 },
@@ -286,7 +364,7 @@ class CustomDrawer extends StatelessWidget {
                 Icon(Icons.delete_outline, color: Colors.green), // Icono
                 SizedBox(width: 8), // Espacio entre el icono y el texto
                 Text(
-                  'Gestión de residuos',
+                  'Inventario de HC',
                   style: TextStyle(
                     color: Colors.green, // Color del texto
                     fontWeight: FontWeight.normal, // Negrita
@@ -297,58 +375,46 @@ class CustomDrawer extends StatelessWidget {
             ),
             children: [
               ListTile(
-                title: const Text('Carga de peligros y riesgos'),
-                onTap: () {
-                  // Aquí puedes definir la acción cuando se selecciona el segundo elemento del Drawer
-                },
-              ),
-              ListTile(
-                title: const Text('Carga de peligros y riesgos'),
-                onTap: () {
-                  // Aquí puedes definir la acción cuando se selecciona el segundo elemento del Drawer
-                },
-              ),
-              ListTile(
-                title: const Text('Invetario de Carbono'),
-                onTap: () {
-                  // Aquí puedes definir la acción cuando se selecciona el segundo elemento del Drawer
-                },
-              ),
-            ],
-          ),
-          ExpansionTile(
-            title: const Row(
-              children: [
-                Icon(Icons.nature_people, color: Colors.green), // Icono
-                SizedBox(width: 8), // Espacio entre el icono y el texto
-                Text(
-                  'Huella de carbono',
-                  style: TextStyle(
-                    color: Colors.green, // Color del texto
-                    fontWeight: FontWeight.normal, // Negrita
-                    fontSize: 18, // Tamaño de letra
-                  ),
+                title: const Text(
+                  'Carga de consumos',
+                  style: TextStyle(color: Colors.green),
                 ),
-              ],
-            ),
-            // Título del elemento desplegable
-            children: [
-              ListTile(
-                title: const Text('Carga inicial de extintores'),
                 onTap: () {
-                  // Aquí puedes definir la acción cuando se selecciona el segundo elemento del Drawer
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const OrganizationConSelectionScreen(),
+                    ),
+                  );
                 },
               ),
               ListTile(
-                title: const Text('Control de extintores'),
+                title: const Text(
+                  'Ver listas de consumos',
+                  style: TextStyle(color: Colors.green),
+                ),
                 onTap: () {
-                  // Aquí puedes definir la acción cuando se selecciona el segundo elemento del Drawer
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const ConsumoOrgaTableSelectionScreen(),
+                      ));
                 },
               ),
               ListTile(
-                title: const Text('Extadistica de extintores'),
+                title: const Text(
+                  'Ver Estadística',
+                  style: TextStyle(color: Colors.green),
+                ),
                 onTap: () {
-                  // Aquí puedes definir la acción cuando se selecciona el segundo elemento del Drawer
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const ConsumoOrganizationSelectionScreen(),
+                      ));
                 },
               ),
             ],

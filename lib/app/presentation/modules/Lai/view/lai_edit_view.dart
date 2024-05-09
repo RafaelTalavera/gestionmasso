@@ -17,7 +17,7 @@ import '../../../global/widgets/custom_AppBar.dart';
 import '../../../global/widgets/custom_drawer.dart';
 import '../sources/lai_data_out.dart';
 import '../sources/list_lai_dropdown.dart';
-import 'lai_table_view.dart';
+import 'lai_table_organization_select_view .dart';
 
 class LaiEditScreen extends StatefulWidget {
   const LaiEditScreen({super.key, required this.lai, required String laiId});
@@ -36,9 +36,8 @@ class LaiEditScreenState extends State<LaiEditScreen> {
 
   final String apiUrl = 'http://10.0.2.2:8080/api/lai';
 
-  final String interstitialAdUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/1033173712'
-      : 'ca-app-pub-3940256099942544/1033173712';
+  final String interstitialAdUnitId =
+      Platform.isAndroid ? '' : 'ca-app-pub-3940256099942544/1033173712';
 
   InterstitialAd? _interstitialAd;
 
@@ -96,9 +95,8 @@ class LaiEditScreenState extends State<LaiEditScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const LaiScreen(
-                        initialCompany: '',
-                      ),
+                      builder: (context) =>
+                          const LaiOrganizationSelectionTableScreen(),
                     ),
                   );
                 },

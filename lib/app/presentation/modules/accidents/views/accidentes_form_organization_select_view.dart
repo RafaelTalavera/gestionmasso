@@ -6,6 +6,7 @@ import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
 import '../../organization/views/organization_form_view.dart';
+
 import 'accidents_form_views.dart';
 
 class AccidentesOrgaSelectionScreen extends StatefulWidget {
@@ -189,8 +190,8 @@ class OrganizationSelectionScreenState
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => AccidentsPage(
-                                        id: organizations[index]['id']!,
                                         name: organizations[index]['name']!,
+                                        id: '',
                                       ),
                                     ),
                                   );

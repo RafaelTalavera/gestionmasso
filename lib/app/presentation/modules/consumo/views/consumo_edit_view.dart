@@ -17,7 +17,7 @@ import '../../../global/widgets/custom_AppBar.dart';
 
 import '../sources/consumo_list_dropdown.dart';
 import '../sources/consumo_table_data.dart';
-import 'consumo_table_view.dart';
+import 'consumo_organization_select_table_view .dart';
 
 class ConsumoEditScreen extends StatefulWidget {
   const ConsumoEditScreen(
@@ -96,7 +96,8 @@ class ConsumoEditScreenState extends State<ConsumoEditScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ConsumoTable(),
+                        builder: (context) =>
+                            const ConsumoOrgaTableSelectionScreen(),
                       ));
                 },
                 child: const Text('OK'),

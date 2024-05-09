@@ -14,7 +14,8 @@ import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
 import '../../home/views/home_view.dart';
-import 'risk_table_screm_view.dart';
+import 'risk_table_organization.dart';
+
 import '../sources/risk_list_dropdown.dart';
 
 class RiskPage extends StatefulWidget {
@@ -40,15 +41,13 @@ class _RiskPageState extends State<RiskPage> {
   int _currentIndexArea = -1;
   int _currentIndexConsecuencia = -1;
   int _currentIndexIncidentesPotenciales = -1;
-  int _currentIndexFuente = -1;
   int _currentIndexTipo = 0;
   int _currentIndexProbabilidad = 0;
   int _currentIndexGravedad = 0;
   int _currentIndexClasificaMC = 0;
 
-  final String interstitialAdUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/1033173712'
-      : 'ca-app-pub-3940256099942544/1033173712';
+  final String interstitialAdUnitId =
+      Platform.isAndroid ? '' : 'ca-app-pub-3940256099942544/1033173712';
 
   InterstitialAd? _interstitialAd;
 
@@ -98,8 +97,7 @@ class _RiskPageState extends State<RiskPage> {
           getWrappedButtonValue(ListDropdownRisk.tipo, _currentIndexTipo);
       formData['consecuencia'] = getWrappedButtonValue(
           ListDropdownRisk.consecuencia, _currentIndexConsecuencia);
-      formData['fuente'] =
-          getWrappedButtonValue(ListDropdownRisk.fuente, _currentIndexFuente);
+
       formData['incidentesPotenciales'] = getWrappedButtonValue(
           ListDropdownRisk.incidentesPotenciales,
           _currentIndexIncidentesPotenciales);
@@ -144,9 +142,8 @@ class _RiskPageState extends State<RiskPage> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const IperTable(
-                                initialCompany: '',
-                              )),
+                          builder: (context) =>
+                              const OrganizationTableSelectionScreen()),
                     );
                   },
                   child: const Text('Ir al IPER'),
@@ -397,49 +394,6 @@ class _RiskPageState extends State<RiskPage> {
                       validator: (value) {
                         if (value == null) {
                           return 'Por favor, una consecuencia';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
-                    width: availableWidth * 0.89,
-                    child: DropdownButtonFormField<String>(
-                      value: _currentIndexFuente == -1
-                          ? null
-                          : ListDropdownRisk.fuente[_currentIndexFuente],
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _currentIndexFuente =
-                              ListDropdownRisk.fuente.indexOf(newValue!);
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        labelText: 'Fuente',
-                        labelStyle: TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(),
-                      ),
-                      items: [
-                        const DropdownMenuItem<String>(
-                          value: null,
-                          child: Text(
-                            'Elija una fuente del evento',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ),
-                        ...ListDropdownRisk.fuente.map((value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }),
-                      ],
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Por favor, una fuente';
                         }
                         return null;
                       },

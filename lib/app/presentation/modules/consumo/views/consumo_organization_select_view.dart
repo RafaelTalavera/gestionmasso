@@ -10,8 +10,8 @@ import '../../../global/widgets/custom_AppBar.dart';
 import '../../organization/views/organization_form_view.dart';
 import 'consumo_form_view.dart';
 
-class OrganizationSelectionScreen extends StatefulWidget {
-  const OrganizationSelectionScreen({Key? key});
+class OrganizationConSelectionScreen extends StatefulWidget {
+  const OrganizationConSelectionScreen({Key? key});
 
   @override
   OrganizationSelectionScreenState createState() =>
@@ -19,7 +19,7 @@ class OrganizationSelectionScreen extends StatefulWidget {
 }
 
 class OrganizationSelectionScreenState
-    extends State<OrganizationSelectionScreen> {
+    extends State<OrganizationConSelectionScreen> {
   List<Map<String, String>> organizations = [];
   bool loading = true;
 

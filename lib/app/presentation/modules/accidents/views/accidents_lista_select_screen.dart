@@ -5,8 +5,9 @@ import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
 
 import '../../statistcs/views/statistcs_listaTotal_organization_select_view.dart';
+
 import 'accidentes_ListaTotal_organization_select_view.dart';
-import 'accidents_table_screen_view.dart';
+import 'accidentes_organization_select_table_view .dart';
 
 class SelectScreemLista extends StatelessWidget {
   const SelectScreemLista({super.key});
@@ -36,7 +37,7 @@ class SelectScreemLista extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AccidentsTable(),
+                      builder: (context) => const AccOrgaTableSelectionScreen(),
                     ),
                   );
                 },
@@ -109,6 +110,7 @@ class SelectScreemLista extends StatelessWidget {
                   ],
                 ),
               ),
+
               const SizedBox(height: 80), // Espacio entre los botones
               ElevatedButton(
                 onPressed: () {

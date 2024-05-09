@@ -28,7 +28,7 @@ class EmpresaSelectionScreenState extends State<EmpresaSelectionScreen> {
   late List<Empresa> _empresas = [];
 
   final String interstitialAdUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/1033173712'
+      ? ''
       : 'ca-app-pub-3940256099942544/1033173712';
 
   InterstitialAd? _interstitialAd;

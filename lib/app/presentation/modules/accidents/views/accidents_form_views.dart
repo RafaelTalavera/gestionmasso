@@ -16,7 +16,7 @@ import '../../../global/widgets/custom_AppBar.dart';
 
 import '../../home/views/home_view.dart';
 import '../sources/accidents_list_dropdown.dart';
-import 'accidents_table_screen_view.dart';
+import 'accidentes_organization_select_table_view .dart';
 
 class AccidentsPage extends StatefulWidget {
   const AccidentsPage({
@@ -41,7 +41,7 @@ class _AccidentsPageState extends State<AccidentsPage> {
   int _currentIndexSeverity = -1;
 
   final String interstitialAdUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/1033173712'
+      ? ''
       : 'ca-app-pub-3940256099942544/1033173712';
 
   InterstitialAd? _interstitialAd;
@@ -131,7 +131,8 @@ class _AccidentsPageState extends State<AccidentsPage> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const AccidentsTable()),
+                          builder: (context) =>
+                              const AccOrgaTableSelectionScreen()),
                     );
                   },
                   child: const Text('Ir al listado'),

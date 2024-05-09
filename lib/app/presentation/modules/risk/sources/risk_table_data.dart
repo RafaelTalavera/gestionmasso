@@ -5,7 +5,6 @@ class Risk {
       required this.puesto,
       required this.area,
       required this.tarea,
-      required this.fuente,
       required this.incidentesPotenciales,
       required this.consecuencia,
       required this.tipo,
@@ -25,7 +24,6 @@ class Risk {
       puesto: json['puesto'] ?? '',
       area: json['area'] ?? '',
       tarea: json['tarea'] ?? '',
-      fuente: json['fuente'] ?? '',
       incidentesPotenciales: json['incidentesPotenciales'] ?? '',
       consecuencia: json['consecuencia'] ?? '',
       tipo: json['tipo'] ?? '',
@@ -47,7 +45,6 @@ class Risk {
       'puesto': puesto,
       'area': area,
       'tarea': tarea,
-      'fuente': fuente,
       'incidentesPotenciales': incidentesPotenciales,
       'consecuencia': consecuencia,
       'tipo': tipo,
@@ -68,7 +65,6 @@ class Risk {
     String? puesto,
     String? area,
     String? tarea,
-    String? fuente,
     String? incidentesPotenciales,
     String? consecuencia,
     String? tipo,
@@ -87,7 +83,6 @@ class Risk {
       puesto: puesto ?? this.puesto,
       area: area ?? this.area,
       tarea: tarea ?? this.tarea,
-      fuente: fuente ?? this.fuente,
       incidentesPotenciales:
           incidentesPotenciales ?? this.incidentesPotenciales,
       consecuencia: consecuencia ?? this.consecuencia,
@@ -108,7 +103,6 @@ class Risk {
   final String puesto;
   final String area;
   final String tarea;
-  final String fuente;
   final String incidentesPotenciales;
   final String consecuencia;
   final String tipo;

@@ -81,7 +81,7 @@ class DataFetcher {
       id: extimguisher.extId.hashCode,
       title: 'Extintor Vencido',
       body:
-          'El extintor de ${extimguisher.empresa} en el sector ${extimguisher.sector} con ID ${extimguisher.extId} está vencido.',
+          'El extintor de ${extimguisher.nameOrganization} en el sector ${extimguisher.sector} con ID ${extimguisher.extId} está vencido.',
       payload: Routes.home,
     );
 

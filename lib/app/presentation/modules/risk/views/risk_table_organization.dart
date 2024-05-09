@@ -6,10 +6,10 @@ import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
 
-import 'risk_select_area._chart.dart';
+import 'risk_table_screm_view.dart';
 
-class OrganizationSelectionScreen extends StatefulWidget {
-  const OrganizationSelectionScreen({Key? key});
+class OrganizationTableSelectionScreen extends StatefulWidget {
+  const OrganizationTableSelectionScreen({Key? key});
 
   @override
   OrganizationSelectionScreenState createState() =>
@@ -17,7 +17,7 @@ class OrganizationSelectionScreen extends StatefulWidget {
 }
 
 class OrganizationSelectionScreenState
-    extends State<OrganizationSelectionScreen> {
+    extends State<OrganizationTableSelectionScreen> {
   List<String> organizations = [];
 
   @override
@@ -99,8 +99,10 @@ class OrganizationSelectionScreenState
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => AreaSelectionScreen(
-                                  organization: organizations[index]),
+                              builder: (context) => IperTable(
+                                organization: organizations[index],
+                                initialCompany: '',
+                              ),
                             ),
                           );
                         },

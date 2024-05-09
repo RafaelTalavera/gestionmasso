@@ -2,7 +2,7 @@ class Extimguisher {
   Extimguisher(
       {required this.id,
       required this.date,
-      required this.empresa,
+      required this.nameOrganization,
       required this.sector,
       required this.extId,
       required this.tipo,
@@ -24,7 +24,7 @@ class Extimguisher {
         date: json['date'] != null
             ? DateTime.parse(json['date'])
             : DateTime.now(),
-        empresa: json['empresa'] ?? '',
+        nameOrganization: json['nameOrganization'] ?? '',
         sector: json['sector'] ?? '',
         extId: json['extId'] ?? '',
         tipo: json['tipo'] ?? '',
@@ -47,7 +47,7 @@ class Extimguisher {
     return {
       'id': id,
       'date': date.toIso8601String(),
-      'empresa': empresa,
+      'nameOrganization': nameOrganization,
       'sector': sector,
       'extId': extId,
       'tipo': tipo,
@@ -67,7 +67,7 @@ class Extimguisher {
   Extimguisher copyWith({
     String? id,
     DateTime? date,
-    String? empresa,
+    String? nameOrganization,
     String? sector,
     String? extId,
     String? tipo,
@@ -86,7 +86,7 @@ class Extimguisher {
     return Extimguisher(
       id: id ?? this.id,
       date: date ?? this.date,
-      empresa: empresa ?? this.empresa,
+      nameOrganization: nameOrganization ?? this.nameOrganization,
       sector: sector ?? this.sector,
       extId: extId ?? this.extId,
       tipo: tipo ?? this.tipo,
@@ -106,7 +106,7 @@ class Extimguisher {
 
   final String id;
   final DateTime date;
-  final String empresa;
+  final String nameOrganization;
   final String sector;
   final String extId;
   final String tipo;

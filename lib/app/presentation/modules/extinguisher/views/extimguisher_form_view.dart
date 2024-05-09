@@ -15,7 +15,7 @@ import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
 
 import '../sources/List_extimguisher.dart';
-import 'extimguisher_table_view.dart';
+import 'extimguisher_table_organization.dart';
 
 class ExtinguerPage extends StatefulWidget {
   const ExtinguerPage({
@@ -36,13 +36,13 @@ class _ExtinguerPageState extends State<ExtinguerPage> {
   final String apiUrl = 'http://10.0.2.2:8080/api/extinguishers';
 
   int _currentIndexTipo = 0;
+  int _currentIndexArea = -1;
   bool access = false;
   bool presion = false;
   bool signaling = false;
 
-  final String interstitialAdUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/1033173712'
-      : 'ca-app-pub-3940256099942544/1033173712';
+  final String interstitialAdUnitId =
+      Platform.isAndroid ? '' : 'ca-app-pub-3940256099942544/1033173712';
 
   InterstitialAd? _interstitialAd;
 
@@ -67,6 +67,16 @@ class _ExtinguerPageState extends State<ExtinguerPage> {
     _loadInterstitialAd();
   }
 
+  String getWrappedButtonValue(List<String?> options, int currentIndex) {
+    List<String> nonNullOptions =
+        options.where((element) => element != null).cast<String>().toList();
+
+    if (currentIndex >= 0 && currentIndex < nonNullOptions.length) {
+      return nonNullOptions[currentIndex];
+    }
+    return '';
+  }
+
   void _submitForm() async {
     String? token = await TokenManager.getToken();
 
@@ -75,6 +85,9 @@ class _ExtinguerPageState extends State<ExtinguerPage> {
       formData['date'] = formData['date'].toIso8601String();
       formData['vencimiento'] = formData['vencimiento'].toIso8601String();
       formData['tipo'] = ListDropdownExtimguisher.tipo[_currentIndexTipo];
+      formData['sector'] = getWrappedButtonValue(
+          ListDropdownExtimguisher.areas, _currentIndexArea);
+
       formData['access'] = access;
       formData['signaling'] = signaling;
       formData['presion'] = presion;
@@ -104,7 +117,8 @@ class _ExtinguerPageState extends State<ExtinguerPage> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ExtimguishersScreen(),
+                        builder: (context) =>
+                            const OrganizationTableExtimguisherSelectionScreen(),
                       ),
                     );
                   },
@@ -238,16 +252,43 @@ class _ExtinguerPageState extends State<ExtinguerPage> {
                 const SizedBox(
                   height: 20,
                 ),
-                FormBuilderTextField(
-                  name: 'sector',
-                  decoration: const InputDecoration(
-                    labelText: 'Sector',
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.all(10),
-                    suffixText: 'Sector',
-                  ),
-                  validator: FormBuilderValidators.required(
-                    errorText: 'El campo no puede estar vacío',
+                SizedBox(
+                  child: DropdownButtonFormField<String>(
+                    value: _currentIndexArea == -1
+                        ? null
+                        : ListDropdownExtimguisher.areas[_currentIndexArea],
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _currentIndexArea =
+                            ListDropdownExtimguisher.areas.indexOf(newValue!);
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Área',
+                      labelStyle: TextStyle(color: Colors.grey),
+                      border: OutlineInputBorder(),
+                    ),
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: null,
+                        child: Text(
+                          'Elija un área',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                      ...ListDropdownExtimguisher.areas.map((value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }),
+                    ],
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Por favor, elija un área';
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(

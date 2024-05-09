@@ -9,10 +9,11 @@ import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
 import '../../organization/views/organization_form_view.dart';
-import 'accidents_table_total_screen_view.dart';
+import 'accidents_table_screen_view.dart';
 
-class AccidentesTotalOrgaSelectionScreen extends StatefulWidget {
-  const AccidentesTotalOrgaSelectionScreen({Key? key});
+class AccOrgaTableSelectionScreen extends StatefulWidget {
+  // ignore: use_key_in_widget_constructors
+  const AccOrgaTableSelectionScreen({Key? key});
 
   @override
   OrganizationSelectionScreenState createState() =>
@@ -20,7 +21,7 @@ class AccidentesTotalOrgaSelectionScreen extends StatefulWidget {
 }
 
 class OrganizationSelectionScreenState
-    extends State<AccidentesTotalOrgaSelectionScreen> {
+    extends State<AccOrgaTableSelectionScreen> {
   List<Map<String, String>> organizations = [];
   bool loading = true;
 
@@ -182,7 +183,7 @@ class OrganizationSelectionScreenState
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => AccidentsTableTotal(
+                                      builder: (context) => AccidentsTable(
                                         organization: organizations[index]
                                             ['name']!,
                                       ),

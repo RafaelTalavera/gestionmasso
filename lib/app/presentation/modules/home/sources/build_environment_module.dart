@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../Lai/view/lai_form_organization_select_view.dart';
 import '../../Lai/view/lai_selec_organization_chart.dart';
-import '../../Lai/view/lai_table_view.dart';
+import '../../Lai/view/lai_table_organization_select_view .dart';
 
+import '../../consumo/views/consumo_organization_select_table_view .dart';
 import '../../consumo/views/consumo_organization_select_view.dart';
 import '../../consumo/views/consumo_selec_organization.dart';
-import '../../consumo/views/consumo_table_view.dart';
 
 Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
   return Container(
@@ -81,9 +81,8 @@ Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const LaiScreen(
-                        initialCompany: '',
-                      ),
+                      builder: (context) =>
+                          const LaiOrganizationSelectionTableScreen(),
                     ),
                   );
                 },
@@ -162,7 +161,7 @@ Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
         ),
         const Center(
           child: Text(
-            'Invetario de Hidrocarburos',
+            'Inventario de Hidrocarburos',
             style: TextStyle(
               color: Color.fromARGB(255, 238, 183, 19),
               fontSize: 26,
@@ -184,7 +183,7 @@ Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const OrganizationSelectionScreen(),
+                      builder: (context) => const OrganizationConSelectionScreen(),
                     ),
                   );
                 },
@@ -222,7 +221,8 @@ Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ConsumoTable(),
+                        builder: (context) =>
+                            const ConsumoOrgaTableSelectionScreen(),
                       ));
                 },
                 style: ElevatedButton.styleFrom(
@@ -277,12 +277,12 @@ Widget buildEnviromentModule(BuildContext context, Color? selectedColor) {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      Icons.factory,
+                     Icons.bar_chart,
                       color: Colors.white,
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'Organización',
+                      'Estadística',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.white,

@@ -16,7 +16,7 @@ import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
 import '../sources/risk_table_data.dart';
 import '../sources/risk_list_dropdown.dart';
-import 'risk_table_screm_view.dart';
+import 'risk_table_organization.dart';
 
 class RiskEditScreen extends StatefulWidget {
   const RiskEditScreen({super.key, required this.risk, required String iperId});
@@ -34,9 +34,8 @@ class RiskEditScreenState extends State<RiskEditScreen> {
 
   final String apiUrl = 'http://10.0.2.2:8080/api/risk';
 
-  final String interstitialAdUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/1033173712'
-      : 'ca-app-pub-3940256099942544/1033173712';
+  final String interstitialAdUnitId =
+      Platform.isAndroid ? '' : 'ca-app-pub-3940256099942544/1033173712';
 
   InterstitialAd? _interstitialAd;
 
@@ -97,9 +96,8 @@ class RiskEditScreenState extends State<RiskEditScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const IperTable(
-                        initialCompany: '',
-                      ),
+                      builder: (context) =>
+                          const OrganizationTableSelectionScreen(),
                     ),
                   );
                   _showInterstitialAd();
@@ -195,15 +193,6 @@ class RiskEditScreenState extends State<RiskEditScreen> {
               initialValue: widget.risk.consecuencia,
               decoration: const InputDecoration(
                 labelText: 'Consecuencia',
-                border: OutlineInputBorder(),
-              ),
-              enabled: false,
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              initialValue: widget.risk.fuente,
-              decoration: const InputDecoration(
-                labelText: 'Fuente',
                 border: OutlineInputBorder(),
               ),
               enabled: false,

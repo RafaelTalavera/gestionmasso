@@ -6,9 +6,11 @@ import '../../accidents/views/accidents_lista_select_screen.dart';
 import '../../extinguisher/views/extimguisher_organization_selection_chart_view.dart';
 import '../../extinguisher/views/extimguisher_form_organization_select_view.dart';
 
-import '../../extinguisher/views/extimguisher_table_view.dart';
+import '../../extinguisher/views/extimguisher_table_organization.dart';
+
 import '../../risk/views/risk_form_organization_select_view.dart';
-import '../../risk/views/risk_table_screm_view.dart';
+import '../../risk/views/risk_table_organization.dart';
+
 import '../../risk/views/risk_selec_organization_chart.dart';
 import '../../statistcs/views/statistcs_if_organization_select_view.dart';
 
@@ -84,9 +86,8 @@ Widget buildAccidentModule(BuildContext context, Color? selectedColor) {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const IperTable(
-                          initialCompany: '',
-                        ),
+                        builder: (context) =>
+                            const OrganizationTableSelectionScreen(),
                       ));
                 },
                 style: ElevatedButton.styleFrom(
@@ -224,7 +225,8 @@ Widget buildAccidentModule(BuildContext context, Color? selectedColor) {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ExtimguishersScreen()));
+                          builder: (context) =>
+                              const OrganizationTableExtimguisherSelectionScreen()));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.cyan.shade800,

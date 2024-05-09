@@ -24,9 +24,8 @@ class ExtintorChartsState extends State<ExtintorCharts> {
   late List<ExtintorData> _extintorDataList = [];
   late String _selectedCompany;
 
-  final String interstitialAdUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/1033173712'
-      : 'ca-app-pub-3940256099942544/1033173712';
+  final String interstitialAdUnitId =
+      Platform.isAndroid ? '' : 'ca-app-pub-3940256099942544/1033173712';
 
   InterstitialAd? _interstitialAd;
 
@@ -201,7 +200,8 @@ class ExtintorChartsState extends State<ExtintorCharts> {
     );
     if (response.statusCode == 200) {
       _showInterstitialAd();
-      final List<dynamic> jsonData = json.decode(response.body);
+      final List<dynamic> jsonData =
+          jsonDecode(utf8.decode(response.bodyBytes));
       setState(() {
         _extintorDataList =
             jsonData.map((json) => ExtintorData.fromJson(json)).toList();

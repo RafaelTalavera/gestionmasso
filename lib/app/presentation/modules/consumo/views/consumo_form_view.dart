@@ -14,7 +14,7 @@ import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
 import '../../home/views/home_view.dart';
 import '../sources/consumo_list_dropdown.dart';
-import 'consumo_table_view.dart';
+import 'consumo_organization_select_table_view .dart';
 
 class InventoryFormConsumoPage extends StatefulWidget {
   const InventoryFormConsumoPage({
@@ -91,7 +91,8 @@ class _InventoryFormConsumoPageState extends State<InventoryFormConsumoPage> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ConsumoTable()),
+                          builder: (context) =>
+                              const ConsumoOrgaTableSelectionScreen()),
                     );
                   },
                   child: const Text('Ir a listado'),

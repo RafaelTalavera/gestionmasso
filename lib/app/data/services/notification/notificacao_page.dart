@@ -18,12 +18,12 @@ class NotificacaoPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.message_outlined,
               size: 48,
             ),
             const SizedBox(height: 16),
-            Text(
+            const Text(
               'Novidades após a Notificação Push! ',
               style: TextStyle(
                 fontSize: 18,

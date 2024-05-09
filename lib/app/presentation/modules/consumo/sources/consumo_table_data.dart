@@ -8,7 +8,7 @@ class Consumo {
     required this.combustible,
     required this.unidad,
     required this.consumo,
-    required this.mes,
+    required this.month,
     required this.year,
     required this.userId,
   });
@@ -23,8 +23,8 @@ class Consumo {
       combustible: json['combustible'] ?? '',
       unidad: json['unidad'] ?? '',
       consumo: json['consumo'] != null ? json['consumo'].toDouble() : 0.0,
-      mes: json['mes'] ?? '',
-      year: json['year'] ?? '',
+      month: json['month'] ?? '',
+      year: json['year']?.toString() ?? '',
       userId: json['userId'] ?? '',
     );
   }
@@ -39,7 +39,7 @@ class Consumo {
       'combustible': combustible,
       'unidad': unidad,
       'consumo': consumo,
-      'month': mes,
+      'month': month,
       'year': year,
       'userId': userId,
     };
@@ -48,13 +48,13 @@ class Consumo {
   Consumo copyWith({
     String? id,
     String? nameOrganization,
-    DateTime? date,
-    String? fuente,
-    String? tipoFuente,
-    String? combustible,
-    String? unidad,
-    double? consumo,
-    String? mes,
+    DateTime? date, // este
+    String? fuente, //este
+    String? tipoFuente, //este
+    String? combustible, //este
+    String? unidad, //
+    double? consumo, // 
+    String? month,
     String? year,
     String? userId,
   }) {
@@ -67,7 +67,7 @@ class Consumo {
       combustible: combustible ?? this.combustible,
       unidad: unidad ?? this.unidad,
       consumo: consumo ?? this.consumo,
-      mes: mes ?? this.mes,
+      month: month ?? this.month,
       year: year ?? this.year,
       userId: userId ?? this.userId,
     );
@@ -81,7 +81,7 @@ class Consumo {
   final String combustible;
   final String unidad;
   final double consumo;
-  final String mes;
+  final String month;
   final String year;
   final String userId;
 }

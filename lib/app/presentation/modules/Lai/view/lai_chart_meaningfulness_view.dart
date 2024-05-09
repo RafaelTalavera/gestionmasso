@@ -320,7 +320,7 @@ class _RiskChartsState extends State<LaiCharts> {
       context,
       MaterialPageRoute(
           builder: (context) => const LaiScreen(
-                initialCompany: '',
+                nameOrganization: '',
               )),
     );
     if (selectedCompany != null) {

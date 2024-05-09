@@ -1,26 +1,36 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:pdf/pdf.dart';
+// ignore: library_prefixes
+import 'package:pdf/widgets.dart' as pdfLib;
+//import 'package:share_extend/share_extend.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
 
 import '../sources/risk_table_data.dart';
+
+import '../../../global/widgets/pdf_view.dart';
 import 'risk_edit_view.dart';
 
 class IperTable extends StatefulWidget {
-  const IperTable({super.key, required String initialCompany});
+  const IperTable(
+      {super.key, required this.organization, required String initialCompany});
+  final String organization;
 
   @override
-  // ignore: library_private_types_in_public_api
-  _IperTableState createState() => _IperTableState();
+  IperTableState createState() => IperTableState();
 }
 
-class _IperTableState extends State<IperTable> {
+class IperTableState extends State<IperTable> {
   late List<Risk> risks;
   String? filtroEvaluacion;
   String? filtroPuesto;
@@ -42,9 +52,8 @@ class _IperTableState extends State<IperTable> {
     }
   }
 
-  final String interstitialAdUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/1033173712'
-      : 'ca-app-pub-3940256099942544/1033173712';
+  final String interstitialAdUnitId =
+      Platform.isAndroid ? '' : 'ca-app-pub-3940256099942544/1033173712';
 
   InterstitialAd? _interstitialAd;
 
@@ -74,7 +83,8 @@ class _IperTableState extends State<IperTable> {
   Future<void> fetchData() async {
     String? token = await TokenManager.getToken();
 
-    final url = Uri.parse('http://10.0.2.2:8080/api/risk/list');
+    final url = Uri.parse(
+        'http://10.0.2.2:8080/api/risk/organization/${widget.organization}');
 
     final response = await http.get(
       url,
@@ -101,13 +111,8 @@ class _IperTableState extends State<IperTable> {
       bool cumpleFiltroPuesto =
           filtroPuesto == null || risk.puesto == filtroPuesto;
       bool cumpleFiltroArea = filtroArea == null || risk.area == filtroArea;
-      bool cumpleFiltroOrganizacion = filtroOrganizacion == null ||
-          risk.nameOrganization == filtroOrganizacion;
 
-      return cumpleFiltroEvaluacion &&
-          cumpleFiltroPuesto &&
-          cumpleFiltroArea &&
-          cumpleFiltroOrganizacion;
+      return cumpleFiltroEvaluacion && cumpleFiltroPuesto && cumpleFiltroArea;
     }).toList();
   }
 
@@ -136,15 +141,26 @@ class _IperTableState extends State<IperTable> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Filtros',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        _createPDF(listaFiltrada);
+                      },
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.picture_as_pdf,
+                              color: Colors.red), // Icono de PDF
+                          SizedBox(
+                              width: 8), // Espacio entre el icono y el texto
+                          Text('Crear informe en PDF'), // Texto del botón
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
                 SingleChildScrollView(
                   child: Center(
@@ -184,16 +200,6 @@ class _IperTableState extends State<IperTable> {
                               ],
                             ),
                             DropdownButton<String>(
-                              value: filtroOrganizacion,
-                              hint: const Text('Organización'),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  filtroOrganizacion = newValue;
-                                });
-                              },
-                              items: obtenerItemsFiltro('organizacion'),
-                            ),
-                            DropdownButton<String>(
                               value: filtroArea,
                               hint: const Text('Área'),
                               onChanged: (String? newValue) {
@@ -215,7 +221,6 @@ class _IperTableState extends State<IperTable> {
                       filtroEvaluacion = null;
                       filtroPuesto = null;
                       filtroArea = null;
-                      filtroOrganizacion = null;
                     });
                     _showInterstitialAd();
                   },
@@ -257,22 +262,6 @@ class _IperTableState extends State<IperTable> {
                                   style: DefaultTextStyle.of(context).style,
                                   children: [
                                     const TextSpan(
-                                      text: 'Organization: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    TextSpan(
-                                      text:
-                                          listaFiltrada[index].nameOrganization,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  style: DefaultTextStyle.of(context).style,
-                                  children: [
-                                    const TextSpan(
                                       text: 'Puesto: ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold),
@@ -294,21 +283,6 @@ class _IperTableState extends State<IperTable> {
                                     ),
                                     TextSpan(
                                       text: listaFiltrada[index].area,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  style: DefaultTextStyle.of(context).style,
-                                  children: [
-                                    const TextSpan(
-                                      text: 'Fuente: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    TextSpan(
-                                      text: listaFiltrada[index].fuente,
                                     ),
                                   ],
                                 ),
@@ -421,21 +395,6 @@ class _IperTableState extends State<IperTable> {
                                   ],
                                 ),
                               ),
-                              RichText(
-                                text: TextSpan(
-                                  style: DefaultTextStyle.of(context).style,
-                                  children: [
-                                    const TextSpan(
-                                      text: 'Usuario: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    TextSpan(
-                                      text: listaFiltrada[index].userId,
-                                    ),
-                                  ],
-                                ),
-                              ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -497,9 +456,6 @@ class _IperTableState extends State<IperTable> {
         case 'evaluacion':
           valoresUnicos.add(risk.evaluacion);
           break;
-        case 'organizacion':
-          valoresUnicos.add(risk.nameOrganization);
-          break;
       }
     }
 
@@ -509,5 +465,269 @@ class _IperTableState extends State<IperTable> {
               child: Text(valor),
             ))
         .toList();
+  }
+
+  _createPDF(listaFiltrada) async {
+    final pdfLib.Document pdf = pdfLib.Document();
+
+    String fechaActual = DateFormat('dd-MM-yyyy').format(DateTime.now());
+
+    var fontData = await rootBundle.load("assets/fonts/Roboto-Regular.ttf");
+    var font = pdfLib.Font.ttf(fontData);
+
+    final organizationName =
+        listaFiltrada.isNotEmpty ? listaFiltrada.first.nameOrganization : '';
+
+    final userName = listaFiltrada.isNotEmpty ? listaFiltrada.first.userId : '';
+
+    final Uint8List imageData =
+        (await rootBundle.load('assets/imagen/gmasso.png'))
+            .buffer
+            .asUint8List();
+
+    ui.Codec codec = await ui.instantiateImageCodec(imageData);
+    ui.FrameInfo frameInfo = await codec.getNextFrame();
+    int imageWidth = frameInfo.image.width;
+    int imageHeight = frameInfo.image.height;
+
+    pdf.addPage(
+      pdfLib.MultiPage(
+        pageFormat: PdfPageFormat.a4.copyWith(
+          marginLeft: 10.0,
+          marginRight: 10.0,
+          marginTop: 40.0,
+          marginBottom: 10.0,
+        ),
+        header: (context) {
+          // Encabezado de la página
+          return pdfLib.Container(
+            alignment: pdfLib.Alignment.centerRight,
+            margin: const pdfLib.EdgeInsets.only(top: 30.0, bottom: 20.0),
+            padding: const pdfLib.EdgeInsets.only(bottom: 3.0),
+            decoration: const pdfLib.BoxDecoration(
+              border: pdfLib.Border(
+                bottom: pdfLib.BorderSide(
+                  color: PdfColors.grey,
+                  width: 1.0,
+                ),
+              ),
+            ),
+            child: pdfLib.Row(
+              mainAxisAlignment: pdfLib.MainAxisAlignment.spaceBetween,
+              children: [
+                pdfLib.Column(
+                  crossAxisAlignment: pdfLib.CrossAxisAlignment.start,
+                  children: [
+                    pdfLib.Text(
+                      'Informe de Riesgos',
+                      style: pdfLib.TextStyle(
+                        font: font,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    pdfLib.Text(
+                      'Organización: $organizationName',
+                      style: pdfLib.TextStyle(
+                        font: font,
+                        fontSize: 10.0,
+                      ),
+                    ),
+                    pdfLib.Text(
+                      'Usuario: $userName',
+                      style: pdfLib.TextStyle(
+                        font: font,
+                        fontSize: 10.0,
+                      ),
+                    ),
+                    pdfLib.Text(
+                      'Fecha del Informe: $fechaActual',
+                      style: pdfLib.TextStyle(
+                        font: font,
+                        fontSize: 10.0,
+                      ),
+                    ),
+                  ],
+                ),
+                pdfLib.Image(
+                  pdfLib.MemoryImage(imageData),
+                  width: imageWidth * 0.08,
+                  height: imageHeight * 0.08,
+                )
+              ],
+            ),
+          );
+        },
+        footer: (context) {
+          // Footer de la página
+          return pdfLib.Container(
+            alignment: pdfLib.Alignment.center,
+            margin: const pdfLib.EdgeInsets.only(top: 20),
+            child: pdfLib.Text(
+              'Idea y desarrollo axiomasolucionesintegrales@gmail.com',
+              style:
+                  const pdfLib.TextStyle(fontSize: 8, color: PdfColors.black),
+            ),
+          );
+        },
+        build: (context) => [
+          // Contenido de la página
+          pdfLib.Table(
+            border: pdfLib.TableBorder.all(),
+            children: <pdfLib.TableRow>[
+              pdfLib.TableRow(
+                children: <pdfLib.Widget>[
+                  pdfLib.Container(
+                    margin: const pdfLib.EdgeInsets.fromLTRB(5, 2, 5, 2),
+                    child: pdfLib.Text('Evaluación',
+                        style: pdfLib.TextStyle(
+                          font: font,
+                          fontSize: 9.0,
+                          fontWeight: pdfLib.FontWeight.bold,
+                        )),
+                  ),
+                  pdfLib.Container(
+                    margin: const pdfLib.EdgeInsets.fromLTRB(5, 2, 5, 2),
+                    child: pdfLib.Text('Puesto',
+                        style: pdfLib.TextStyle(
+                          font: font,
+                          fontSize: 9.0,
+                          fontWeight: pdfLib.FontWeight.bold,
+                        )),
+                  ),
+                  pdfLib.Container(
+                    margin: const pdfLib.EdgeInsets.fromLTRB(5, 2, 5, 2),
+                    child: pdfLib.Text('Área',
+                        style: pdfLib.TextStyle(
+                          font: font,
+                          fontSize: 9.0,
+                          fontWeight: pdfLib.FontWeight.bold,
+                        )),
+                  ),
+                  pdfLib.Container(
+                    width: 100,
+                    margin: const pdfLib.EdgeInsets.fromLTRB(5, 2, 5, 2),
+                    child: pdfLib.Text('Incidente potencial',
+                        style: pdfLib.TextStyle(
+                          font: font,
+                          fontSize: 9.0,
+                          fontWeight: pdfLib.FontWeight.bold,
+                        )),
+                  ),
+                  pdfLib.Container(
+                    width: 100,
+                    margin: const pdfLib.EdgeInsets.fromLTRB(5, 2, 5, 2),
+                    child: pdfLib.Text('Consecuencia',
+                        style: pdfLib.TextStyle(
+                          font: font,
+                          fontSize: 9.0,
+                          fontWeight: pdfLib.FontWeight.bold,
+                        )),
+                  ),
+                  pdfLib.Container(
+                    width: 170,
+                    margin: const pdfLib.EdgeInsets.fromLTRB(5, 2, 5, 2),
+                    child: pdfLib.Text('Medida de control',
+                        style: pdfLib.TextStyle(
+                          font: font,
+                          fontSize: 9.0,
+                          fontWeight: pdfLib.FontWeight.bold,
+                        )),
+                  ),
+                  pdfLib.Container(
+                    margin: const pdfLib.EdgeInsets.fromLTRB(5, 2, 5, 2),
+                    child: pdfLib.Text('Tipo',
+                        style: pdfLib.TextStyle(
+                          font: font,
+                          fontSize: 9.0,
+                          fontWeight: pdfLib.FontWeight.bold,
+                        )),
+                  ),
+                  pdfLib.Container(
+                    margin: const pdfLib.EdgeInsets.fromLTRB(5, 2, 5, 2),
+                    child: pdfLib.Text('Revalidación',
+                        style: pdfLib.TextStyle(
+                          font: font,
+                          fontSize: 9.0,
+                          fontWeight: pdfLib.FontWeight.bold,
+                        )),
+                  ),
+                ],
+              ),
+              for (var risk in listaFiltrada)
+                pdfLib.TableRow(
+                  children: <pdfLib.Widget>[
+                    pdfLib.Container(
+                      margin: const pdfLib.EdgeInsets.fromLTRB(5, 3, 5, 3),
+                      child: pdfLib.Text(risk.evaluacion,
+                          style: pdfLib.TextStyle(font: font, fontSize: 8.0)),
+                    ),
+                    pdfLib.Container(
+                      margin: const pdfLib.EdgeInsets.fromLTRB(5, 3, 5, 3),
+                      child: pdfLib.Text(risk.puesto,
+                          style: pdfLib.TextStyle(
+                            font: font,
+                            fontSize: 8.0,
+                          )),
+                    ),
+                    pdfLib.Container(
+                      margin: const pdfLib.EdgeInsets.fromLTRB(5, 3, 5, 3),
+                      child: pdfLib.Text(risk.area,
+                          style: pdfLib.TextStyle(font: font, fontSize: 8.0)),
+                    ),
+                    pdfLib.Container(
+                      width: 100,
+                      margin: const pdfLib.EdgeInsets.fromLTRB(5, 3, 5, 3),
+                      child: pdfLib.Text(risk.incidentesPotenciales,
+                          style: pdfLib.TextStyle(font: font, fontSize: 8.0)),
+                    ),
+                    pdfLib.Container(
+                      width: 100,
+                      margin: const pdfLib.EdgeInsets.fromLTRB(5, 3, 5, 3),
+                      child: pdfLib.Text(risk.consecuencia,
+                          style: pdfLib.TextStyle(font: font, fontSize: 8.0)),
+                    ),
+                    pdfLib.Container(
+                      width: 170,
+                      margin: const pdfLib.EdgeInsets.fromLTRB(5, 3, 5, 3),
+                      child: pdfLib.Text(risk.medidaControl,
+                          style: pdfLib.TextStyle(font: font, fontSize: 8.0)),
+                    ),
+                    pdfLib.Container(
+                      margin: const pdfLib.EdgeInsets.fromLTRB(5, 3, 5, 3),
+                      child: pdfLib.Text(risk.tipo,
+                          style: pdfLib.TextStyle(font: font, fontSize: 8.0)),
+                    ),
+                    pdfLib.Container(
+                      margin: const pdfLib.EdgeInsets.fromLTRB(5, 3, 5, 3),
+                      child: pdfLib.Text(
+                          DateFormat('dd-MM-yyyy').format(risk.dateOfRevision),
+                          style: pdfLib.TextStyle(font: font, fontSize: 7.0)),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+
+    // Generar un nombre de archivo único usando la fecha y la hora actual
+    final String timestamp =
+        DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+    final String fileName = 'pdf_$timestamp.pdf';
+    final String dir = (await getApplicationDocumentsDirectory()).path;
+    final String path = '$dir/$fileName';
+
+    // Guardar el PDF con el nombre de archivo único
+    final File file = File(path);
+    final Uint8List pdfBytes = await pdf.save();
+    await file.writeAsBytes(pdfBytes.toList());
+
+    // Abrir la vista previa del PDF
+    // ignore: use_build_context_synchronously
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ViewPdf(path)),
+    );
   }
 }

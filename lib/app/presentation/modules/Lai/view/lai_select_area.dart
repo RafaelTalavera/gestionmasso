@@ -21,9 +21,8 @@ class LaiAreaSelectionScreen extends StatefulWidget {
 class LaiAreaSelectionScreenState extends State<LaiAreaSelectionScreen> {
   List<String> areas = [];
 
-  final String interstitialAdUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/1033173712'
-      : 'ca-app-pub-3940256099942544/1033173712';
+  final String interstitialAdUnitId =
+      Platform.isAndroid ? '' : 'ca-app-pub-3940256099942544/1033173712';
 
   InterstitialAd? _interstitialAd;
 

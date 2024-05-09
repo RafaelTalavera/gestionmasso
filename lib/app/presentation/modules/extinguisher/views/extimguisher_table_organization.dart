@@ -5,11 +5,10 @@ import 'dart:convert';
 import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
+import 'extimguisher_table_view.dart';
 
-import 'risk_select_area._chart.dart';
-
-class OrganizationSelectionScreen extends StatefulWidget {
-  const OrganizationSelectionScreen({Key? key});
+class OrganizationTableExtimguisherSelectionScreen extends StatefulWidget {
+  const OrganizationTableExtimguisherSelectionScreen({Key? key});
 
   @override
   OrganizationSelectionScreenState createState() =>
@@ -17,7 +16,7 @@ class OrganizationSelectionScreen extends StatefulWidget {
 }
 
 class OrganizationSelectionScreenState
-    extends State<OrganizationSelectionScreen> {
+    extends State<OrganizationTableExtimguisherSelectionScreen> {
   List<String> organizations = [];
 
   @override
@@ -59,7 +58,7 @@ class OrganizationSelectionScreenState
     return Scaffold(
       appBar: CustomAppBar(
         titleWidget: Text(
-          ' Peligros y Riesgos',
+          'Listado Extintores',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: const Color.fromARGB(255, 238, 183, 19),
@@ -99,8 +98,9 @@ class OrganizationSelectionScreenState
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => AreaSelectionScreen(
-                                  organization: organizations[index]),
+                              builder: (context) => ExtimguishersScreen(
+                                organization: organizations[index],
+                              ),
                             ),
                           );
                         },

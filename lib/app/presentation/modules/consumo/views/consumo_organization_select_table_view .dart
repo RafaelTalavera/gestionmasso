@@ -9,10 +9,11 @@ import '../../../../data/services/remote/token_manager.dart';
 import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
 import '../../organization/views/organization_form_view.dart';
-import 'accidents_table_total_screen_view.dart';
+import 'consumo_table_view.dart';
 
-class AccidentesTotalOrgaSelectionScreen extends StatefulWidget {
-  const AccidentesTotalOrgaSelectionScreen({Key? key});
+class ConsumoOrgaTableSelectionScreen extends StatefulWidget {
+  // ignore: use_key_in_widget_constructors
+  const ConsumoOrgaTableSelectionScreen({Key? key});
 
   @override
   OrganizationSelectionScreenState createState() =>
@@ -20,7 +21,7 @@ class AccidentesTotalOrgaSelectionScreen extends StatefulWidget {
 }
 
 class OrganizationSelectionScreenState
-    extends State<AccidentesTotalOrgaSelectionScreen> {
+    extends State<ConsumoOrgaTableSelectionScreen> {
   List<Map<String, String>> organizations = [];
   bool loading = true;
 
@@ -96,7 +97,7 @@ class OrganizationSelectionScreenState
     return Scaffold(
       appBar: CustomAppBar(
         titleWidget: Text(
-          ' Accidentes',
+          ' Consumos ',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: const Color.fromARGB(255, 238, 183, 19),
@@ -182,8 +183,8 @@ class OrganizationSelectionScreenState
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => AccidentsTableTotal(
-                                        organization: organizations[index]
+                                      builder: (context) => ConsumoTable(
+                                        nameOrganization: organizations[index]
                                             ['name']!,
                                       ),
                                     ),

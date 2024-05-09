@@ -16,7 +16,7 @@ import '../../../global/utils/caculate_font_sise.dart';
 import '../../../global/widgets/custom_AppBar.dart';
 
 import '../sources/extimguisher_table.dart';
-import 'extimguisher_table_view.dart';
+import 'extimguisher_table_organization.dart';
 
 class ExtimguisherEditScreen extends StatefulWidget {
   const ExtimguisherEditScreen(
@@ -35,9 +35,8 @@ class ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
   bool presion = false;
   bool signaling = false;
 
-  final String interstitialAdUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/1033173712'
-      : 'ca-app-pub-3940256099942544/1033173712';
+  final String interstitialAdUnitId =
+      Platform.isAndroid ? '' : 'ca-app-pub-3940256099942544/1033173712';
 
   InterstitialAd? _interstitialAd;
 
@@ -94,7 +93,8 @@ class ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ExtimguishersScreen(),
+                        builder: (context) =>
+                            const OrganizationTableExtimguisherSelectionScreen(),
                       ));
                   _showInterstitialAd();
                 },
@@ -141,7 +141,7 @@ class ExtimguisherEditScreenState extends State<ExtimguisherEditScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
-              initialValue: widget.extinguisher.empresa,
+              initialValue: widget.extinguisher.nameOrganization,
               decoration: const InputDecoration(
                 labelText: 'Empresa',
                 border: OutlineInputBorder(),

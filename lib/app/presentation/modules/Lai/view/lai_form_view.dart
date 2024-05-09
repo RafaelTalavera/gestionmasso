@@ -116,7 +116,7 @@ class _LaiPageState extends State<LaiFormPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => const LaiScreen(
-                                initialCompany: '',
+                                nameOrganization: '',
                               )),
                     );
                   },
